@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Board(models.Model):
-    name = models.CharField(max_length=255)
+    board_name = models.CharField(max_length=255)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     # board_contributors = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -13,8 +13,8 @@ class Board(models.Model):
 
 
 class Column(models.Model):
-    name = models.CharField(max_length=255)
-    board = models.ForeignKey(Board, related_name='columns', on_delete=models.CASCADE)
+    column_name = models.CharField(max_length=255)
+    board_name = models.ForeignKey(Board, related_name='columns', on_delete=models.CASCADE)
     order_position = models.IntegerField()
 
     def __str__(self):
