@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from .serializers import *
 
-# Create your views here.
+@api_view(['GET'])
+def get_all_accounts(req):
+    
