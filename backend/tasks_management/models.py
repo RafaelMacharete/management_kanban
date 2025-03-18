@@ -1,39 +1,37 @@
-# from django.contrib.auth.models import User
+# from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
-class Account(models.Model):
-    username = models.CharField(max_length=50, primary_key=True)
-    password = models.CharField(max_length=40)
-    email = models.EmailField(max_length=254)
-    role = models.CharField(max_length=11)
- 
+class Account(models.Model): 
+    username = models.CharField(max_length=50)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=50)
+    
+    # groups = models.ManyToManyField(Group, related_name="custom_groups", blank=True)
+    # user_permissions = models.ManyToManyField(Permission, related_name="custom_user_p", blank=True)
+
     def __str__(self):
         return self.username
 
 class ProjectBoard(models.Model):
-    project_board_name = models.CharField(max_length=50, primary_key=True)
-    projects = models.ManyToManyField(Account, through='ProjectBoardAccount')
+    name = models.CharField(max_length=50, unique=True)
+    members = models.ManyToManyField(Account)
     
     def __str__(self):
-        return self.project_board_name
-
-class ProjectBoardAccount(models.Model):
-    account_username = models.ForeignKey(Account, on_delete=models.CASCADE)
-    project_board_name = models.ForeignKey(ProjectBoard, on_delete=models.CASCADE)
+        return self.name
 
 class Column(models.Model):
-    column_name = models.CharField(max_length=30, primary_key=True)
-    project_name = models.ForeignKey(ProjectBoard, on_delete=models.CASCADE)
-    position = models.IntegerField()
-    
+    name = models.CharField(max_length=30)
+    project_board = models.ForeignKey(ProjectBoard, on_delete=models.CASCADE, related_name="columns")
+    position = models.PositiveIntegerField()
+
     def __str__(self):
-        return self.column_name
+        return f"{self.project_board.name} - {self.name}"
 
 class Card(models.Model):
-    card_name = models.CharField(max_length=35, primary_key=True)
-    column_name = models.ForeignKey(Column, on_delete=models.CASCADE) 
-    card_description = models.TextField()
-    card_creation_update_date = models.DateField(auto_now_add=1)
+    name = models.CharField(max_length=35)
+    column = models.ForeignKey(Column, on_delete=models.CASCADE)
+    description = models.TextField()
+    creation_date = models.DateField(auto_now_add=True)
     
     def __str__(self):
-        return self.card_name
+        return self.name
