@@ -32,6 +32,7 @@ class Card(models.Model):
     column = models.ForeignKey(Column, on_delete=models.CASCADE)
     description = models.TextField()
     creation_date = models.DateField(auto_now_add=True)
+    position = models.PositiveIntegerField(default=1)
     
     def __str__(self):
         return self.name
