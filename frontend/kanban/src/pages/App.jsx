@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Project } from '../components/Project'
 
 export function App() {
   const [projects, setProjects] = useState([]);
-  const [page, setPage] = useState(1);
-  const [accounts, setAccounts] = useState([]);
+  const [account, setAccount] = useState('');
 
   useEffect(() => {
     async function fetchProjects() {
@@ -16,29 +16,22 @@ export function App() {
       }
     };
     fetchProjects();
-  }, [page]);
+  }, []);
 
   useEffect(() => {
     async function fetchAccounts() {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/account/`);
-        setAccounts(res.data);
+        const res = await axios.get(`http://127.0.0.1:8000/api/account/${variavel}`);
+        setAccount(res.data);
       } catch (err) {
         console.log(err.message);
       }
     };
     fetchAccounts();
-  }, []);
-
+  }, [projects]);
   return (
     <>
-      <ul>
-        {projects.map((project) => (
-          <li key={project.id}>
-            {project.name} - {project.members}
-          </li>
-        ))}
-      </ul>
+      <Project projects={projects} account={account}/>
     </>
   );
 }

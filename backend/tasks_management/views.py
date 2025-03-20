@@ -141,11 +141,14 @@ def alter_card_state(req, pk):
         
         card_by_pk.delete()
         return Response('Card Deleted', status=status.HTTP_200_OK)
-    
+
+@api_view(['GET'])
 def get_account(req, pk):
     try:
-        account = Account.objects.get(pk=pk)
-    except Card.DoesNotExist:
+        account_by_pk = Account.objects.get(pk=pk)
+    except Account.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    account_serializer = AccountSerializer(account)
+    
+    account_serializer = AccountSerializer(account_by_pk)
+    print(account_serializer.data)
     return Response(account_serializer.data, status=status.HTTP_200_OK)
