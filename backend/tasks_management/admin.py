@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import *
 
 class AccountAdmin(UserAdmin):
-    list_display = ('username', 'email', 'username', 'is_staff', 'phone_number')
+    list_display = ('username', 'email', 'is_staff', 'phone_number')
     fieldsets = UserAdmin.fieldsets + (
         (None, 
          {'fields' : ('phone_number',)}),
