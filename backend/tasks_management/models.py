@@ -1,17 +1,12 @@
-# from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-class Account(models.Model): 
-    username = models.CharField(max_length=50)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=50)
-    
-    # groups = models.ManyToManyField(Group, related_name="custom_groups", blank=True)
-    # user_permissions = models.ManyToManyField(Permission, related_name="custom_user_p", blank=True)
+class Account(AbstractUser):
+    phone_number = models.PositiveIntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.username
-
+    
 class ProjectBoard(models.Model):
     name = models.CharField(max_length=50, unique=True)
     members = models.ManyToManyField(Account)
