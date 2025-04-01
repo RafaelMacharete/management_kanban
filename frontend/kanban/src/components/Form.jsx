@@ -1,8 +1,8 @@
 import { useState } from "react";
-import {AccountForm} from '../pages/AccountForm'
-import {ProjectForm} from '../pages/ProjectForm'
-import {ColumnForm} from '../pages/ColumnForm'
-import {CardForm} from '../pages/CardForm'
+import {AccountForm} from './AccountForm'
+import {ProjectForm} from './ProjectForm'
+import {ColumnForm} from './ColumnForm'
+import {CardForm} from './CardForm'
 
 export function Form() {
   const [activeTab, setActiveTab] = useState("account");

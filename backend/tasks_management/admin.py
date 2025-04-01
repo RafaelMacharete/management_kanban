@@ -5,7 +5,7 @@ from .models import *
 class AccountAdmin(UserAdmin):
     list_display = ('username', 'email', 'is_staff', 'phone_number')
     fieldsets = UserAdmin.fieldsets + (
-        (None, 
+        (None,  
          {'fields' : ('phone_number',)}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
