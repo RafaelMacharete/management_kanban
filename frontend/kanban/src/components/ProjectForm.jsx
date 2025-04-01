@@ -26,21 +26,25 @@ export function ProjectForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="bg-[#ddd] p-6 rounded-lg shadow-md max-w-md mx-auto">
       <input
         type="text"
         name="name"
         placeholder="Nome do Projeto"
         onChange={handleChange}
         required
+        className="w-full p-3 mb-4 border border-[#787486] rounded-md focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
       />
       <input
         type="text"
         name="members"
-        placeholder="IDs dos Membros (separados por vírgula)"
+        placeholder="Members id's (by comma)"
         onChange={handleChange}
+        className="w-full p-3 mb-4 border border-[#787486] rounded-md focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
       />
-      <button type="submit">Criar Projeto</button>
+      <button type="submit" className="w-full p-3 bg-[#5030E5] text-white rounded-md hover:bg-[#787486] focus:outline-none focus:ring-2 focus:ring-[#5030E5]">
+        Criar Projeto
+      </button>
     </form>
   );
 }
