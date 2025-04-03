@@ -1,12 +1,26 @@
 import { Navbar } from '../components/Navbar'
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 export function Login() {
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
+  function handleChange(e) {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    console.log({ ...formData, [e.target.name]: e.target.value });
+  }
+
+
+    
+    
     return (
         <>
             <Navbar />
             <div className="flex items-center justify-center min-h-screen">
-                <form className="bg-white p-6 rounded-2xl shadow-indigo-500 shadow-lg w-80">
+                <form className="bg-white p-6 rounded-2xl shadow-indigo-500 shadow-lg w-80" onChange={handleChange}>
                     <h2 className="text-2xl font-semibold text-[#5030E5] text-center mb-4">Login</h2>
                     <div className="mb-4">
                         <label htmlFor="username" className="block text-[#787486] mb-1">Usuário</label>
