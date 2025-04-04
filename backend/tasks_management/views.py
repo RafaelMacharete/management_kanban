@@ -40,7 +40,7 @@ def login(req):
             'refresh':str(refresh),
             }, status=status.HTTP_200_OK)
     else:
-        return Response({'Error': 'Username or Password invalid'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'Username or Password invalid'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['GET', 'POST'])
