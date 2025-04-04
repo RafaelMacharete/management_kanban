@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { AccountForm } from "./AccountForm";
-import { ProjectForm } from "./ProjectForm";
-import { ColumnForm } from "./ColumnForm";
-import { CardForm } from "./CardForm";
+import { ProjectForm } from "./Forms/ProjectForm";
+import { ColumnForm } from "./Forms/ColumnForm";
+import { CardForm } from "./Forms/CardForm";
 
 export function Navbar() {
     const [dropdown, setDropdown] = useState(false);
@@ -44,7 +43,7 @@ export function Navbar() {
                     </li>
                 </ul>
             </div>
-            
+
             {/* Exibição do formulário com base na seleção */}
             <div className="container mt-4">
                 {activeTab === "project" && <ProjectForm />}

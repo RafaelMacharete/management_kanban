@@ -1,5 +1,4 @@
 import { useState } from "react";
-import {AccountForm} from './AccountForm'
 import {ProjectForm} from './ProjectForm'
 import {ColumnForm} from './ColumnForm'
 import {CardForm} from './CardForm'
@@ -19,7 +18,6 @@ export function Form() {
         <button onClick={() => setActiveTab("card")}>Criar Card</button>
       </div>
 
-      {activeTab === "account" && <AccountForm />}
       {activeTab === "project" && <ProjectForm />}
       {activeTab === "column" && <ColumnForm />}
       {activeTab === "card" && <CardForm />}

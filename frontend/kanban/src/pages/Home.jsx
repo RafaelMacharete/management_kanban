@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form } from "../components/Form";
+import { Form } from "../components/Forms/Form";
 
 export function Home() {
   const [projects, setProjects] = useState([]);

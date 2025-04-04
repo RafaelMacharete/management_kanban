@@ -12,35 +12,17 @@ from .serializers import *
 def create_account(req):
     username = req.data.get('username')
     password = req.data.get('password')
-    email = req.data.get('email')
-    phone_number = req.data.get('phone_number')
-    is_staff = req.data.get('staff')
 
-    if not username or not password or not email or not phone_number:
-        return Response({'Error: Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
+    if not username or not password:
+        return Response({'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 
     if Account.objects.filter(username = username).exists():
-        return Response({'Error: Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
     
-    if Account.objects.filter(email = email).exists():
-        return Response({'Error: Email already exists'}, status=status.HTTP_400_BAD_REQUEST)    
-    
-    if is_staff:
-        account = Account.objects.create_superuser(
-            username=username,
-            password=password,
-            email=email,
-            phone_number=phone_number,
-            is_staff=is_staff,
-        )
-    else:
-        account = Account.objects.create_user(
-            username=username,
-            password=password,
-            email=email,
-            phone_number=phone_number,
-        )
-
+    account = Account.objects.create_user(
+        username=username,
+        password=password,
+    )
 
     return Response({'User created successfully'}, status=status.HTTP_201_CREATED)
 
@@ -48,9 +30,9 @@ def create_account(req):
 def login(req):
     username = req.data.get('username')
     password = req.data.get('password')
-
+    
     user = authenticate(username=username, password=password)
-
+    
     if user:
         refresh = RefreshToken.for_user(user)
         return Response({
