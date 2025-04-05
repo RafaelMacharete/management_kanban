@@ -1,86 +1,128 @@
 import { Link, Navigate } from "react-router-dom";
 import { useState } from "react";
+import Banner from '../assets/aaa.jpg'
+import { FcGoogle } from "react-icons/fc";
+import { OrbitProgress } from 'react-loading-indicators'
 
 export function Login() {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [navigate, setNavigate] = useState(false);
-
-  function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    const response = await fetch("http://127.0.0.1:8000/login/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include',
-      body: JSON.stringify(formData),
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
     });
-    const body = await response.json();
-    if (body.access) {
-      setNavigate(true);
-    }
-  }
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [navigate, setNavigate] = useState(false);
+    const [error, setError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
 
-  if (navigate) {
-    return <Navigate to="/projects" />;
-  }
-  return (
-    <>
-      <div className="flex items-center justify-center min-h-screen">
-        <form
-          className="bg-white p-6 rounded-2xl shadow-indigo-500 shadow-lg w-80"
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-          method="POST" // Esconde os campos do formulário
-        >
-          <h2 className="text-2xl font-semibold text-[#5030E5] text-center mb-4">
-            Login
-          </h2>
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-[#787486] mb-1">
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              id="username"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-[#787486] mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
-            />
-          </div>
-          <div className="flex justify-between items-center mb-4">
-            <Link
-              to="/register"
-              className="text-[#5030E5] text-sm hover:underline"
-            >
-              Register
-            </Link>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-[#5030E5] text-white py-2 rounded-lg hover:bg-[#4025b8] transition"
-          >
-            Login
-          </button>
-        </form>
-      </div>
-    </>
-  );
+    function handleChange(e) {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        setIsLoading(true);
+
+        const response = await fetch("http://127.0.0.1:8000/login/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify(formData),
+        });
+        const body = await response.json();
+        setIsLoading(false)
+        if (body.access) {
+            setNavigate(true);
+        } else {
+            setError(true)
+        }
+    }
+
+    if (navigate) {
+        return <Navigate to="/projects" />;
+    }
+    return (
+        <div className="flex min-h-screen">
+            <div className="max-h-screen w-1/2">
+                <img src={Banner} alt="Banner of Kanban" className="w-full h-full" />
+            </div>
+            <div className="flex flex-col w-1/2 p-6 py-12">
+                <form
+                    className="bg-white flex flex-col gap-2"
+                    onSubmit={handleSubmit}
+                >
+                    <h2 className="text-2xl font-bold text-center text-[#5030E5] mb-6">
+                        Welcome Back
+                    </h2>
+
+                    <div className="mb-4">
+                        <label htmlFor="username" className="block text-sm text-gray-600 mb-1">
+                            Username
+                        </label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
+                            required
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label htmlFor="password" className="block text-sm text-gray-600 mb-1">
+                            Password
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
+                            required
+                        />
+                    </div>
+
+                    {error && (
+                        <p className="text-sm text-red-600 mb-4">
+                            Invalid username or password.
+                        </p>
+                    )}
+
+                    <div className="flex justify-between items-center text-sm mb-4">
+                        <span className="text-gray-500">Don't have an account?</span>
+                        <Link to="/register" className="text-[#5030E5] hover:underline">
+                            Sign up
+                        </Link>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-[#5030E5] text-white py-2 rounded-lg hover:bg-[#4025b8] transition-colors"
+                    >
+                        {isLoading ? <OrbitProgress color="#9272d2" size="small" text="" textColor="" /> : 'Log in'}
+                    </button>
+                </form>
+                <div>
+                    <div className="flex items-center my-6 w-full">
+                        <div className="flex-1 border-t border-gray-300"></div>
+                        <span className="mx-4 text-gray-500 font-medium">Or</span>
+                        <div className="flex-1 border-t border-gray-300"></div>
+                    </div>
+
+
+                    <div className="w-full">
+                        <button className="border-1 rounded-4xl flex gap-3 w-full h-15 items-center justify-center">
+                            <FcGoogle size={30} />
+
+                            Continue with Google
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
