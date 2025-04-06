@@ -3,6 +3,8 @@ import { useState } from "react";
 import Banner from '../assets/aaa.jpg'
 import { FcGoogle } from "react-icons/fc";
 import { OrbitProgress } from 'react-loading-indicators'
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from 'jwt-decode'
 
 export function Login() {
     const [formData, setFormData] = useState({
@@ -18,7 +20,6 @@ export function Login() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-
     async function handleSubmit(e) {
         e.preventDefault();
 
@@ -31,9 +32,12 @@ export function Login() {
             body: JSON.stringify(formData),
         });
         const body = await response.json();
+
+        localStorage.setItem('token', body.access)
         setIsLoading(false)
         if (body.access) {
             setNavigate(true);
+            localStorage.setItem('username', formData.username)
         } else {
             setError(true)
         }
@@ -53,7 +57,7 @@ export function Login() {
                     onSubmit={handleSubmit}
                 >
                     <h2 className="text-2xl font-bold text-center text-[#5030E5] mb-6">
-                        Welcome Back
+                        Welcome Back to Trellio
                     </h2>
 
                     <div className="mb-4">
@@ -116,9 +120,16 @@ export function Login() {
 
                     <div className="w-full">
                         <button className="border-1 rounded-4xl flex gap-3 w-full h-15 items-center justify-center">
-                            <FcGoogle size={30} />
 
-                            Continue with Google
+                            {/* <GoogleLogin
+                                onSuccess={(credentialResponse) => {
+                                    console.log(credentialResponse)
+                                    console.log(jwtDecode(credentialResponse.credential))
+                                }}
+                                onError={() => console.log('Login Failed')}
+                            >
+
+                            </GoogleLogin> */}
                         </button>
                     </div>
                 </div>
