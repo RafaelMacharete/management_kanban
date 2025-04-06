@@ -17,7 +17,7 @@ def create_account(req):
         return Response({'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 
     if Account.objects.filter(username = username).exists():
-        return Response({'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
     
     account = Account.objects.create_user(
         username=username,
@@ -106,7 +106,35 @@ def alter_get_project_board(req, pk):
     elif req.method == 'DELETE':
         project_board.delete()
         return Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
-    
+
+@api_view(['POST'])
+def google_login(request):
+    email = request.data.get('email')
+    name = request.data.get('name')
+    sub = request.data.get('sub')
+
+    if not email or not name or not sub:
+        return Response({'error': 'Missing fields'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user, created = Account.objects.get_or_create(
+        email=email,
+        defaults={
+            'username': f'{name}_{sub[:5]}',
+            'is_active': True,
+        }
+    )
+
+    if created:
+        user.set_unusable_password()
+        user.save()
+
+    refresh = RefreshToken.for_user(user)
+
+    return Response({
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
+    }, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def get_accounts_by_project(req, project_id):
     try:

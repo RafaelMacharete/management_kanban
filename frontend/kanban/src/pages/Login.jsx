@@ -20,6 +20,42 @@ export function Login() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
+    async function handleGoogleSubmit(googleResponse) {
+        setIsLoading(true);
+        try {
+            const userInfo = jwtDecode(googleResponse.credential);
+
+            const response = await fetch("http://127.0.0.1:8000/google-login/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: 'include',
+                body: JSON.stringify({
+                    email: userInfo.email,
+                    name: userInfo.name,
+                    sub: userInfo.sub,
+                }),
+            });
+
+            const body = await response.json();
+            setIsLoading(false);
+
+            if (body.access) {
+                localStorage.setItem('token', body.access);
+
+                const user = userInfo.name;
+                localStorage.setItem('user', user);
+
+                setNavigate(true);
+            } else {
+                setError(true);
+            }
+        } catch (error) {
+            console.error("Google login error", error);
+            setIsLoading(false);
+            setError(true);
+        }
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
 
@@ -46,6 +82,7 @@ export function Login() {
     if (navigate) {
         return <Navigate to="/projects" />;
     }
+    
     return (
         <div className="flex min-h-screen">
             <div className="max-h-screen w-1/2">
@@ -121,15 +158,14 @@ export function Login() {
                     <div className="w-full">
                         <button className="border-1 rounded-4xl flex gap-3 w-full h-15 items-center justify-center">
 
-                            {/* <GoogleLogin
+                            <GoogleLogin
                                 onSuccess={(credentialResponse) => {
-                                    console.log(credentialResponse)
-                                    console.log(jwtDecode(credentialResponse.credential))
+                                    handleGoogleSubmit(credentialResponse);
                                 }}
                                 onError={() => console.log('Login Failed')}
-                            >
-
-                            </GoogleLogin> */}
+                                shape="circle"
+                                theme="filled_blue"
+                            />
                         </button>
                     </div>
                 </div>
