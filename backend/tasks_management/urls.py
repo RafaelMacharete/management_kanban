@@ -12,6 +12,4 @@ urlpatterns = [
     path('columns/<int:pk>', views.alter_get_column, name='alter_get_column'),
     path('cards/', views.get_create_cards, name='get_create_card'),
     path('cards/<int:pk>', views.alter_get_card, name='alter_get_card'),
-    # Google
-    path('google-login/', views.google_login, name='google-login'),
 ]

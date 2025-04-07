@@ -20,42 +20,6 @@ export function Login() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-    async function handleGoogleSubmit(googleResponse) {
-        setIsLoading(true);
-        try {
-            const userInfo = jwtDecode(googleResponse.credential);
-
-            const response = await fetch("http://127.0.0.1:8000/google-login/", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: 'include',
-                body: JSON.stringify({
-                    email: userInfo.email,
-                    name: userInfo.name,
-                    sub: userInfo.sub,
-                }),
-            });
-
-            const body = await response.json();
-            setIsLoading(false);
-
-            if (body.access) {
-                localStorage.setItem('token', body.access);
-
-                const user = userInfo.name;
-                localStorage.setItem('user', user);
-
-                setNavigate(true);
-            } else {
-                setError(true);
-            }
-        } catch (error) {
-            console.error("Google login error", error);
-            setIsLoading(false);
-            setError(true);
-        }
-    }
-
     async function handleSubmit(e) {
         e.preventDefault();
 
@@ -160,7 +124,7 @@ export function Login() {
 
                             <GoogleLogin
                                 onSuccess={(credentialResponse) => {
-                                    handleGoogleSubmit(credentialResponse);
+                                    console.log(jwtDecode(credentialResponse.credential))
                                 }}
                                 onError={() => console.log('Login Failed')}
                                 shape="circle"

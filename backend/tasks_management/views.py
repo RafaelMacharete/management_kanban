@@ -26,6 +26,7 @@ def create_account(req):
 
     return Response({'User created successfully'}, status=status.HTTP_201_CREATED)
 
+
 @api_view(['POST'])
 def login(req):
     username = req.data.get('username')
@@ -56,6 +57,7 @@ def get_create_accounts(req):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def alter_get_account(req, pk):
     try:
@@ -75,6 +77,7 @@ def alter_get_account(req, pk):
         account.delete()
         return Response('Account deleted', status=status.HTTP_204_NO_CONTENT)
 
+
 @api_view(['GET', 'POST'])
 def get_create_project_boards(req):
     if req.method == 'GET':
@@ -87,6 +90,7 @@ def get_create_project_boards(req):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def alter_get_project_board(req, pk):
@@ -107,33 +111,6 @@ def alter_get_project_board(req, pk):
         project_board.delete()
         return Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['POST'])
-def google_login(request):
-    email = request.data.get('email')
-    name = request.data.get('name')
-    sub = request.data.get('sub')
-
-    if not email or not name or not sub:
-        return Response({'error': 'Missing fields'}, status=status.HTTP_400_BAD_REQUEST)
-
-    user, created = Account.objects.get_or_create(
-        email=email,
-        defaults={
-            'username': f'{name}_{sub[:5]}',
-            'is_active': True,
-        }
-    )
-
-    if created:
-        user.set_unusable_password()
-        user.save()
-
-    refresh = RefreshToken.for_user(user)
-
-    return Response({
-        'access': str(refresh.access_token),
-        'refresh': str(refresh),
-    }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_accounts_by_project(req, project_id):
@@ -146,8 +123,10 @@ def get_accounts_by_project(req, project_id):
     serializer = AccountSerializer(accounts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(['GET', 'POST'])
 def get_create_columns(req):
+    
     if req.method == 'GET':
         columns = Column.objects.all()
         serializer = ColumnSerializer(columns, many=True)
@@ -161,6 +140,7 @@ def get_create_columns(req):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def alter_get_column(req, pk):
+    
     try:
         column = Column.objects.get(pk=pk)
     except Column.DoesNotExist:
@@ -190,6 +170,7 @@ def get_create_cards(req):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def alter_get_card(req, pk):
