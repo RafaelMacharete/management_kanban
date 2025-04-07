@@ -34,29 +34,6 @@ export function Home() {
     setLogOut(true);
   }
 
-  useEffect(() => {
-    async function fetchAccountsForProjects() {
-      if (!projects) return;
-
-      const projectsWithAccountsData = await Promise.all(
-        projects.map(async (project) => {
-          try {
-            const res = await fetch(`http://127.0.0.1:8000/projectboards/${project.id}/accounts/`);
-            const accounts = await res.json();
-            return { ...project, accounts };
-          } catch (err) {
-            console.error(`Erro ao buscar contas do projeto ${project.id}:`, err);
-            return { ...project, accounts: [] };
-          }
-        })
-      );
-
-      setProjectsWithAccounts(projectsWithAccountsData);
-    }
-
-    fetchAccountsForProjects();
-  }, [projects]);
-
   return (
     <div className={`min-h-screen grid ${showSidebar ? 'grid-cols-[250px_1fr]' : 'grid-cols-[0px_1fr]'} grid-rows-[70px_1fr_1fr] bg-gray-100 transition-all duration-300`}>
 
@@ -147,23 +124,7 @@ export function Home() {
       </header>
 
       <main className="row-span-2 p-6 overflow-y-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projectsWithAccounts.map((project) => (
-            <div key={project.id} className="bg-white p-5 rounded-2xl shadow-md hover:shadow-lg transition duration-200">
-              <h2 className="text-xl font-semibold mb-2 text-violet-700">{project.name}</h2>
-              <h3 className="text-lg font-medium text-gray-700 mb-1">Usuários:</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {project.accounts.length > 0 ? (
-                  project.accounts.map((user) => (
-                    <li key={user.id} className="text-gray-600">{user.username}</li>
-                  ))
-                ) : (
-                  <li className="text-gray-400 italic">Nenhum usuário associado</li>
-                )}
-              </ul>
-            </div>
-          ))}
-        </div>
+        
       </main>
     </div>
   );

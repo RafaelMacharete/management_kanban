@@ -140,7 +140,6 @@ def get_create_columns(req):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def alter_get_column(req, pk):
-    
     try:
         column = Column.objects.get(pk=pk)
     except Column.DoesNotExist:
