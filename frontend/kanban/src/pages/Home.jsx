@@ -37,46 +37,50 @@ export function Home() {
   return (
     <div className={`min-h-screen grid ${showSidebar ? 'grid-cols-[250px_1fr]' : 'grid-cols-[0px_1fr]'} grid-rows-[70px_1fr_1fr] bg-gray-100 transition-all duration-300`}>
 
-      <aside className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white shadow-lg transition-all duration-300 ${showSidebar ? 'opacity-100' : 'opacity-0'}`}>
+      <aside className={`row-span-3 grid grid-rows-[70px_1fr_1fr] border-r border-gray-300 bg-white shadow-lg transition-all duration-250 ${showSidebar ? 'opacity-100' : 'opacity-0'}`}>
 
         {/* Trellio */}
 
 
         {showSidebar && (
-          <div className="flex justify-between items-center border-b border-gray-300 px-4 py-2">
+          <div className="flex justify-between items-center border-b border-gray-300 px-5 py-4">
             <div className="flex items-center gap-2">
-              <FiTrello size={36} className="text-violet-600" />
-              <h1 className="text-2xl font-bold text-gray-800">Trellio</h1>
+              <FiTrello size={30} className="text-violet-600" />
+              <h1 className="text-xl font-semibold text-gray-800">Trellio</h1>
             </div>
-            <RxDoubleArrowLeft
-              onClick={() => setShowSidebar(false)}
-              size={22}
-              className="text-gray-500 hover:text-violet-600 transition-colors duration-200 cursor-pointer"
-            />
+            <button
+              onClick={() => setShowSidebar(!showSidebar)}
+              className="bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-100 transition"
+            >
+              <RxDoubleArrowLeft
+                size={20}
+                className="text-gray-600 hover:text-violet-600 transition"
+              />
+            </button>
           </div>
         )}
 
         {/* Links */}
         <div className="flex flex-col justify-start gap-4 p-4 text-gray-700">
           <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-pink-600 transition duration-200" />
-            <a href="#" className="text-base hover:text-pink-600 transition duration-200">Home</a>
+            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-violet-600 transition duration-200" />
+            <a href="#" className="text-base hover:text-violet-600 transition duration-200">Home</a>
           </div>
           <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-pink-600 transition duration-200" />
-            <a href="#" className="text-base hover:text-pink-600 transition duration-200">Projects</a>
+            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-violet-600 transition duration-200" />
+            <a href="#" className="text-base hover:text-violet-600 transition duration-200">Projects</a>
           </div>
           <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-pink-600 transition duration-200" />
-            <a href="#" className="text-base hover:text-pink-600 transition duration-200">Teams</a>
+            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-violet-600 transition duration-200" />
+            <a href="#" className="text-base hover:text-violet-600 transition duration-200">Teams</a>
           </div>
           <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-pink-600 transition duration-200" />
-            <a href="#" className="text-base hover:text-pink-600 transition duration-200">Tasks</a>
+            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-violet-600 transition duration-200" />
+            <a href="#" className="text-base hover:text-violet-600 transition duration-200">Tasks</a>
           </div>
           <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-pink-600 transition duration-200" />
-            <a href="#" className="text-base hover:text-pink-600 transition duration-200">Settings</a>
+            <PiSquaresFourLight size={26} className="text-gray-500 group-hover:text-violet-600 transition duration-200" />
+            <a href="#" className="text-base hover:text-violet-600 transition duration-200">Settings</a>
           </div>
         </div>
 
@@ -89,7 +93,7 @@ export function Home() {
 
       {!showSidebar && (
         <button
-          onClick={() => setShowSidebar(true)}
+          onClick={() => setShowSidebar(!showSidebar)}
           className="absolute top-4 left-2 z-50 bg-white border border-gray-300 rounded-full p-2 shadow-md hover:bg-gray-100 transition"
         >
           <RxDoubleArrowLeft
@@ -99,7 +103,7 @@ export function Home() {
         </button>
       )}
 
-      <header className="bg-white shadow-md px-15">
+      <header className="bg-white px-15 border-b border-gray-300">
         <div className="flex justify-between items-center h-full">
           <div className="relative w-full max-w-md">
             <input
@@ -123,8 +127,8 @@ export function Home() {
         </div>
       </header>
 
-      <main className="row-span-2 p-6 overflow-y-auto">
-        
+      <main className="row-span-2 p-6 overflow-y-auto bg-">
+
       </main>
     </div>
   );

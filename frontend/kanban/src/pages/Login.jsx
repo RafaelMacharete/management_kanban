@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { OrbitProgress } from 'react-loading-indicators'
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from 'jwt-decode'
-
+// #56D3BA
 export function Login() {
     const [formData, setFormData] = useState({
         username: "",
@@ -58,7 +58,7 @@ export function Login() {
                     onSubmit={handleSubmit}
                 >
                     <h2 className="text-2xl font-bold text-center text-[#5030E5] mb-6">
-                        Welcome Back to Trellio
+                        <span className="text-black">Welcome Back to </span>Trellio
                     </h2>
 
                     <div className="mb-4">

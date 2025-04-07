@@ -51,7 +51,7 @@ export function Register() {
                         className="bg-white flex flex-col gap-2"
                         onSubmit={handleSubmit}
                     >
-                        <h2 className="text-2xl font-bold text-center text-[#5030E5] mb-6">
+                        <h2 className="text-2xl font-bold text-center text-black mb-6">
                             Register
                         </h2>
 
