@@ -112,16 +112,16 @@ def alter_get_project_board(req, pk):
         return Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET'])
-def get_accounts_by_project(req, project_id):
-    try:
-        project = ProjectBoard.objects.get(pk=project_id)
-    except ProjectBoard.DoesNotExist:
-        return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+# @api_view(['GET'])
+# def get_accounts_by_project(req, project_id):
+#     try:
+#         project = ProjectBoard.objects.get(pk=project_id)
+#     except ProjectBoard.DoesNotExist:
+#         return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    accounts = project.members.all()
-    serializer = AccountSerializer(accounts, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+#     accounts = project.members.all()
+#     serializer = AccountSerializer(accounts, many=True)
+#     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
