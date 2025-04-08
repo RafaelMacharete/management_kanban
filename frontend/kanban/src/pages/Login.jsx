@@ -32,8 +32,8 @@ export function Login() {
             body: JSON.stringify(formData),
         });
         const body = await response.json();
-
         localStorage.setItem('token', body.access)
+        console.log(jwtDecode(body.access))
         setIsLoading(false)
         if (body.access) {
             setNavigate(true);
@@ -57,8 +57,8 @@ export function Login() {
                     className="bg-white flex flex-col gap-2"
                     onSubmit={handleSubmit}
                 >
-                    <h2 className="text-2xl font-bold text-center text-[#5030E5] mb-6">
-                        <span className="text-black">Welcome Back to </span>Trellio
+                    <h2 className="text-3xl font-bold text-center text-[#5030E5] mb-6">
+                        <span className="text-black text-2xl">Welcome Back to </span>Trellio
                     </h2>
 
                     <div className="mb-4">

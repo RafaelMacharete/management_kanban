@@ -7,7 +7,6 @@ import { RxExit } from "react-icons/rx";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
-  const [projectsWithAccounts, setProjectsWithAccounts] = useState([]);
   const [logOut, setLogOut] = useState(false)
   const token = localStorage.getItem('token')
   const username = localStorage.getItem('username') || localStorage.getItem('user');
@@ -28,6 +27,22 @@ export function Home() {
     }
     fetchProjects();
   }, [logOut]);
+
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!token) return;
+      const response = await fetch('http://localhost:8000/projectboards/', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      // setProjects(response)
+      console.log(projects)
+    }
+    fetchData();
+  }, [projects])
+
 
   const exit = () => {
     localStorage.clear();

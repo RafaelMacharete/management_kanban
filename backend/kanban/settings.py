@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
-    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +66,7 @@ CORS_ALLOW_METHODS = (
 )
 
 SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("Bearer",),
     'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
