@@ -5,6 +5,8 @@ import { RxDoubleArrowLeft } from "react-icons/rx";
 import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { GrFormAdd } from "react-icons/gr";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { GrFormPrevious } from "react-icons/gr";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
@@ -16,7 +18,7 @@ export function Home() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
 
-  const handleClickProjectForm = ((e) =>{
+  const handleClickProjectForm = ((e) => {
     setShowProjectForm(!showProjectForm)
   })
 
@@ -42,15 +44,12 @@ export function Home() {
   };
 
   return (
-    <div
-      className={`min-h-screen grid ${
-        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-      } grid-rows-[70px_1fr_1fr] bg-gray-100`}
+    <div className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"} 
+    grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       <aside
-        className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${
-          showSidebar ? "opacity-100" : "opacity-0"
-        } `}
+        className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${showSidebar ? "opacity-100" : "opacity-0"
+          } `}
       >
         {/* Trellio */}
         {showSidebar && (
@@ -140,17 +139,28 @@ export function Home() {
             <b className="text-xl">my projects</b>
             <div className="absolute left-50">
               <button
-                className="flex items-center rounded-xl border border-gray-300"
+                className="flex items-center rounded-xl border border-gray-300 cursor-pointer hover:bg-gray-200"
                 onClick={handleClickProjectForm}
               >
                 <GrFormAdd size={29} />
               </button>
               {showProjectForm && (
-              <div className="relative left-14 border w-50 h-full">
-                <p>asdas</p>
-                <input type="text" placeholder="Project name"/>
-                <input type="text" placeholder="Member's name"/>
-              </div>
+                <div className="flex flex-col justify-between relative left-14 bottom-5 border rounded-[5px] border-gray-300 w-50 h-53 py-2 bg-neutral-200">
+                  <div className="flex gap-6 justify-evenly items-center">
+                    <p className="text-xl">Create Project</p>
+                    <IoIosCloseCircleOutline
+                      className="h-5 w-5 rounded-[5px] hover:bg-violet-400 cursor-pointer"
+                      />
+                  </div>
+                  <div className="flex flex-col px-2">
+                    <label htmlFor="project" className="font-medium text-indigo-500">Project's title</label>
+                    <input type="text" id="project" className="w-45 bg-white h-8 px-2 pr-12 rounded-[3px] border border-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition" />
+                  </div>
+                  <div className="flex flex-col px-2">
+                    <label htmlFor="members" className="font-medium text-indigo-500">Members name</label>
+                    <input type="text" id="members" className="w-45 bg-white h-8 px-2 pr-12 rounded-[3px] border border-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition" />
+                  </div>
+                </div>
               )}
             </div>
           </div>

@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { OrbitProgress } from 'react-loading-indicators'
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from 'jwt-decode'
-// #56D3BA
+
 export function Login() {
     const [formData, setFormData] = useState({
         username: "",
