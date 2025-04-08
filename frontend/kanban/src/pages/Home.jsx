@@ -19,7 +19,7 @@ export function Home() {
 
   const [formData, setFormData] = useState({
     name: '',
-    members: [],
+    members: [1],
   })
 
   const handleClickProjectForm = ((e) => {
@@ -38,9 +38,14 @@ export function Home() {
     e.preventDefault()
     const response = await fetch("http://localhost:8000/projectboards/", {
       method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      headers: { 
+        'Content-Type': 'application/json',  
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(formData),
     });
+    const body = await response.json();
+    console.log(body)
   }
 
   useEffect(() => {
