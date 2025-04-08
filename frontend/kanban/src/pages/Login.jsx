@@ -32,10 +32,10 @@ export function Login() {
             body: JSON.stringify(formData),
         });
         const body = await response.json();
-        localStorage.setItem('token', body.access)
-        console.log(jwtDecode(body.access))
         setIsLoading(false)
         if (body.access) {
+            localStorage.setItem('token', body.access)
+            console.log(jwtDecode(body.access))
             setNavigate(true);
             localStorage.setItem('username', formData.username)
         } else {
@@ -46,7 +46,7 @@ export function Login() {
     if (navigate) {
         return <Navigate to="/projects" />;
     }
-    
+
     return (
         <div className="flex min-h-screen">
             <div className="max-h-screen w-1/2">
