@@ -54,6 +54,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  
+    "http://localhost:5174",
 ]
 
 CORS_ALLOW_METHODS = (
@@ -67,7 +68,7 @@ CORS_ALLOW_METHODS = (
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,

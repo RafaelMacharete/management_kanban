@@ -44,18 +44,12 @@ def login(req):
         return Response({'Username or Password invalid'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(['GET', 'POST'])
-def get_create_accounts(req):
+@api_view(['GET'])
+def get_accounts(req):
     if req.method == 'GET':
         accounts = Account.objects.all()
         serializer = AccountSerializer(accounts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'POST':
-        serializer = AccountSerializer(data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -64,7 +58,6 @@ def alter_get_account(req, pk):
         account = Account.objects.get(pk=pk)
     except Account.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
     if req.method == 'GET':
         serializer = AccountSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -79,6 +72,7 @@ def alter_get_account(req, pk):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def get_create_project_boards(req):
     if req.method == 'GET':
         project_boards = ProjectBoard.objects.all()
@@ -93,6 +87,7 @@ def get_create_project_boards(req):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def alter_get_project_board(req, pk):
     try:
         project_board = ProjectBoard.objects.get(pk=pk)
@@ -111,22 +106,9 @@ def alter_get_project_board(req, pk):
         project_board.delete()
         return Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
 
-
-# @api_view(['GET'])
-# def get_accounts_by_project(req, project_id):
-#     try:
-#         project = ProjectBoard.objects.get(pk=project_id)
-#     except ProjectBoard.DoesNotExist:
-#         return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
-
-#     accounts = project.members.all()
-#     serializer = AccountSerializer(accounts, many=True)
-#     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def get_create_columns(req):
-    
     if req.method == 'GET':
         columns = Column.objects.all()
         serializer = ColumnSerializer(columns, many=True)
@@ -139,6 +121,7 @@ def get_create_columns(req):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def alter_get_column(req, pk):
     try:
         column = Column.objects.get(pk=pk)
@@ -158,6 +141,7 @@ def alter_get_column(req, pk):
         return Response('Column deleted', status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def get_create_cards(req):
     if req.method == 'GET':
         cards = Card.objects.all()
@@ -172,6 +156,7 @@ def get_create_cards(req):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def alter_get_card(req, pk):
     try:
         card = Card.objects.get(pk=pk)
