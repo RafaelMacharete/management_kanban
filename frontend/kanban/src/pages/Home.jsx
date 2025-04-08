@@ -33,25 +33,25 @@ export function Home() {
   function handleChangeMembers(e) {
     let membersInput = e.target.value.split(',')
     membersInput = membersInput.map((item) => Number(item))
-    console.log('membersInput: ',membersInput)
-    setFormData({...formData, members: membersInput})
+    console.log('membersInput: ', membersInput)
+    setFormData({ ...formData, members: membersInput })
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
     const response = await fetch("http://localhost:8000/projectboards/", {
       method: "POST",
-      headers: { 
-        'Content-Type': 'application/json',  
+      headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData),
     });
     const body = await response.json();
     console.log(body)
-    console.log('membros: ',formData.members[0])
-    console.log('formdata: ',formData)
-    console.log('formdata-stringify: ',JSON.stringify(formData))
+    console.log('membros: ', formData.members[0])
+    console.log('formdata: ', formData)
+    console.log('formdata-stringify: ', JSON.stringify(formData))
   }
 
   useEffect(() => {
@@ -176,49 +176,55 @@ export function Home() {
               >
                 <GrFormAdd size={29} />
               </button>
+
+
               {showProjectForm && (
-                <form
-                  className="flex flex-col justify-between relative left-14 bottom-5 border rounded-[5px] border-gray-300 w-50 h-53 py-2 bg-neutral-200"
-                  onSubmit={handleSubmit}
-                >
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-1">
+                  <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
+                    <button
+                      className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
+                      onClick={() => setShowProjectForm(false)}
+                    >
+                      <IoIosCloseCircleOutline size={24} />
+                    </button>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Create Project</h2>
 
-                  <div className="flex gap-6 justify-evenly items-center">
-                    <p className="text-xl">Create Project</p>
-                    <IoIosCloseCircleOutline
-                      className="h-5 w-5 rounded-[5px] hover:bg-violet-400 cursor-pointer"
-                    />
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                      <div>
+                        <label htmlFor="project" className="block text-sm font-medium text-violet-700">
+                          Project's Title
+                        </label>
+                        <input
+                          type="text"
+                          id="project"
+                          className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          onChange={handleChangeName}
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="members" className="block text-sm font-medium text-violet-700">
+                          Members Name
+                        </label>
+                        <input
+                          type="text"
+                          id="members"
+                          className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          onChange={handleChangeMembers}
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full bg-violet-500 text-white py-2 rounded-lg hover:bg-violet-600 transition"
+                      >
+                        Create
+                      </button>
+                    </form>
                   </div>
-
-                  <div className="flex flex-col px-2">
-                    <label htmlFor="project" className="font-medium text-indigo-500">Project's title</label>
-                    <input
-                      type="text"
-                      id="project"
-                      className="w-45 bg-white h-8 px-2 pr-12 rounded-[3px] border border-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                      onChange={handleChangeName}
-                    />
-
-                  </div>
-
-                  <div className="flex flex-col px-2">
-
-                    <label
-                      htmlFor="members"
-                      className="font-medium text-indigo-500"
-
-                    >Members name</label>
-                    <input
-                      type="text"
-                      id="members"
-                      className="w-45 bg-white h-8 px-2 pr-12 rounded-[3px] border border-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                      onChange={handleChangeMembers}
-                    />
-                  </div>
-
-                  <button type="submit" className="bg-cyan-300 w-15 rounded-[6px] mx-auto">Create</button>
-
-                </form>
+                </div>
               )}
+
             </div>
           </div>
         </div>
