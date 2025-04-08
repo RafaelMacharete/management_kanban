@@ -34,29 +34,6 @@ export function Home() {
     setLogOut(true);
   }
 
-  useEffect(() => {
-    async function fetchAccountsForProjects() {
-      if (!projects) return;
-
-      const projectsWithAccountsData = await Promise.all(
-        projects.map(async (project) => {
-          try {
-            const res = await fetch(`http://127.0.0.1:8000/projectboards/${project.id}/accounts/`);
-            const accounts = await res.json();
-            return { ...project, accounts };
-          } catch (err) {
-            console.error(`Erro ao buscar contas do projeto ${project.id}:`, err);
-            return { ...project, accounts: [] };
-          }
-        })
-      );
-
-      setProjectsWithAccounts(projectsWithAccountsData);
-    }
-
-    fetchAccountsForProjects();
-  }, [projects]);
-
   return (
     <div className={`min-h-screen grid ${showSidebar ? 'grid-cols-[250px_1fr]' : 'grid-cols-[0px_1fr]'} grid-rows-[70px_1fr_1fr] bg-gray-100 transition-all duration-300`}>
 

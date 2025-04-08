@@ -39,6 +39,7 @@ export function Login() {
             setNavigate(true);
             localStorage.setItem('username', formData.username)
         } else {
+            console.log(body)
             setError(true)
         }
     }

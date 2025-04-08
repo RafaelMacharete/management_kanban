@@ -4,7 +4,7 @@ from .models import ProjectBoard, Column, Card, Account
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = '__all__'
+        fields = ['username', 'password']
 
 class ProjectBoardSerializer(serializers.ModelSerializer):
     class Meta:
