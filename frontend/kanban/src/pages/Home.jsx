@@ -4,6 +4,7 @@ import { PiSquaresFourLight } from "react-icons/pi";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
+import { jwtDecode } from "jwt-decode";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
@@ -21,28 +22,14 @@ export function Home() {
         const res = await fetch("http://127.0.0.1:8000/projectboards/");
         const data = await res.json();
         setProjects(data);
+        console.log(data)
+        console.log(jwtDecode(token))
       } catch (err) {
         console.error("Erro ao buscar projetos:", err);
       }
     }
     fetchProjects();
   }, [logOut]);
-
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!token) return;
-      const response = await fetch('http://localhost:8000/projectboards/', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      // setProjects(response)
-      console.log(projects)
-    }
-    fetchData();
-  }, [projects])
-
 
   const exit = () => {
     localStorage.clear();
