@@ -44,7 +44,7 @@ def login(req):
         return Response({'Username or Password invalid'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def get_accounts(req):
     if req.method == 'GET':
         accounts = Account.objects.all()
