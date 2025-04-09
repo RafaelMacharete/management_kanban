@@ -64,8 +64,11 @@ export function Home() {
     }
     async function fetchProjects() {
       try {
-        const res = await fetch("http://127.0.0.1:8000/projectboards/");
+        const res = await fetch("http://127.0.0.1:8000/projectboards/", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         const data = await res.json();
+        console.log(data)
         setProjects(data);
       } catch (err) {
         console.error("Erro ao buscar projetos:", err);
@@ -263,8 +266,8 @@ export function Home() {
       )}
 
       {/* Main header (search input and username) */}
-      <header className="bg-white px-15 border-b border-gray-300">
-        <div className="flex justify-between items-center h-full">
+      <header className="bg-white border-b border-gray-300">
+        <div className="flex max-w-6xl mx-auto justify-between items-center h-full">
           <div className="relative w-full max-w-md">
             <input
               type="text"
@@ -278,7 +281,7 @@ export function Home() {
 
           {/* User content */}
           <div className="flex items-center gap-3 text-gray-700 font-medium">
-          <p>Username: <span className="text-xl text-cyan-700 underline">{username}</span></p>
+            <p>Username: <span className="text-xl text-cyan-700 underline">{username}</span></p>
             <RxExit
               onClick={exit}
               className="cursor-pointer text-gray-500 hover:text-red-600 transition"
@@ -306,10 +309,12 @@ export function Home() {
           {/* Área onde você pode exibir os cards de projetos futuramente */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Project */}
-            <div className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
-              <h2 className="text-lg font-semibold text-gray-700">Project Name</h2>
-              <p className="text-sm text-gray-500 mt-1">Team Members: Alice, Bob</p>
-            </div>
+            {projects.map((item, index) => (
+              <div className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
+                <h2 key={item.id} className="text-lg font-semibold text-gray-700">{item.name}</h2>
+                <p className="text-sm text-gray-500 mt-1">{item.members}</p>
+              </div>
+            ))}
 
           </div>
         </div>

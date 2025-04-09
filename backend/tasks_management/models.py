@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 class Account(AbstractUser):
     phone_number = models.PositiveIntegerField(blank=True, null=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=False)
 
     def __str__(self):
         return self.username
