@@ -16,43 +16,46 @@ export function Home() {
     localStorage.getItem("username") || localStorage.getItem("user");
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
-  const [response, setResponse] = useState(null)
+  const [response, setResponse] = useState(null);
 
   const [formData, setFormData] = useState({
-    name: '',
+    name: "",
     members: [],
-  })
+  });
 
-  const handleClickProjectForm = ((e) => {
-    setShowProjectForm(!showProjectForm)
-  })
+  const handleClickProjectForm = (e) => {
+    setShowProjectForm(!showProjectForm);
+  };
 
   function handleChangeName(e) {
-    setFormData({ ...formData, name: e.target.value })
+    setFormData({ ...formData, name: e.target.value });
   }
 
   function handleChangeMembers(e) {
-    let membersInput = e.target.value.split(',')
-    membersInput = membersInput.map((item) => Number(item))
-    setFormData({ ...formData, members: membersInput })
+    let membersInput = e.target.value.split(",");
+    membersInput = membersInput.map((item) => Number(item));
+    setFormData({ ...formData, members: membersInput });
   }
 
   async function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     const response = await fetch("http://localhost:8000/projectboards/", {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(formData),
     });
     const body = await response.json();
     if (response.ok) {
-      setResponse({ type: 'success', message: 'Project created sucessfully!' });
-      setFormData({ name: '', members: [] });
+      setResponse({ type: "success", message: "Project created sucessfully!" });
+      setFormData({ name: "", members: [] });
     } else {
-      setResponse({ type: 'error', message: body.detail || 'Error on create project .' });
+      setResponse({
+        type: "error",
+        message: body.detail || "Error on create project .",
+      });
     }
 
     setTimeout(() => setResponse(null), 4000);
@@ -65,10 +68,10 @@ export function Home() {
     async function fetchProjects() {
       try {
         const res = await fetch("http://127.0.0.1:8000/projectboards/", {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        console.log(data)
+        console.log(data);
         setProjects(data);
       } catch (err) {
         console.error("Erro ao buscar projetos:", err);
@@ -82,14 +85,53 @@ export function Home() {
     setLogOut(true);
   };
 
+  async function handleSubmita(e) {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    console.log("Token:", token); // Log the token for debugging purposes
+
+    if (!token) {
+      console.log("No token found in localStorage.");
+      return;
+    }
+
+    // Now send the token to your backend for authentication
+    try {
+      const response = await fetch("http://localhost:8000/jwt/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Send the token in the Authorization header
+          "Content-Type": "application/json", // If needed
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("JWT authentication successful:", data);
+        // You can handle the response here, like redirecting or updating the UI
+      } else {
+        console.error("JWT authentication failed:", data.error);
+        // Handle failed authentication
+      }
+    } catch (error) {
+      console.error("Error while authenticating:", error);
+    }
+  }
+
   return (
-    <div className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"} 
+    <div
+      className={`min-h-screen grid ${
+        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+      } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       {/* Left Bar */}
       <aside
-        className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${showSidebar ? "opacity-100" : "opacity-0"
-          } `}
+        className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${
+          showSidebar ? "opacity-100" : "opacity-0"
+        } `}
       >
         {/* Button to hide aside */}
         {showSidebar && (
@@ -198,23 +240,29 @@ export function Home() {
                     >
                       <IoIosCloseCircleOutline size={24} />
                     </button>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Create Project</h2>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                      Create Project
+                    </h2>
 
                     {/* Form with message of sucessful and unsucessful */}
                     <form className="space-y-4" onSubmit={handleSubmit}>
                       {response && (
                         <div
-                          className={`p-3 mb-2 rounded-lg text-sm font-medium ${response.type === 'success'
-                            ? 'bg-green-100 text-green-700 border border-green-300'
-                            : 'bg-red-100 text-red-700 border border-red-300'
-                            }`}
+                          className={`p-3 mb-2 rounded-lg text-sm font-medium ${
+                            response.type === "success"
+                              ? "bg-green-100 text-green-700 border border-green-300"
+                              : "bg-red-100 text-red-700 border border-red-300"
+                          }`}
                         >
                           {response.message}
                         </div>
                       )}
 
                       <div>
-                        <label htmlFor="project" className="block text-sm font-medium text-violet-700">
+                        <label
+                          htmlFor="project"
+                          className="block text-sm font-medium text-violet-700"
+                        >
                           Project's Title
                         </label>
                         <input
@@ -226,7 +274,10 @@ export function Home() {
                       </div>
 
                       <div>
-                        <label htmlFor="members" className="block text-sm font-medium text-violet-700">
+                        <label
+                          htmlFor="members"
+                          className="block text-sm font-medium text-violet-700"
+                        >
                           Members Name
                         </label>
                         <input
@@ -247,7 +298,6 @@ export function Home() {
                   </div>
                 </div>
               )}
-
             </div>
           </div>
         </div>
@@ -281,7 +331,12 @@ export function Home() {
 
           {/* User content */}
           <div className="flex items-center gap-3 text-gray-700 font-medium">
-            <p>Username: <span className="text-xl text-cyan-700 underline">{username}</span></p>
+            <p>
+              Username:{" "}
+              <span className="text-xl text-cyan-700 underline">
+                {username}
+              </span>
+            </p>
             <RxExit
               onClick={exit}
               className="cursor-pointer text-gray-500 hover:text-red-600 transition"
@@ -294,7 +349,6 @@ export function Home() {
       {/* Main content */}
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
-
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
             <button
@@ -311,15 +365,19 @@ export function Home() {
             {/* Project */}
             {projects.map((item, index) => (
               <div className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
-                <h2 key={item.id} className="text-lg font-semibold text-gray-700">{item.name}</h2>
+                <h2
+                  key={item.id}
+                  className="text-lg font-semibold text-gray-700"
+                >
+                  {item.name}
+                </h2>
                 <p className="text-sm text-gray-500 mt-1">{item.members}</p>
               </div>
             ))}
-
           </div>
         </div>
       </main>
-
+      <button onClick={handleSubmita}>asd</button>
     </div>
   );
 }

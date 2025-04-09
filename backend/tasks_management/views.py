@@ -2,11 +2,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Account
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.contrib.auth import authenticate
 from .models import Account, ProjectBoard, Column, Card
 from .serializers import *
+
 
 @api_view(['POST'])
 def create_account(req):
@@ -50,6 +52,25 @@ def get_accounts(req):
         accounts = Account.objects.all()
         serializer = AccountSerializer(accounts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def jwt(req):
+    # JWT Authentication
+    jwt_authenticator = JWTAuthentication()
+
+    # Try to authenticate using the token in request headers
+    user, auth = jwt_authenticator.authenticate(req)
+
+    if user:
+        # If user is authenticated, return success response
+        return Response({
+            'message': 'JWT authenticated successfully',
+            'user': user.username  # Example of returning user data, adjust as needed
+        }, status=status.HTTP_200_OK)
+    else:
+        # If authentication fails, return error response
+        return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
