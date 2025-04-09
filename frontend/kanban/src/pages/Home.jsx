@@ -71,7 +71,6 @@ export function Home() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        console.log(data);
         setProjects(data);
       } catch (err) {
         console.error("Erro ao buscar projetos:", err);
@@ -89,31 +88,26 @@ export function Home() {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
-    console.log("Token:", token); // Log the token for debugging purposes
+    console.log("Token:", token);
 
     if (!token) {
       console.log("No token found in localStorage.");
       return;
     }
 
-    // Now send the token to your backend for authentication
     try {
       const response = await fetch("http://localhost:8000/jwt/", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // Send the token in the Authorization header
-          "Content-Type": "application/json", // If needed
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", 
         },
       });
-
-      const data = await response.json();
-
+      const body = await response.json();
       if (response.ok) {
-        console.log("JWT authentication successful:", data);
-        // You can handle the response here, like redirecting or updating the UI
+        console.log("JWT authentication successful:", body);
       } else {
-        console.error("JWT authentication failed:", data.error);
-        // Handle failed authentication
+        console.error("JWT authentication failed:", body.error);
       }
     } catch (error) {
       console.error("Error while authenticating:", error);
@@ -360,10 +354,9 @@ export function Home() {
             </button>
           </div>
 
-          {/* Área onde você pode exibir os cards de projetos futuramente */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Project */}
-            {projects.map((item, index) => (
+            {/* {projects.map((item, index) => (
               <div className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
                 <h2
                   key={item.id}
@@ -373,7 +366,7 @@ export function Home() {
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">{item.members}</p>
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </main>
