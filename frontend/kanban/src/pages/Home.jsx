@@ -16,6 +16,7 @@ export function Home() {
     localStorage.getItem("username") || localStorage.getItem("user");
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
+  const [response, setResponse] = useState(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -33,7 +34,6 @@ export function Home() {
   function handleChangeMembers(e) {
     let membersInput = e.target.value.split(',')
     membersInput = membersInput.map((item) => Number(item))
-    console.log('membersInput: ', membersInput)
     setFormData({ ...formData, members: membersInput })
   }
 
@@ -48,10 +48,14 @@ export function Home() {
       body: JSON.stringify(formData),
     });
     const body = await response.json();
-    console.log(body)
-    console.log('membros: ', formData.members[0])
-    console.log('formdata: ', formData)
-    console.log('formdata-stringify: ', JSON.stringify(formData))
+    if (response.ok) {
+      setResponse({ type: 'success', message: 'Project created sucessfully!' });
+      setFormData({ name: '', members: [] });
+    } else {
+      setResponse({ type: 'error', message: body.detail || 'Error on create project .' });
+    }
+
+    setTimeout(() => setResponse(null), 4000);
   }
 
   useEffect(() => {
@@ -79,11 +83,12 @@ export function Home() {
     <div className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"} 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
+      {/* Left Bar */}
       <aside
         className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${showSidebar ? "opacity-100" : "opacity-0"
           } `}
       >
-        {/* Trellio */}
+        {/* Button to hide aside */}
         {showSidebar && (
           <div className="flex justify-between items-center  px-4 py-2 border-b border-gray-300">
             <div className="flex items-center gap-2">
@@ -102,7 +107,7 @@ export function Home() {
           </div>
         )}
 
-        {/* Links */}
+        {/* Links on aside*/}
         <div className="flex flex-col justify-start gap-4 p-4 text-gray-700">
           <div className="flex items-center gap-3 group">
             <PiSquaresFourLight
@@ -166,9 +171,12 @@ export function Home() {
           </div>
         </div>
 
+        {/* Exhibition of projects */}
         <div className="p-4 bg-white text-sm rounded-b-lg">
           <div className="flex gap-2 justify-between p-2 border-t">
             <b className="text-xl">my projects</b>
+
+            {/* Button to open the project modal form */}
             <div className="absolute left-50">
               <button
                 className="flex items-center rounded-xl border border-gray-300 cursor-pointer hover:bg-gray-200"
@@ -177,7 +185,7 @@ export function Home() {
                 <GrFormAdd size={29} />
               </button>
 
-
+              {/* Modal form project */}
               {showProjectForm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-1">
                   <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
@@ -189,7 +197,19 @@ export function Home() {
                     </button>
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Create Project</h2>
 
+                    {/* Form with message of sucessful and unsucessful */}
                     <form className="space-y-4" onSubmit={handleSubmit}>
+                      {response && (
+                        <div
+                          className={`p-3 mb-2 rounded-lg text-sm font-medium ${response.type === 'success'
+                            ? 'bg-green-100 text-green-700 border border-green-300'
+                            : 'bg-red-100 text-red-700 border border-red-300'
+                            }`}
+                        >
+                          {response.message}
+                        </div>
+                      )}
+
                       <div>
                         <label htmlFor="project" className="block text-sm font-medium text-violet-700">
                           Project's Title
@@ -216,7 +236,7 @@ export function Home() {
 
                       <button
                         type="submit"
-                        className="w-full bg-violet-500 text-white py-2 rounded-lg hover:bg-violet-600 transition"
+                        className="w-full cursor-pointer bg-violet-500 text-white py-2 rounded-lg hover:bg-violet-600 transition"
                       >
                         Create
                       </button>
@@ -242,6 +262,7 @@ export function Home() {
         </button>
       )}
 
+      {/* Main header (search input and username) */}
       <header className="bg-white px-15 border-b border-gray-300">
         <div className="flex justify-between items-center h-full">
           <div className="relative w-full max-w-md">
@@ -255,8 +276,9 @@ export function Home() {
             </button>
           </div>
 
+          {/* User content */}
           <div className="flex items-center gap-3 text-gray-700 font-medium">
-            <p>Username: {username}</p>
+          <p>Username: <span className="text-xl text-cyan-700 underline">{username}</span></p>
             <RxExit
               onClick={exit}
               className="cursor-pointer text-gray-500 hover:text-red-600 transition"
@@ -266,12 +288,33 @@ export function Home() {
         </div>
       </header>
 
-      <main className="row-span-2 bg-white">
-        <div className="bg-gray-100 w-full h-full">
-          <h1>Projects</h1>
-          <GrFormAdd />
+      {/* Main content */}
+      <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
+            <button
+              onClick={handleClickProjectForm}
+              className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition"
+            >
+              <GrFormAdd size={20} />
+              <span>Create Project</span>
+            </button>
+          </div>
+
+          {/* Área onde você pode exibir os cards de projetos futuramente */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Project */}
+            <div className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
+              <h2 className="text-lg font-semibold text-gray-700">Project Name</h2>
+              <p className="text-sm text-gray-500 mt-1">Team Members: Alice, Bob</p>
+            </div>
+
+          </div>
         </div>
       </main>
+
     </div>
   );
 }
