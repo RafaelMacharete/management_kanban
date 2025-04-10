@@ -54,7 +54,7 @@ def get_accounts(req):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def get_projects_account_validated(req):
     jwt_authenticator = JWTAuthentication()
 
@@ -62,15 +62,26 @@ def get_projects_account_validated(req):
 
     if user:
         projects_filtered = ProjectBoard.objects.filter(members=user.id)
-        projects_filtered_serialized = ProjectBoardSerializer(projects_filtered, many=True)
-        
-        for account in projects_filtered_serialized.data:
-            for member_id in account['members']:
-                member_serializer = AccountSerializer((Account.objects.filter(id = member_id)), many=True)
-                
-        return Response(member_serializer.data, status=status.HTTP_200_OK)
+        projects_serialized = ProjectBoardSerializer(projects_filtered, many=True)
+        projects_data = projects_serialized.data
+        print(projects_data)
+        all_member_ids = []
+        for project in projects_data:
+            for member_id in project['members']:
+                if member_id not in all_member_ids:
+                    all_member_ids.append(member_id)
+
+        members = Account.objects.filter(pk__in=all_member_ids)
+        members_serialized = AccountSerializer(members, many=True)
+
+        return Response({
+            'projects': projects_data,
+            'members': members_serialized.data
+        }, status=status.HTTP_200_OK)
+
     else:
         return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def alter_get_account(req, pk):

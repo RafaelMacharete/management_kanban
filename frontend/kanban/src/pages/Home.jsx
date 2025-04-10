@@ -9,7 +9,7 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
-  const [projectsWithAccounts, setProjectsWithAccounts] = useState([]);
+  const [members, setMembers] = useState([]);
   const [logOut, setLogOut] = useState(false);
   const token = localStorage.getItem("token");
   const username =
@@ -61,71 +61,49 @@ export function Home() {
     setTimeout(() => setResponse(null), 4000);
   }
 
-  useEffect(() => {
-    if (!token) {
-      window.location.href = "/";
-    }
-    async function fetchProjects() {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/projectboards/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setProjects(data);
-      } catch (err) {
-        console.error("Erro ao buscar projetos:", err);
-      }
-    }
-    fetchProjects();
-  }, [logOut]);
-
   const exit = () => {
     localStorage.clear();
     setLogOut(true);
   };
 
-  async function handleSubmita(e) {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token");
-    console.log("Token:", token);
-
-    if (!token) {
-      console.log("No token found in localStorage.");
-      return;
-    }
-
-    try {
-      const response = await fetch("http://localhost:8000/jwt/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json", 
-        },
-      });
-      const body = await response.json();
-      if (response.ok) {
-        console.log("JWT authentication successful:", body);
-      } else {
-        console.error("JWT authentication failed:", body.error);
+  useEffect(() => {
+    async function fetchData() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "/";
+        return;
       }
-    } catch (error) {
-      console.error("Error while authenticating:", error);
+
+      try {
+        const response = await fetch("http://localhost:8000/jwt/", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const body = await response.json();
+        console.log(body)
+        setProjects(body.projects)
+        setMembers(body.members)
+
+      } catch (error) {
+        console.error("Error while authenticating:", error);
+      }
     }
-  }
+    fetchData();
+  }, [logOut])
 
   return (
     <div
-      className={`min-h-screen grid ${
-        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-      } 
+      className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+        } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       {/* Left Bar */}
       <aside
-        className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${
-          showSidebar ? "opacity-100" : "opacity-0"
-        } `}
+        className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${showSidebar ? "opacity-100" : "opacity-0"
+          } `}
       >
         {/* Button to hide aside */}
         {showSidebar && (
@@ -242,11 +220,10 @@ export function Home() {
                     <form className="space-y-4" onSubmit={handleSubmit}>
                       {response && (
                         <div
-                          className={`p-3 mb-2 rounded-lg text-sm font-medium ${
-                            response.type === "success"
-                              ? "bg-green-100 text-green-700 border border-green-300"
-                              : "bg-red-100 text-red-700 border border-red-300"
-                          }`}
+                          className={`p-3 mb-2 rounded-lg text-sm font-medium ${response.type === "success"
+                            ? "bg-green-100 text-green-700 border border-green-300"
+                            : "bg-red-100 text-red-700 border border-red-300"
+                            }`}
                         >
                           {response.message}
                         </div>
@@ -356,21 +333,21 @@ export function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Project */}
-            {/* {projects.map((item, index) => (
-              <div className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
-                <h2
-                  key={item.id}
-                  className="text-lg font-semibold text-gray-700"
-                >
-                  {item.name}
-                </h2>
-                <p className="text-sm text-gray-500 mt-1">{item.members}</p>
+            {projects.map((project) => (
+              <div key={project.id}
+                className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
+                <h2 className="text-lg font-semibold text-gray-700">{project.name}</h2>
+
+                {members
+                  .filter((member) => project.members.includes(member.id))
+                  .map((member) => (
+                    <p key={member.id} className="text-sm text-gray-500 mt-1">{member.username}</p>
+                  ))}
               </div>
-            ))} */}
+            ))}
           </div>
         </div>
       </main>
-      <button onClick={handleSubmita}>asd</button>
     </div>
   );
 }
