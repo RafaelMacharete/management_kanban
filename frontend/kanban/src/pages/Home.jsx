@@ -48,9 +48,10 @@ export function Home() {
       body: JSON.stringify(formData),
     });
     const body = await response.json();
+    console.log(body)
     if (response.ok) {
       setResponse({ type: "success", message: "Project created sucessfully!" });
-      setFormData({ name: "", members: [] });
+      setFormData({ name: "", members: [] }); 
     } else {
       setResponse({
         type: "error",
@@ -189,89 +190,99 @@ export function Home() {
         </div>
 
         {/* Exhibition of projects */}
-        <div className="p-4 bg-white text-sm rounded-b-lg">
-          <div className="flex gap-2 justify-between p-2 border-t">
-            <b className="text-xl">my projects</b>
+        <div className="p-4 bg-white text-sm rounded-b-lg shadow">
+          <div className="flex flex-col gap-4 p-2 border-t border-gray-200">
+            <b className="text-xl text-violet-700">My Projects</b>
 
-            {/* Button to open the project modal form */}
-            <div className="absolute left-50">
-              <button
-                className="flex items-center rounded-xl border border-gray-300 cursor-pointer hover:bg-gray-200"
-                onClick={handleClickProjectForm}
+            {/* Lista de projetos */}
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className="p-2 rounded-md bg-gray-50 border border-gray-200 hover:bg-violet-50 transition"
               >
-                <GrFormAdd size={29} />
+                <p className="text-gray-700">{project.name}</p>
+              </div>
+            ))}
+
+            {/* Botão flutuante para abrir o modal */}
+            <div className="relative self-end">
+              <button
+                className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 transition"
+                onClick={handleClickProjectForm}
+                title="Add Project"
+              >
+                <GrFormAdd size={24} />
               </button>
+            </div>
 
-              {/* Modal form project */}
-              {showProjectForm && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-1">
-                  <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative">
-                    <button
-                      className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
-                      onClick={() => setShowProjectForm(false)}
-                    >
-                      <IoIosCloseCircleOutline size={24} />
-                    </button>
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                      Create Project
-                    </h2>
+            {/* Modal */}
+            {showProjectForm && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative animate-fade-in">
+                  <button
+                    className="absolute top-3 right-3 text-gray-500 hover:text-red-500 transition"
+                    onClick={() => setShowProjectForm(false)}
+                  >
+                    <IoIosCloseCircleOutline size={28} />
+                  </button>
 
-                    {/* Form with message of sucessful and unsucessful */}
-                    <form className="space-y-4" onSubmit={handleSubmit}>
-                      {response && (
-                        <div
-                          className={`p-3 mb-2 rounded-lg text-sm font-medium ${response.type === "success"
+                  <h2 className="text-2xl font-semibold text-gray-800 mb-4">Create Project</h2>
+
+                  <form className="space-y-4" onSubmit={handleSubmit}>
+                    {response && (
+                      <div
+                        className={`p-3 rounded-lg text-sm font-medium ${response.type === "success"
                             ? "bg-green-100 text-green-700 border border-green-300"
                             : "bg-red-100 text-red-700 border border-red-300"
-                            }`}
-                        >
-                          {response.message}
-                        </div>
-                      )}
-
-                      <div>
-                        <label
-                          htmlFor="project"
-                          className="block text-sm font-medium text-violet-700"
-                        >
-                          Project's Title
-                        </label>
-                        <input
-                          type="text"
-                          id="project"
-                          className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                          onChange={handleChangeName}
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="members"
-                          className="block text-sm font-medium text-violet-700"
-                        >
-                          Members Name
-                        </label>
-                        <input
-                          type="text"
-                          id="members"
-                          className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                          onChange={handleChangeMembers}
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="w-full cursor-pointer bg-violet-500 text-white py-2 rounded-lg hover:bg-violet-600 transition"
+                          }`}
                       >
-                        Create
-                      </button>
-                    </form>
-                  </div>
+                        {response.message}
+                      </div>
+                    )}
+
+                    <div>
+                      <label
+                        htmlFor="project"
+                        className="block text-sm font-medium text-violet-700"
+                      >
+                        Project's Title
+                      </label>
+                      <input
+                        type="text"
+                        id="project"
+                        className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                        onChange={handleChangeName}
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="members"
+                        className="block text-sm font-medium text-violet-700"
+                      >
+                        Members Name
+                      </label>
+                      <input
+                        type="text"
+                        id="members"
+                        className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                        onChange={handleChangeMembers}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full bg-violet-500 text-white py-2 rounded-lg hover:bg-violet-600 transition"
+                    >
+                      Create
+                    </button>
+                  </form>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
+
       </aside>
 
       {!showSidebar && (
