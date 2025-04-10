@@ -55,16 +55,20 @@ def get_accounts(req):
 
 
 @api_view(['POST'])
-def get_projects_account_validated(req):
+def get_projects_account_validated(req, qnt=None):
     jwt_authenticator = JWTAuthentication()
+    qnt = req.query_params.get('qnt', None)
 
     user, auth = jwt_authenticator.authenticate(req)
 
     if user:
         projects_filtered = ProjectBoard.objects.filter(members=user.id)
+        if qnt:
+            projects_filtered = projects_filtered[0:int(qnt)]
         projects_serialized = ProjectBoardSerializer(projects_filtered, many=True)
+
         projects_data = projects_serialized.data
-        print(projects_data)
+
         all_member_ids = []
         for project in projects_data:
             for member_id in project['members']:
@@ -117,7 +121,7 @@ def get_create_project_boards(req):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def alter_get_project_board(req, pk):
     try:
@@ -135,7 +139,15 @@ def alter_get_project_board(req, pk):
             return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'DELETE':
         project_board.delete()
-        return Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
+        return  Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
+    elif req.method == 'PATCH':
+        serializer = ProjectBoardSerializer(project_board, data=req.data, partial=True)
+        print(req.data)
+        if serializer.is_valid():
+            print('tchau')
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])

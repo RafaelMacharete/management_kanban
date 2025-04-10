@@ -11,6 +11,7 @@ class Account(AbstractUser):
 class ProjectBoard(models.Model):
     name = models.CharField(max_length=50)
     members = models.ManyToManyField(Account)
+    favorite = models.BooleanField(default=False)
     
     def __str__(self):
         return self.name

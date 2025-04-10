@@ -1,3 +1,4 @@
+// Arrumar o modal não aparecer sem o aside, não ter que me auto-adicionar
 import { useState, useEffect } from "react";
 import { FiTrello } from "react-icons/fi";
 import { PiSquaresFourLight } from "react-icons/pi";
@@ -6,17 +7,26 @@ import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { GrFormAdd } from "react-icons/gr";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { FaObjectGroup, FaRegStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+
 
 export function Home() {
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
   const [logOut, setLogOut] = useState(false);
+  const [qnt, setQnt] = useState(9)
   const token = localStorage.getItem("token");
   const username =
     localStorage.getItem("username") || localStorage.getItem("user");
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [response, setResponse] = useState(null);
+
+  const [favorite, setFavorite] = useState({
+    favorite: false
+  })
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -51,7 +61,7 @@ export function Home() {
     console.log(body)
     if (response.ok) {
       setResponse({ type: "success", message: "Project created sucessfully!" });
-      setFormData({ name: "", members: [] }); 
+      setFormData({ name: "", members: [] });
     } else {
       setResponse({
         type: "error",
@@ -62,29 +72,59 @@ export function Home() {
     setTimeout(() => setResponse(null), 4000);
   }
 
-  const exit = () => {
-    localStorage.clear();
+  async function handleFavorite(id) {
+    const updatedProjects = projects.map(project => {
+      if (project.id === id) {
+        return { ...project, favorite: !project.favorite };
+      }
+      return project;
+    });
+    setProjects(updatedProjects);
+
+    const updatedProject = updatedProjects.find(project => project.id === id);
+    const newFavorite = { favorite: updatedProject.favorite };
+
+    try {
+      await fetch(`http://localhost:8000/projectboards/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newFavorite)
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function exit() {
     setLogOut(true);
+    window.location.href = "/";
+    localStorage.clear();
   };
+
+  function sumQnt() {
+    if (qnt <= projects.length) {
+      setQnt(qnt + 3)
+    }
+  }
 
   useEffect(() => {
     async function fetchData() {
-      const token = localStorage.getItem("token");
       if (!token) {
         window.location.href = "/";
         return;
       }
-
       try {
-        const response = await fetch("http://localhost:8000/jwt/", {
+        const response = await fetch(`http://localhost:8000/jwt/?qnt=${qnt}`, {
           method: "POST",
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
         });
         const body = await response.json();
-        console.log(body)
         setProjects(body.projects)
         setMembers(body.members)
 
@@ -93,7 +133,7 @@ export function Home() {
       }
     }
     fetchData();
-  }, [logOut])
+  }, [qnt])
 
   return (
     <div
@@ -192,17 +232,17 @@ export function Home() {
         {/* Exhibition of projects */}
         <div className="p-4 bg-white text-sm rounded-b-lg shadow">
           <div className="flex flex-col gap-4 p-2 border-t border-gray-200">
-            <b className="text-xl text-violet-700">My Projects</b>
+            <b className="text-xl text-violet-700">Favorite Projects</b>
 
             {/* Lista de projetos */}
-            {projects.map((project) => (
-              <div
-                key={project.id}
-                className="p-2 rounded-md bg-gray-50 border border-gray-200 hover:bg-violet-50 transition"
-              >
-                <p className="text-gray-700">{project.name}</p>
-              </div>
-            ))}
+            <div className="h-67 overflow-y-scroll flex flex-col gap-2 border-2 border-gray-300 p-2">
+              {projects.filter((project) => project.favorite === true)
+                .map((project) => (
+                  <p key={project.id}>{project.name}</p>
+                ))
+              }
+
+            </div>
 
             {/* Botão flutuante para abrir o modal */}
             <div className="relative self-end">
@@ -232,8 +272,8 @@ export function Home() {
                     {response && (
                       <div
                         className={`p-3 rounded-lg text-sm font-medium ${response.type === "success"
-                            ? "bg-green-100 text-green-700 border border-green-300"
-                            : "bg-red-100 text-red-700 border border-red-300"
+                          ? "bg-green-100 text-green-700 border border-green-300"
+                          : "bg-red-100 text-red-700 border border-red-300"
                           }`}
                       >
                         {response.message}
@@ -297,7 +337,7 @@ export function Home() {
         </button>
       )}
 
-      {/* Main header (search input and username) */}
+      {/* Main header*/}
       <header className="bg-white border-b border-gray-300">
         <div className="flex max-w-6xl mx-auto justify-between items-center h-full">
           <div className="relative w-full max-w-md">
@@ -314,7 +354,6 @@ export function Home() {
           {/* User content */}
           <div className="flex items-center gap-3 text-gray-700 font-medium">
             <p>
-              Username:{" "}
               <span className="text-xl text-cyan-700 underline">
                 {username}
               </span>
@@ -329,7 +368,7 @@ export function Home() {
       </header>
 
       {/* Main content */}
-      <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto">
+      <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
@@ -345,9 +384,31 @@ export function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Project */}
             {projects.map((project) => (
-              <div key={project.id}
+              <div
+                key={project.id}
                 className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition">
-                <h2 className="text-lg font-semibold text-gray-700">{project.name}</h2>
+                <div className="flex justify-between">
+                  <h2 className="text-lg font-semibold text-gray-700">{project.name}</h2>
+
+                  <button
+                    key={project.id}
+                    onClick={() => handleFavorite(project.id)}
+                    className="transition-transform duration-200 ease-in-out transform hover:scale-110 cursor-pointer"
+                  >
+                    {project.favorite ? (
+                      <FaStar
+                        size={23}
+                        className="text-cyan-700 transition-colors duration-300"
+                      />
+                    ) : (
+                      <FaRegStar
+                        size={20}
+                        className="text-gray-500 transition-colors duration-300 hover:text-cyan-700"
+                      />
+                    )}
+                  </button>
+
+                </div>
 
                 {members
                   .filter((member) => project.members.includes(member.id))
@@ -358,6 +419,12 @@ export function Home() {
             ))}
           </div>
         </div>
+        <p
+          className="text-center cursor-pointer underline font-light"
+          onClick={sumQnt}
+        >
+          Show More
+        </p>
       </main>
     </div>
   );

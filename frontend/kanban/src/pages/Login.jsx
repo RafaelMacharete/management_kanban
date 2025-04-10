@@ -35,11 +35,9 @@ export function Login() {
         setIsLoading(false)
         if (body.access) {
             localStorage.setItem('token', body.access)
-            console.log(body.access)
             setNavigate(true);
             localStorage.setItem('username', formData.username)
         } else {
-            console.log(body)
             setError(true)
         }
     }
