@@ -1,4 +1,5 @@
 // Arrumar o modal não aparecer sem o aside, não ter que me auto-adicionar
+// Mostra a quantidade de projetos exibidos
 import { useState, useEffect } from "react";
 import { FiTrello } from "react-icons/fi";
 import { PiSquaresFourLight } from "react-icons/pi";
@@ -39,7 +40,7 @@ export function Home() {
   const handleClickProjectForm = (e) => {
     setShowProjectForm(!showProjectForm);
   };
-  
+
   if (!isLogged || !token) {
     window.location.href = "/";
     return null;
