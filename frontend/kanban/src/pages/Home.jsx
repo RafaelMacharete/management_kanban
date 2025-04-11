@@ -5,13 +5,12 @@ import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { GrFormAdd } from "react-icons/gr";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { Projects } from "../components/Project";
+import { Projects } from "../components/Projects";
 import { Aside } from "../components/aside";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
-  const [logOut, setLogOut] = useState(false);
   const [qnt, setQnt] = useState(9);
   const token = localStorage.getItem("token");
   const username =
@@ -76,7 +75,6 @@ export function Home() {
   }
 
   function exit() {
-    setLogOut(true);
     window.location.href = "/";
     localStorage.clear();
   }

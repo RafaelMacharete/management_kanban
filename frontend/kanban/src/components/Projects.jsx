@@ -1,16 +1,19 @@
 import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
 import { GoPencil } from "react-icons/go";
-
+import { Link } from 'react-router-dom'
 
 export function Projects({ projects, members }) {
+  console.log(projects)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {/* Project */}
       {projects.map((project) => (
-        <div
+        <Link
           key={project.id}
           className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition"
+          state={{projectname: 'oi'}}
+          to='/project'
         >
           <div className="flex justify-between">
             <h2 className="text-lg font-semibold text-gray-700">
@@ -45,7 +48,7 @@ export function Projects({ projects, members }) {
                 {member.username}
               </p>
             ))}
-        </div>
+        </Link>
       ))}
     </div>
   );
