@@ -1,17 +1,12 @@
 // Arrumar o modal não aparecer sem o aside, não ter que me auto-adicionar
 // Mostra a quantidade de projetos exibidos
 import { useState, useEffect } from "react";
-import { FiTrello } from "react-icons/fi";
-import { PiSquaresFourLight } from "react-icons/pi";
-import { RxDoubleArrowLeft } from "react-icons/rx";
 import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { GrFormAdd } from "react-icons/gr";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { FaObjectGroup, FaRegStar } from "react-icons/fa";
-import { FaStar } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
-import { jwtDecode } from "jwt-decode";
+import { Projects } from "../components/Project";
+import { Aside } from "../components/aside";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
@@ -45,6 +40,7 @@ export function Home() {
     window.location.href = "/";
     return null;
   }
+
   function handleChangeName(e) {
     setFormData({ ...formData, name: e.target.value });
   }
@@ -57,7 +53,7 @@ export function Home() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const response = await fetch("http://localhost:8000/projectboards/", {
+    const response = await fetch("http://localhost:8000/projects/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +62,6 @@ export function Home() {
       body: JSON.stringify(formData),
     });
     const body = await response.json();
-    console.log(body);
     if (response.ok) {
       setResponse({ type: "success", message: "Project created sucessfully!" });
       setFormData({ name: "", members: [] });
@@ -78,32 +73,6 @@ export function Home() {
     }
 
     setTimeout(() => setResponse(null), 4000);
-  }
-
-  async function handleFavorite(id) {
-    const updatedProjects = projects.map((project) => {
-      if (project.id === id) {
-        return { ...project, favorite: !project.favorite };
-      }
-      return project;
-    });
-    setProjects(updatedProjects);
-
-    const updatedProject = updatedProjects.find((project) => project.id === id);
-    const newFavorite = { favorite: updatedProject.favorite };
-
-    try {
-      await fetch(`http://localhost:8000/projectboards/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(newFavorite),
-      });
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   function exit() {
@@ -121,7 +90,7 @@ export function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!isLogged || !token) return; // Não faz nada se não estiver logado
+        if (!isLogged || !token) return;
 
         const response = await fetch(`http://localhost:8000/jwt/?qnt=${qnt}`, {
           method: "POST",
@@ -130,9 +99,8 @@ export function Home() {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (response.status === 401) {
-          setUnauthorized(true); // Só cai aqui se estiver logado
+          setUnauthorized(true);
           return;
         }
 
@@ -148,128 +116,11 @@ export function Home() {
   }, [qnt, isLogged, token]);
   return (
     <div
-      className={`min-h-screen grid ${
-        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-      } 
+      className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+        } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
-      {/* Left Bar */}
-      <aside
-        className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${
-          showSidebar ? "opacity-100" : "opacity-0"
-        } `}
-      >
-        {/* Button to hide aside */}
-        {showSidebar && (
-          <div className="flex justify-between items-center  px-4 py-2 border-b border-gray-300">
-            <div className="flex items-center gap-2">
-              <FiTrello size={30} className="text-violet-600" />
-              <h1 className="text-xl font-semibold text-gray-800">Trellio</h1>
-            </div>
-            <button
-              onClick={() => setShowSidebar(!showSidebar)}
-              className="bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-100 transition"
-            >
-              <RxDoubleArrowLeft
-                size={20}
-                className="text-gray-600 hover:text-violet-600 transition"
-              />
-            </button>
-          </div>
-        )}
-
-        {/* Links on aside*/}
-        <div className="flex flex-col justify-start gap-4 p-4 text-gray-700">
-          <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight
-              size={26}
-              className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-            />
-            <a
-              href="#"
-              className="text-base hover:text-pink-600 transition duration-200"
-            >
-              Home
-            </a>
-          </div>
-          <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight
-              size={26}
-              className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-            />
-            <a
-              href="#"
-              className="text-base hover:text-pink-600 transition duration-200"
-            >
-              Projects
-            </a>
-          </div>
-          <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight
-              size={26}
-              className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-            />
-            <a
-              href="#"
-              className="text-base hover:text-pink-600 transition duration-200"
-            >
-              Teams
-            </a>
-          </div>
-          <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight
-              size={26}
-              className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-            />
-            <a
-              href="#"
-              className="text-base hover:text-pink-600 transition duration-200"
-            >
-              Tasks
-            </a>
-          </div>
-          <div className="flex items-center gap-3 group">
-            <PiSquaresFourLight
-              size={26}
-              className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-            />
-            <a
-              href="#"
-              className="text-base hover:text-pink-600 transition duration-200"
-            >
-              Settings
-            </a>
-          </div>
-        </div>
-
-        {/* Exhibition of projects */}
-        <div className="p-4 bg-white text-sm rounded-b-lg shadow">
-          <div className="flex flex-col gap-4 p-2 border-t border-gray-200">
-            <b className="text-xl text-violet-700">Favorite Projects</b>
-
-            {/* Lista de projetos */}
-            <div className="h-67 overflow-y-scroll flex flex-col gap-2 border-2 border-gray-300 p-2">
-              {projects
-                .filter((project) => project.favorite === true)
-                .map((project) => (
-                  <p key={project.id}>{project.name}</p>
-                ))}
-            </div>
-
-            {/* Floating button to open modal form */}
-            <div className="relative self-end">
-              <button
-                className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 transition"
-                onClick={handleClickProjectForm}
-                title="Add Project"
-              >
-                <GrFormAdd size={24} />
-              </button>
-            </div>
-          </div>
-        </div>
-      </aside>
-
+      <Aside showSidebar={showSidebar} projects={projects}/>
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}
@@ -351,11 +202,10 @@ export function Home() {
               <form className="space-y-4" onSubmit={handleSubmit}>
                 {response && (
                   <div
-                    className={`p-3 rounded-lg text-sm font-medium ${
-                      response.type === "success"
+                    className={`p-3 rounded-lg text-sm font-medium ${response.type === "success"
                         ? "bg-green-100 text-green-700 border border-green-300"
                         : "bg-red-100 text-red-700 border border-red-300"
-                    }`}
+                      }`}
                   >
                     {response.message}
                   </div>
@@ -414,55 +264,14 @@ export function Home() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Project */}
-            {projects.map((project) => (
-              <div
-                key={project.id}
-                className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition"
-              >
-                <div className="flex justify-between">
-                  <h2 className="text-lg font-semibold text-gray-700">
-                    {project.name}
-                  </h2>
-
-                  <button
-                    key={project.id}
-                    onClick={() => handleFavorite(project.id)}
-                    className="transition-transform duration-200 ease-in-out transform hover:scale-110 cursor-pointer"
-                  >
-                    {project.favorite ? (
-                      <FaStar
-                        size={23}
-                        className="text-cyan-700 transition-colors duration-300"
-                        title="Remove from favorites"
-                      />
-                    ) : (
-                      <FaRegStar
-                        size={20}
-                        className="text-gray-500 transition-colors duration-300 hover:text-cyan-700"
-                        title="Add to favorites"
-                      />
-                    )}
-                  </button>
-                </div>
-
-                {members
-                  .filter((member) => project.members.includes(member.id))
-                  .map((member) => (
-                    <p key={member.id} className="text-sm text-gray-500 mt-1">
-                      {member.username}
-                    </p>
-                  ))}
-              </div>
-            ))}
-          </div>
+          <Projects projects={projects} members={members}/>
+          
         </div>
         <p
-          className="text-center cursor-pointer underline font-light"
+          className="cursor-pointer underline font-light w-20 text-center mx-auto"
           onClick={sumQnt}
         >
-          Show More
+          {qnt <= projects.length ? "Show More": ''}
         </p>
       </main>
     </div>

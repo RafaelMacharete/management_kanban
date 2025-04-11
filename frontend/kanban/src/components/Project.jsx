@@ -1,28 +1,50 @@
-export function Project({ projects }) {
+import { FaStar } from "react-icons/fa";
+import { FaRegStar } from "react-icons/fa";
+import { GoPencil } from "react-icons/go";
+
+
+export function Projects({ projects, members }) {
   return (
-    <div>
-      <h2>Projetos e suas Contas Associadas</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Project */}
       {projects.map((project) => (
         <div
           key={project.id}
-          style={
-            { marginBottom: "20px", borderBottom: "1px solid #ccc", paddingBottom: "10px" }
-          }>
-          <h3>{project.name}</h3>
-          <p><strong>Membros:</strong> {project.members}</p>
+          className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition"
+        >
+          <div className="flex justify-between">
+            <h2 className="text-lg font-semibold text-gray-700">
+              {project.name}
+            </h2>
 
-          <h4>Contas Associadas:</h4>
-          <ul>
-            {project.accounts.length > 0 ? (
-              project.accounts.map((account) => (
-                <li key={account.id}>
-                  {account.username} - {account.email}
-                </li>
-              ))
-            ) : (
-              <li>Nenhuma conta associada</li>
-            )}
-          </ul>
+            <button
+              key={project.id}
+              onClick={() => handleFavorite(project.id)}
+              className="transition-transform duration-200 ease-in-out transform hover:scale-110 cursor-pointer"
+            >
+              {project.favorite ? (
+                <FaStar
+                  size={23}
+                  className="text-cyan-700 transition-colors duration-300"
+                  title="Remove from favorites"
+                />
+              ) : (
+                <FaRegStar
+                  size={20}
+                  className="text-gray-500 transition-colors duration-300 hover:text-cyan-700"
+                  title="Add to favorites"
+                />
+              )}
+            </button>
+          </div>
+
+          {members
+            .filter((member) => project.members.includes(member.id))
+            .map((member) => (
+              <p key={member.id} className="text-sm text-gray-500 mt-1">
+                {member.username}
+              </p>
+            ))}
         </div>
       ))}
     </div>
