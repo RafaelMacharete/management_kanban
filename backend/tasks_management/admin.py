@@ -14,6 +14,6 @@ class AccountAdmin(UserAdmin):
     )
 
 admin.site.register(Account, AccountAdmin)
-admin.site.register(ProjectBoard)
+admin.site.register(Project)
 admin.site.register(Column)
 admin.site.register(Card)

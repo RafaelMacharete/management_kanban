@@ -8,7 +8,7 @@ class Account(AbstractUser):
     def __str__(self):
         return self.username
     
-class ProjectBoard(models.Model):
+class Project(models.Model):
     name = models.CharField(max_length=50)
     members = models.ManyToManyField(Account)
     favorite = models.BooleanField(default=False)
@@ -18,7 +18,7 @@ class ProjectBoard(models.Model):
 
 class Column(models.Model):
     name = models.CharField(max_length=30)
-    project_board = models.ForeignKey(ProjectBoard, on_delete=models.CASCADE, related_name="columns")
+    project_board = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="columns")
     position = models.PositiveIntegerField()
 
     def __str__(self):

@@ -1,14 +1,14 @@
-from rest_framework import serializers, viewsets, permissions
-from .models import ProjectBoard, Column, Card, Account
+from rest_framework import serializers
+from .models import Project, Column, Card, Account
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ['id', 'username', 'password']
 
-class ProjectBoardSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProjectBoard
+        model = Project
         fields = '__all__'
 
 class ColumnSerializer(serializers.ModelSerializer):

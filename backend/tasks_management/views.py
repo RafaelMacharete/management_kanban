@@ -6,8 +6,56 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import authenticate
-from .models import Account, ProjectBoard, Column, Card
-from .serializers import *
+from .models import Account, Project, Column, Card
+from .serializers import AccountSerializer, ProjectSerializer, ColumnSerializer, CardSerializer
+
+from rest_framework.generics import (RetrieveUpdateDestroyAPIView, 
+                                     UpdateAPIView, 
+                                     ListCreateAPIView,
+                                     )
+from rest_framework.permissions import IsAuthenticated
+
+'''CRUD Project'''
+# GET POST
+class ProjectCreateAPIView(ListCreateAPIView):
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+# PUT PATCH
+class ProjectUpdateAPIView(UpdateAPIView):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    lookup_field = 'pk'
+
+'''CRUD Account'''
+# GET PUT PATCH DELETE
+class AccountRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+    lookup_field = 'pk'
+
+'''CRUD Column'''
+# POST
+class ColumnListCreateAPIView(ListCreateAPIView):
+    queryset = Column.objects.all()
+    serializer_class = ColumnSerializer
+
+# GET PUT PATCH DELETE
+class ColumnRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Column.objects.all()
+    serializer_class = ColumnSerializer
+    lookup_field = 'pk'
+
+'''CRUD Card'''
+# POST
+class CardListCreateAPIView(ListCreateAPIView):
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
+
+# GET PUT PATCH DELETE
+class CardRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
 
 
 @api_view(['POST'])
@@ -27,7 +75,6 @@ def create_account(req):
     )
 
     return Response({'User created successfully'}, status=status.HTTP_201_CREATED)
-
 
 @api_view(['POST'])
 def login(req):
@@ -63,10 +110,10 @@ def get_projects_account_validated(req, qnt=None):
     user, auth = jwt_authenticator.authenticate(req)
 
     if user:
-        projects_filtered = ProjectBoard.objects.filter(members=user.id)
+        projects_filtered = Project.objects.filter(members=user.id)
         if qnt:
             projects_filtered = projects_filtered[0:int(qnt)]
-        projects_serialized = ProjectBoardSerializer(projects_filtered, many=True)
+        projects_serialized = ProjectSerializer(projects_filtered, many=True)
 
         projects_data = projects_serialized.data
 
@@ -87,7 +134,7 @@ def get_projects_account_validated(req, qnt=None):
     else:
         return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
-
+#
 @api_view(['GET', 'PUT', 'DELETE'])
 def alter_get_account(req, pk):
     try:
@@ -106,35 +153,35 @@ def alter_get_account(req, pk):
         account.delete()
         return Response('Account deleted', status=status.HTTP_204_NO_CONTENT)
 
-
-@api_view(['GET', 'POST'])
+#
+@api_view(['GET', 'POST']) 
 @permission_classes([IsAuthenticated])
 def get_create_project_boards(req):
     if req.method == 'GET':
-        project_boards = ProjectBoard.objects.all()
-        serializer = ProjectBoardSerializer(project_boards, many=True)
+        project_boards = Project.objects.all()
+        serializer = ProjectSerializer(project_boards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
-        serializer = ProjectBoardSerializer(data=req.data)
+        serializer = ProjectSerializer(data=req.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+#
 @api_view(['GET', 'PUT', 'DELETE', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def alter_get_project_board(req, pk):
     try:
-        project_board = ProjectBoard.objects.get(pk=pk)
-    except ProjectBoard.DoesNotExist:
+        project_board = Project.objects.get(pk=pk)
+    except Project.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'GET':
-        serializer = ProjectBoardSerializer(project_board)
+        serializer = ProjectSerializer(project_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'PUT':
-        serializer = ProjectBoardSerializer(project_board, data=req.data)
+        serializer = ProjectSerializer(project_board, data=req.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -142,12 +189,12 @@ def alter_get_project_board(req, pk):
         project_board.delete()
         return  Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
     elif req.method == 'PATCH':
-        serializer = ProjectBoardSerializer(project_board, data=req.data, partial=True)
+        serializer = ProjectSerializer(project_board, data=req.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
+#
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def get_create_columns(req):
@@ -162,6 +209,7 @@ def get_create_columns(req):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+#
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def alter_get_column(req, pk):
@@ -182,6 +230,7 @@ def alter_get_column(req, pk):
         column.delete()
         return Response('Column deleted', status=status.HTTP_204_NO_CONTENT)
 
+#
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def get_create_cards(req):
@@ -196,7 +245,7 @@ def get_create_cards(req):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+#
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def alter_get_card(req, pk):
