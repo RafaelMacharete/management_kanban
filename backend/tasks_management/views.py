@@ -55,6 +55,7 @@ def get_accounts(req):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def get_projects_account_validated(req, qnt=None):
     jwt_authenticator = JWTAuthentication()
     qnt = req.query_params.get('qnt', None)
@@ -142,9 +143,7 @@ def alter_get_project_board(req, pk):
         return  Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
     elif req.method == 'PATCH':
         serializer = ProjectBoardSerializer(project_board, data=req.data, partial=True)
-        print(req.data)
         if serializer.is_valid():
-            print('tchau')
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

@@ -11,7 +11,6 @@ export function Login() {
         username: "",
         password: "",
     });
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [navigate, setNavigate] = useState(false);
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
@@ -37,6 +36,7 @@ export function Login() {
             localStorage.setItem('token', body.access)
             setNavigate(true);
             localStorage.setItem('username', formData.username)
+            localStorage.setItem('isLogged', true)
         } else {
             setError(true)
         }
