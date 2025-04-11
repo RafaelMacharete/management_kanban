@@ -19,4 +19,5 @@ urlpatterns = [
     path('columns/<int:pk>', ColumnRetrieveUpdateDestroyAPIView.as_view(), name='alter_get_columns'),
     path('cards/', CardListCreateAPIView.as_view(), name='get_create_cards'),
     path('cards/<int:pk>', CardRetrieveUpdateDestroyAPIView.as_view(), name='get_create_cards'),
+    path('jwt/', views.get_projects_account_validated, name='jwt')
 ]
