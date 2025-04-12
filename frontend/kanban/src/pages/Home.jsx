@@ -5,7 +5,7 @@ import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { GrFormAdd } from "react-icons/gr";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { Projects } from "../components/Project";
+import { Projects } from "../components/Projects";
 import { Aside } from "../components/aside";
 
 export function Home() {
@@ -32,6 +32,31 @@ export function Home() {
     members: [],
   });
 
+  async function handleFavorite(id) {
+    const updatedProjects = projects.map((project) => {
+      if (project.id === id) {
+        return { ...project, favorite: !project.favorite };
+      }
+      return project;
+    });
+    setProjects(updatedProjects);
+
+    const updatedProject = updatedProjects.find((project) => project.id === id);
+    const newFavorite = { favorite: updatedProject.favorite };
+
+    try {
+      await fetch(`http://localhost:8000/projects/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newFavorite),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const handleClickProjectForm = (e) => {
     setShowProjectForm(!showProjectForm);
   };
@@ -120,7 +145,7 @@ export function Home() {
         } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
-      <Aside showSidebar={showSidebar} projects={projects}/>
+      <Aside showSidebar={showSidebar} projects={projects} />
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}
@@ -203,8 +228,8 @@ export function Home() {
                 {response && (
                   <div
                     className={`p-3 rounded-lg text-sm font-medium ${response.type === "success"
-                        ? "bg-green-100 text-green-700 border border-green-300"
-                        : "bg-red-100 text-red-700 border border-red-300"
+                      ? "bg-green-100 text-green-700 border border-green-300"
+                      : "bg-red-100 text-red-700 border border-red-300"
                       }`}
                   >
                     {response.message}
@@ -264,14 +289,19 @@ export function Home() {
             </button>
           </div>
 
-          <Projects projects={projects} members={members}/>
-          
+          <Projects
+            projects={projects}
+            members={members}
+            handleFavorite={handleFavorite}
+          />
+
+
         </div>
         <p
           className="cursor-pointer underline font-light w-20 text-center mx-auto"
           onClick={sumQnt}
         >
-          {qnt <= projects.length ? "Show More": ''}
+          {qnt <= projects.length ? "Show More" : ''}
         </p>
       </main>
     </div>
