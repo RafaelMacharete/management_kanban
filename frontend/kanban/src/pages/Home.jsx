@@ -7,6 +7,7 @@ import { GrFormAdd } from "react-icons/gr";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { Projects } from "../components/Projects";
 import { Aside } from "../components/aside";
+import { RxDoubleArrowLeft } from "react-icons/rx";
 
 export function Home() {
   const [projects, setProjects] = useState([]);

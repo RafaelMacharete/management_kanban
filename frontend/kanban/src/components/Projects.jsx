@@ -6,7 +6,7 @@ export function Projects({ projects, members, handleFavorite }) {
       {projects.map((project) => (
         <Link
           to="/project"
-          state={{ projectname: project.name, projects: projects}}
+          state={{ projectname: project.name, projects: projects }}
           key={project.id}
           className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition block"
         >
