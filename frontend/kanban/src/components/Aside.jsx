@@ -2,14 +2,10 @@ import { FiTrello } from "react-icons/fi";
 import { GrFormAdd } from "react-icons/gr";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { PiSquaresFourLight } from "react-icons/pi";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
-
-export function Aside({ projects }) {
-    const [showSidebar, setShowSidebar] = useState(true);
-
-
-    const handleClickProjectForm = (e) => {
+export function Aside({ projects, showSidebar, setShowSidebar, showProjectForm, setShowProjectForm }) {
+    const handleClickProjectForm = () => {
         setShowProjectForm(!showProjectForm);
     };
 
@@ -22,10 +18,14 @@ export function Aside({ projects }) {
             {/* Button to hide aside */}
             {showSidebar && (
                 <div className="flex justify-between items-center  px-4 py-2 border-b border-gray-300">
-                    <div className="flex items-center gap-2">
+                    <Link 
+                        className="flex items-center gap-2"
+                        to='/projects'
+                        >
+                        
                         <FiTrello size={30} className="text-violet-600" />
                         <h1 className="text-xl font-semibold text-gray-800">Trellio</h1>
-                    </div>
+                    </Link>
                     <button
                         onClick={() => setShowSidebar(!showSidebar)}
                         className="bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-100 transition"
@@ -129,6 +129,8 @@ export function Aside({ projects }) {
                 </div>
             </div>
         </aside>
+
+
 
     )
 }

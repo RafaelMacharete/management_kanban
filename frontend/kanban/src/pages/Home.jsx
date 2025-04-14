@@ -1,20 +1,18 @@
-// Arrumar o modal não aparecer sem o aside, não ter que me auto-adicionar
-// Mostra a quantidade de projetos exibidos
 import { useState, useEffect } from "react";
-import { CiSearch } from "react-icons/ci";
-import { RxExit } from "react-icons/rx";
 import { GrFormAdd } from "react-icons/gr";
+import { RxDoubleArrowLeft } from "react-icons/rx";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { Projects } from "../components/Projects";
 import { Aside } from "../components/aside";
+import { Header } from "../components/Header";
+
 
 export function Home() {
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
   const [qnt, setQnt] = useState(9);
   const token = localStorage.getItem("token");
-  const username =
-    localStorage.getItem("username") || localStorage.getItem("user");
+
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [response, setResponse] = useState(null);
@@ -31,6 +29,32 @@ export function Home() {
     members: [],
   });
 
+  async function handleFavorite(id) {
+    // To fix it
+    const updatedProjects = projects.map((project) => {
+      if (project.id === id) {
+        return { ...project, favorite: !project.favorite };
+      }
+      return project;
+    });
+    setProjects(updatedProjects);
+
+    const updatedProject = updatedProjects.find((project) => project.id === id);
+    const newFavorite = { favorite: updatedProject.favorite };
+
+    try {
+      await fetch(`http://localhost:8000/projects/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newFavorite),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const handleClickProjectForm = (e) => {
     setShowProjectForm(!showProjectForm);
   };
@@ -74,11 +98,6 @@ export function Home() {
     setTimeout(() => setResponse(null), 4000);
   }
 
-  function exit() {
-    window.location.href = "/";
-    localStorage.clear();
-  }
-
   function sumQnt() {
     if (qnt <= projects.length) {
       setQnt(qnt + 3);
@@ -112,13 +131,21 @@ export function Home() {
 
     fetchData();
   }, [qnt, isLogged, token]);
+
   return (
     <div
       className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
         } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
-      <Aside showSidebar={showSidebar} projects={projects}/>
+      <Aside
+        projects={projects}
+        showSidebar={showSidebar}
+        setShowSidebar={setShowSidebar}
+        showProjectForm={showProjectForm}
+        setShowProjectForm={setShowProjectForm}
+      />
+
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}
@@ -151,34 +178,7 @@ export function Home() {
       )}
 
       {/* Main header*/}
-      <header className="bg-white border-b border-gray-300">
-        <div className="flex max-w-6xl mx-auto justify-between items-center h-full">
-          <div className="relative w-full max-w-md">
-            <input
-              type="text"
-              placeholder="Search for a task"
-              className="w-full bg-white h-10 px-4 pr-12 rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-            />
-            <button className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-violet-600 transition">
-              <CiSearch size={24} />
-            </button>
-          </div>
-
-          {/* User content */}
-          <div className="flex items-center gap-3 text-gray-700 font-medium">
-            <p>
-              <span className="text-xl text-cyan-700 underline">
-                {username}
-              </span>
-            </p>
-            <RxExit
-              onClick={exit}
-              className="cursor-pointer text-gray-500 hover:text-red-600 transition"
-              size={24}
-            />
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main content */}
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
@@ -192,7 +192,6 @@ export function Home() {
               >
                 <IoIosCloseCircleOutline size={28} />
               </button>
-
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
                 Create Project
               </h2>
@@ -201,8 +200,8 @@ export function Home() {
                 {response && (
                   <div
                     className={`p-3 rounded-lg text-sm font-medium ${response.type === "success"
-                        ? "bg-green-100 text-green-700 border border-green-300"
-                        : "bg-red-100 text-red-700 border border-red-300"
+                      ? "bg-green-100 text-green-700 border border-green-300"
+                      : "bg-red-100 text-red-700 border border-red-300"
                       }`}
                   >
                     {response.message}
@@ -262,14 +261,24 @@ export function Home() {
             </button>
           </div>
 
-          <Projects projects={projects} members={members}/>
-          
+          <Projects
+            projects={projects}
+            members={members}
+            handleFavorite={handleFavorite}
+          />
+
+
         </div>
+        <div className="text-sm text-gray-600 mb-2 text-right">
+          Showing <span className="font-semibold text-gray-800">{projects.length}</span> project{projects.length !== 1 && 's'}
+        </div>
+
+
         <p
           className="cursor-pointer underline font-light w-20 text-center mx-auto"
           onClick={sumQnt}
         >
-          {qnt <= projects.length ? "Show More": ''}
+          {qnt > projects.length ? "Show More" : ''}
         </p>
       </main>
     </div>

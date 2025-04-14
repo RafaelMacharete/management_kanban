@@ -8,16 +8,18 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import authenticate
 from .models import Account, Project, Column, Card
 from .serializers import AccountSerializer, ProjectSerializer, ColumnSerializer, CardSerializer
-
+from rest_framework.views import APIView
 from rest_framework.generics import (RetrieveUpdateDestroyAPIView, 
                                      UpdateAPIView, 
                                      ListCreateAPIView,
+                                     
                                      )
 from rest_framework.permissions import IsAuthenticated
 
 '''CRUD Project'''
 # GET POST
 class ProjectCreateAPIView(ListCreateAPIView):
+    queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
 
@@ -37,8 +39,23 @@ class AccountRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 '''CRUD Column'''
 # POST
 class ColumnListCreateAPIView(ListCreateAPIView):
-    queryset = Column.objects.all()
     serializer_class = ColumnSerializer
+
+    def get_queryset(self):
+        project_id = self.request.query_params.get('project_board')
+        if project_id:
+            return Column.objects.filter(project_board=project_id)
+        return Column.objects.all()
+
+class ColumnListByProjectAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        project_id = request.data.get('project_board')
+        if not project_id:
+            return Response({'detail': 'must contain project_board.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        columns = Column.objects.filter(project_board=project_id)
+        serializer = ColumnSerializer(columns, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # GET PUT PATCH DELETE
 class ColumnRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
@@ -52,6 +69,16 @@ class CardListCreateAPIView(ListCreateAPIView):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
 
+class CardListByProjectAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        column_id = request.data.get('column_id')
+        if not column_id:
+            return Response({'detail': 'must containt column id'})
+        
+        cards = Card.objects.filter(column=column_id)
+        serializer = CardSerializer(cards, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
 # GET PUT PATCH DELETE
 class CardRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Card.objects.all()
@@ -91,15 +118,6 @@ def login(req):
             }, status=status.HTTP_200_OK)
     else:
         return Response({'Username or Password invalid'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-@api_view(['GET'])
-def get_accounts(req):
-    if req.method == 'GET':
-        accounts = Account.objects.all()
-        serializer = AccountSerializer(accounts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -152,116 +170,3 @@ def alter_get_account(req, pk):
     elif req.method == 'DELETE':
         account.delete()
         return Response('Account deleted', status=status.HTTP_204_NO_CONTENT)
-
-#
-@api_view(['GET', 'POST']) 
-@permission_classes([IsAuthenticated])
-def get_create_project_boards(req):
-    if req.method == 'GET':
-        project_boards = Project.objects.all()
-        serializer = ProjectSerializer(project_boards, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'POST':
-        serializer = ProjectSerializer(data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#
-@api_view(['GET', 'PUT', 'DELETE', 'PATCH'])
-@permission_classes([IsAuthenticated])
-def alter_get_project_board(req, pk):
-    try:
-        project_board = Project.objects.get(pk=pk)
-    except Project.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    if req.method == 'GET':
-        serializer = ProjectSerializer(project_board)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'PUT':
-        serializer = ProjectSerializer(project_board, data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'DELETE':
-        project_board.delete()
-        return  Response('Project Board deleted', status=status.HTTP_204_NO_CONTENT)
-    elif req.method == 'PATCH':
-        serializer = ProjectSerializer(project_board, data=req.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-#
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-def get_create_columns(req):
-    if req.method == 'GET':
-        columns = Column.objects.all()
-        serializer = ColumnSerializer(columns, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'POST':
-        serializer = ColumnSerializer(data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#
-@api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def alter_get_column(req, pk):
-    try:
-        column = Column.objects.get(pk=pk)
-    except Column.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    if req.method == 'GET':
-        serializer = ColumnSerializer(column)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'PUT':
-        serializer = ColumnSerializer(column, data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'DELETE':
-        column.delete()
-        return Response('Column deleted', status=status.HTTP_204_NO_CONTENT)
-
-#
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-def get_create_cards(req):
-    if req.method == 'GET':
-        cards = Card.objects.all()
-        serializer = CardSerializer(cards, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'POST':
-        serializer = CardSerializer(data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#
-@api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def alter_get_card(req, pk):
-    try:
-        card = Card.objects.get(pk=pk)
-    except Card.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    if req.method == 'GET':
-        serializer = CardSerializer(card)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'PUT':
-        serializer = CardSerializer(card, data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'DELETE':
-        card.delete()
-        return Response('Card deleted', status=status.HTTP_204_NO_CONTENT)

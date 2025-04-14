@@ -1,42 +1,30 @@
-import { FaStar } from "react-icons/fa";
-import { FaRegStar } from "react-icons/fa";
-import { GoPencil } from "react-icons/go";
-import { Link } from 'react-router-dom'
-
-export function Projects({ projects, members }) {
-  console.log(projects)
+import { FaStar, FaRegStar } from "react-icons/fa";
+import { Link } from "react-router-dom";
+export function Projects({ projects, members, handleFavorite}) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {/* Project */}
       {projects.map((project) => (
         <Link
+          to="/project"
+          state={{ projectname: project.name, projectid: project.id, projects: projects}}
           key={project.id}
-          className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition"
-          state={{projectname: 'oi'}}
-          to='/project'
+          className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition block"
         >
-          <div className="flex justify-between">
+          <div className="flex justify-between items-start">
             <h2 className="text-lg font-semibold text-gray-700">
               {project.name}
             </h2>
-
             <button
-              key={project.id}
-              onClick={() => handleFavorite(project.id)}
+              onClick={(e) => {
+                e.preventDefault();
+                handleFavorite(project.id);
+              }}
               className="transition-transform duration-200 ease-in-out transform hover:scale-110 cursor-pointer"
             >
               {project.favorite ? (
-                <FaStar
-                  size={23}
-                  className="text-cyan-700 transition-colors duration-300"
-                  title="Remove from favorites"
-                />
+                <FaStar size={23} className="text-cyan-700" />
               ) : (
-                <FaRegStar
-                  size={20}
-                  className="text-gray-500 transition-colors duration-300 hover:text-cyan-700"
-                  title="Add to favorites"
-                />
+                <FaRegStar size={20} className="text-gray-500 hover:text-cyan-700" />
               )}
             </button>
           </div>
