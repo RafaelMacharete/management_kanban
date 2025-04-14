@@ -1,5 +1,3 @@
-// Arrumar o modal não aparecer sem o aside, não ter que me auto-adicionar
-// Mostra a quantidade de projetos exibidos
 import { useState, useEffect } from "react";
 import { GrFormAdd } from "react-icons/gr";
 import { RxDoubleArrowLeft } from "react-icons/rx";
@@ -15,7 +13,7 @@ export function Home() {
   const [logOut, setLogOut] = useState(false);
   const [qnt, setQnt] = useState(9);
   const token = localStorage.getItem("token");
-  
+
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [response, setResponse] = useState(null);
@@ -100,7 +98,7 @@ export function Home() {
     setTimeout(() => setResponse(null), 4000);
   }
 
- 
+
 
   function sumQnt() {
     if (qnt <= projects.length) {
@@ -142,12 +140,13 @@ export function Home() {
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       <Aside
-        showSidebar={showSidebar}
         projects={projects}
-        showProjectForm={showProjectForm}
+        showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
+        showProjectForm={showProjectForm}
         setShowProjectForm={setShowProjectForm}
       />
+
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}

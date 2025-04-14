@@ -1,12 +1,12 @@
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
-export function Projects({ projects, members, handleFavorite }) {
+export function Projects({ projects, members, handleFavorite}) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {projects.map((project) => (
         <Link
           to="/project"
-          state={{ projectname: project.name, projects: projects }}
+          state={{ projectname: project.name, projects: projects}}
           key={project.id}
           className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition block"
         >

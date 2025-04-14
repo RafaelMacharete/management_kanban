@@ -2,14 +2,15 @@ import { FiTrello } from "react-icons/fi";
 import { GrFormAdd } from "react-icons/gr";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { PiSquaresFourLight } from "react-icons/pi";
-import { useState } from "react";
-
 
 export function Aside({ projects, showSidebar, setShowSidebar, showProjectForm, setShowProjectForm }) {
     const handleClickProjectForm = () => {
         setShowProjectForm(!showProjectForm);
     };
-    
+
+    const [showSidebar, setShowSidebar] = useState(true);
+
+
     return (
         // Left Bar
         <aside
@@ -126,6 +127,8 @@ export function Aside({ projects, showSidebar, setShowSidebar, showProjectForm, 
                 </div>
             </div>
         </aside>
+
+
 
     )
 }
