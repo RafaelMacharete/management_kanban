@@ -21,9 +21,10 @@ export function Project() {
     
     const [columns, setColumns] = useState([])
     const [cards, setCards] = useState([])
+    const aa = {'columns_id': [1,2,3]}
     
-    cards.map((card) => console.log(card))
-
+    // cards.map((card) => console.log(card))
+    
     useEffect(() => {
         async function fetchData() {
             try {
@@ -34,8 +35,6 @@ export function Project() {
                 })
                 const body = await response.json();
                 setColumns(body)
-                console.log(body)
-
             } catch (error) {
                 console.log('error: ', error);
             }
@@ -49,7 +48,7 @@ export function Project() {
                 const response = await fetch(`http://localhost:8000/card/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(aa)
                 })
                 const body = await response.json();
                 setCards(body)

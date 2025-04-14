@@ -71,13 +71,20 @@ class CardListCreateAPIView(ListCreateAPIView):
 
 class CardListByProjectAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        column_id = request.data.get('column_id')
-        if not column_id:
+        all_columns_id = request.data.get('columns_id')
+        if not all_columns_id:
             return Response({'detail': 'must containt column id'})
-        
-        cards = Card.objects.filter(column=column_id)
-        serializer = CardSerializer(cards, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            
+        all_cards = [] 
+        for column_id in all_columns_id:
+            card = Card.objects.filter(column=column_id)
+            if card not in all_cards:
+                all_cards.append(card)
+        print(all_cards)
+        cards = Card.objects.filter(pk__in=all_cards)
+        print(cards,'\nB\nB')
+        cards_serializer = CardSerializer(cards, many=True)
+        return Response(cards_serializer.data, status=status.HTTP_200_OK)
         
 # GET PUT PATCH DELETE
 class CardRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
