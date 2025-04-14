@@ -145,7 +145,13 @@ export function Home() {
         } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
-      <Aside showSidebar={showSidebar} projects={projects} />
+      <Aside
+        showSidebar={showSidebar}
+        projects={projects}
+        showProjectForm={showProjectForm}
+        setShowSidebar={setShowSidebar}
+        setShowProjectForm={setShowProjectForm}
+      />
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}
@@ -219,7 +225,6 @@ export function Home() {
               >
                 <IoIosCloseCircleOutline size={28} />
               </button>
-
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
                 Create Project
               </h2>
@@ -297,11 +302,16 @@ export function Home() {
 
 
         </div>
+        <div className="text-sm text-gray-600 mb-2 text-right">
+          Showing <span className="font-semibold text-gray-800">{projects.length}</span> project{projects.length !== 1 && 's'}
+        </div>
+
+
         <p
           className="cursor-pointer underline font-light w-20 text-center mx-auto"
           onClick={sumQnt}
         >
-          {qnt <= projects.length ? "Show More" : ''}
+          {qnt > projects.length ? "Show More" : ''}
         </p>
       </main>
     </div>

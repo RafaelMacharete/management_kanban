@@ -5,14 +5,11 @@ import { PiSquaresFourLight } from "react-icons/pi";
 import { useState } from "react";
 
 
-export function Aside({ projects }) {
-    const [showSidebar, setShowSidebar] = useState(true);
-
-
-    const handleClickProjectForm = (e) => {
+export function Aside({ projects, showSidebar, setShowSidebar, showProjectForm, setShowProjectForm }) {
+    const handleClickProjectForm = () => {
         setShowProjectForm(!showProjectForm);
     };
-
+    
     return (
         // Left Bar
         <aside
