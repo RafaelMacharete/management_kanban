@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Aside } from "../components/aside";
 import { Header } from "../components/Header";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { FaPen } from "react-icons/fa";
 import { CiGrid2H, CiGrid41 } from "react-icons/ci";
+import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
+import { IoMdAdd } from "react-icons/io";
+import background from '../assets/windows.jpg';
 
 export function Project() {
     const location = useLocation();
@@ -64,14 +67,12 @@ export function Project() {
                 projects={projects}
                 showSidebar={showSidebar}
                 setShowSidebar={setShowSidebar}
-                showProjectForm={showProjectForm}
-                setShowProjectForm={setShowProjectForm}
             />
 
             {!showSidebar && (
                 <button
                     onClick={() => setShowSidebar(!showSidebar)}
-                    className="absolute top-4 left-2 z-50 bg-white border border-gray-300 rounded-full p-2 shadow-md hover:bg-gray-100 transition"
+                    className="absolute top-4 left-2 z-50 bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-100 transition"
                 >
                     <RxDoubleArrowLeft
                         size={20}
@@ -83,7 +84,12 @@ export function Project() {
             <Header />
 
             <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-6">
-                <div className="max-w-6xl mx-auto space-y-6">
+                <div className="border border-gray-400 w-min rounded-xl hover:bg-gray-100">
+                    <Link to='/projects'>
+                        <MdKeyboardDoubleArrowLeft size={25} />
+                    </Link>
+                </div>
+                <div className="max-w-7xl mx-auto space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3 text-gray-800">
                             <h1 className="text-2xl font-bold">{projectname}</h1>
@@ -91,7 +97,7 @@ export function Project() {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <div className="flex gap-2 bg-white p-1 rounded-lg border border-gray-300 shadow-sm">
+                            <div className="flex gap-2 bg-white p-1 rounded-lg border border-gray-300">
                                 {filterOptions.map((option) => (
                                     <button
                                         key={option}
@@ -114,14 +120,14 @@ export function Project() {
                     </div>
 
                     {/* Project content based on activeFilter */}
-                    <div className="p-4 bg-white rounded-xl shadow-sm text-center text-gray-500">
+                    <div className="p-4 bg-white rounded-xl text-center text-gray-500 border-1 border-gray-300">
                         <p className="text-sm">Showing tasks for: <span className="font-semibold text-gray-800">{activeFilter}</span></p>
                     </div>
-                    <div className="flex gap-3 p-4 overflow-x-auto">
+                    <div className="flex gap-3 p-4 overflow-x-auto bg-cover bg-no-repeat"style={{ backgroundImage: `url(${background})` }}>
                         {columns.map((column) => (
                             <div
                                 key={column.id}
-                                className="bg-white border border-gray-300 rounded-2xl shadow-md w-72 flex-shrink-0 p-4"
+                                className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-150"
                             >
                                 <div className="flex items-center py-2 gap-2">
                                     <h2 className="text-lg font-semibold text-gray-800 text-center">
@@ -138,14 +144,14 @@ export function Project() {
                                         .map((card) => (
                                             <div
                                                 key={card.id}
-                                                className="bg-gray-100 border border-gray-300 rounded-xl p-3 text-gray-700 hover:bg-gray-200 transition"
+                                                className="bg-gray-100 border border-gray-300 rounded-xl p-3 text-gray-700 hover:bg-gray-200 cursor-pointer"
                                             >
                                                 {card.name}
                                             </div>
                                         ))}
 
                                     <button
-                                        className="mt-2 text-sm text-black hover:text-cyan-700 hover:bg-gray-100 border border-dashed border-cyan-300 rounded-xl py-2 transition"
+                                        className="mt-2 text-sm text-black hover:text-cyan-700 hover:bg-gray-100 border border-dashed border-cyan-300 rounded-xl py-2 cursor-pointer"
                                         onClick={() => handleAddCard(column.id)}
                                     >
                                         + Adicionar Card
@@ -153,6 +159,10 @@ export function Project() {
                                 </div>
                             </div>
                         ))}
+                        <div className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-15 flex items-center gap-2 cursor-pointer">
+                            <IoMdAdd />
+                            <h2>Add new column</h2>
+                        </div>
                     </div>
                 </div>
             </main>

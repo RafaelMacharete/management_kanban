@@ -12,7 +12,7 @@ export function Home() {
   const [members, setMembers] = useState([]);
   const [qnt, setQnt] = useState(9);
   const token = localStorage.getItem("token");
-
+  const [logOut, setLogOut] = useState(false)
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [response, setResponse] = useState(null);
@@ -28,6 +28,12 @@ export function Home() {
     name: "",
     members: [],
   });
+  
+  function exit() {
+    setLogOut(true);
+    window.location.href = "/";
+    localStorage.clear();
+  }
 
   async function handleFavorite(id) {
     // To fix it
@@ -142,8 +148,6 @@ export function Home() {
         projects={projects}
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
-        showProjectForm={showProjectForm}
-        setShowProjectForm={setShowProjectForm}
       />
 
       {!showSidebar && (
@@ -249,7 +253,7 @@ export function Home() {
           </div>
         )}
 
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
             <button
@@ -278,7 +282,7 @@ export function Home() {
           className="cursor-pointer underline font-light w-20 text-center mx-auto"
           onClick={sumQnt}
         >
-          {qnt > projects.length ? "Show More" : ''}
+          {qnt <= projects.length ? "Show More" : ''}
         </p>
       </main>
     </div>

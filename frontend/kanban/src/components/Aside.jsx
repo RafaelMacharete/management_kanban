@@ -1,13 +1,9 @@
 import { FiTrello } from "react-icons/fi";
-import { GrFormAdd } from "react-icons/gr";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { PiSquaresFourLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
 
-export function Aside({ projects, showSidebar, setShowSidebar, showProjectForm, setShowProjectForm }) {
-    const handleClickProjectForm = () => {
-        setShowProjectForm(!showProjectForm);
-    };
+export function Aside({ projects, showSidebar, setShowSidebar}) {
 
     return (
         // Left Bar
@@ -114,17 +110,6 @@ export function Aside({ projects, showSidebar, setShowSidebar, showProjectForm, 
                             .map((project) => (
                                 <p key={project.id}>{project.name}</p>
                             ))}
-                    </div>
-
-                    {/* Floating button to open modal form */}
-                    <div className="relative self-end">
-                        <button
-                            className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 transition"
-                            onClick={handleClickProjectForm}
-                            title="Add Project"
-                        >
-                            <GrFormAdd size={24} />
-                        </button>
                     </div>
                 </div>
             </div>
