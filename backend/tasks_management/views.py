@@ -73,19 +73,12 @@ class CardListByProjectAPIView(APIView):
     def post(self, request, *args, **kwargs):
         all_columns_id = request.data.get('columns_id')
         if not all_columns_id:
-            return Response({'detail': 'must containt column id'})
-            
-        all_cards = [] 
-        for column_id in all_columns_id:
-            card = Card.objects.filter(column=column_id)
-            if card not in all_cards:
-                all_cards.append(card)
-        print(all_cards)
-        cards = Card.objects.filter(pk__in=all_cards)
-        print(cards,'\nB\nB')
+            return Response({'detail': 'must contain column id'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        cards = Card.objects.filter(column__in=all_columns_id)
         cards_serializer = CardSerializer(cards, many=True)
         return Response(cards_serializer.data, status=status.HTTP_200_OK)
-        
+
 # GET PUT PATCH DELETE
 class CardRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Card.objects.all()

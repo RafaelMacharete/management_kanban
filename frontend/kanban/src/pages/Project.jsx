@@ -15,16 +15,14 @@ export function Project() {
     const [showSidebar, setShowSidebar] = useState(true);
     const [showProjectForm, setShowProjectForm] = useState(false);
     const [activeFilter, setActiveFilter] = useState("Today");
-    
+
     const filterOptions = ["Today", "This Week", "This Month", "All"];
     const columnData = { "project_board": projectid }
-    
+
     const [columns, setColumns] = useState([])
     const [cards, setCards] = useState([])
-    const aa = {'columns_id': [1,2,3]}
-    
-    // cards.map((card) => console.log(card))
-    
+    const aa = { 'columns_id': [1, 2, 3] }
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -121,8 +119,15 @@ export function Project() {
                     </div>
                     <div className="flex justify-between">
                         {columns.map((column) => (
-                            <div className="bg-gray-300 w-78">
+                            <div className="bg-gray-300 w-78" >
                                 <h1 className="text-center">{column.name}</h1>
+
+                                {cards
+                                    .filter((card) => card.column === column.id)
+                                    .map((card) => (
+                                        <p key={card.id}>{card.name}</p>
+                                    ))}
+
                             </div>
                         ))}
                     </div>
