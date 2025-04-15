@@ -117,17 +117,40 @@ export function Project() {
                     <div className="p-4 bg-white rounded-xl shadow-sm text-center text-gray-500">
                         <p className="text-sm">Showing tasks for: <span className="font-semibold text-gray-800">{activeFilter}</span></p>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex gap-3 p-4 overflow-x-auto">
                         {columns.map((column) => (
-                            <div className="bg-gray-300 w-78" >
-                                <h1 className="text-center">{column.name}</h1>
+                            <div
+                                key={column.id}
+                                className="bg-white border border-gray-300 rounded-2xl shadow-md w-72 flex-shrink-0 p-4"
+                            >
+                                <div className="flex items-center py-2 gap-2">
+                                    <h2 className="text-lg font-semibold text-gray-800 text-center">
+                                        {column.name}
+                                    </h2>
+                                    <h2 className="bg-gray-300 rounded-full w-[24px] text-center font-light">
+                                        {cards.filter((card) => card.column === column.id).length}
+                                    </h2>
+                                </div>
 
-                                {cards
-                                    .filter((card) => card.column === column.id)
-                                    .map((card) => (
-                                        <p key={card.id}>{card.name}</p>
-                                    ))}
+                                <div className="flex flex-col gap-2">
+                                    {cards
+                                        .filter((card) => card.column === column.id)
+                                        .map((card) => (
+                                            <div
+                                                key={card.id}
+                                                className="bg-gray-100 border border-gray-300 rounded-xl p-3 text-gray-700 hover:bg-gray-200 transition"
+                                            >
+                                                {card.name}
+                                            </div>
+                                        ))}
 
+                                    <button
+                                        className="mt-2 text-sm text-black hover:text-cyan-700 hover:bg-gray-100 border border-dashed border-cyan-300 rounded-xl py-2 transition"
+                                        onClick={() => handleAddCard(column.id)}
+                                    >
+                                        + Adicionar Card
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
