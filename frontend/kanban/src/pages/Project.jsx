@@ -24,7 +24,7 @@ export function Project() {
 
     const [columns, setColumns] = useState([])
     const [cards, setCards] = useState([])
-    const aa = { 'columns_id': [1, 2, 3] }
+    const [cardsData, setCardsData] = useState()
 
     useEffect(() => {
         async function fetchData() {
@@ -36,30 +36,30 @@ export function Project() {
                 })
                 const body = await response.json();
                 setColumns(body)
+                const columnsIds = {
+                    'columns_id': body.map(col => col.id)
+                }
+                
+                setCardsData(columnsIds)
+
+                try {
+                    const response = await fetch(`http://localhost:8000/card/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(columnsIds)
+                    })
+                    const body = await response.json();
+                    setCards(body)
+                } catch (error) {
+                    console.log('error: ', error);
+                }
+                
             } catch (error) {
                 console.log('error: ', error);
             }
         }
         fetchData()
     }, [])
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const response = await fetch(`http://localhost:8000/card/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(aa)
-                })
-                const body = await response.json();
-                setCards(body)
-
-            } catch (error) {
-                console.log('error: ', error);
-            }
-        }
-        fetchData()
-    }, [columns])
 
     return (
         <div className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"} grid-rows-[70px_1fr_1fr] bg-gray-100`}>
@@ -84,7 +84,7 @@ export function Project() {
             <Header />
 
             <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-6">
-                <div className="border border-gray-400 w-min rounded-xl hover:bg-gray-100">
+                <div className="border border-gray-400 w-min rounded-xl hover:bg-gray-100 relative">
                     <Link to='/projects'>
                         <MdKeyboardDoubleArrowLeft size={25} />
                     </Link>
@@ -123,7 +123,7 @@ export function Project() {
                     <div className="p-4 bg-white rounded-xl text-center text-gray-500 border-1 border-gray-300">
                         <p className="text-sm">Showing tasks for: <span className="font-semibold text-gray-800">{activeFilter}</span></p>
                     </div>
-                    <div className="flex gap-3 p-4 overflow-x-auto bg-cover bg-no-repeat"style={{ backgroundImage: `url(${background})` }}>
+                    <div className="flex gap-3 p-4 overflow-x-auto bg-cover bg-no-repeat">
                         {columns.map((column) => (
                             <div
                                 key={column.id}

@@ -72,6 +72,7 @@ class CardListCreateAPIView(ListCreateAPIView):
 class CardListByProjectAPIView(APIView):
     def post(self, request, *args, **kwargs):
         all_columns_id = request.data.get('columns_id')
+        print(request.data)
         if not all_columns_id:
             return Response({'detail': 'must contain column id'}, status=status.HTTP_400_BAD_REQUEST)
         
