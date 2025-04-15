@@ -129,7 +129,7 @@ export function Project() {
                                 key={column.id}
                                 className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-150"
                             >
-                                <div className="flex items-center py-2 gap-2">
+                                <div className="flex items-center py-2 gap-2 ">
                                     <h2 className="text-lg font-semibold text-gray-800 text-center">
                                         {column.name}
                                     </h2>
@@ -159,7 +159,7 @@ export function Project() {
                                 </div>
                             </div>
                         ))}
-                        <div className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-15 flex items-center gap-2 cursor-pointer">
+                        <div className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-15 flex items-center gap-2 cursor-pointer opacity-85">
                             <IoMdAdd />
                             <h2>Add new column</h2>
                         </div>
