@@ -6,8 +6,8 @@ import { RxDoubleArrowLeft } from "react-icons/rx";
 import { FaPen } from "react-icons/fa";
 import { CiGrid2H, CiGrid41 } from "react-icons/ci";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { IoMdAdd } from "react-icons/io";
-import background from '../assets/windows.jpg';
+import { IoIosCloseCircleOutline, IoMdAdd } from "react-icons/io";
+import { Form } from "../components/Forms";
 
 export function Project() {
     const location = useLocation();
@@ -16,15 +16,54 @@ export function Project() {
     const { projects } = location.state || {};
 
     const [showSidebar, setShowSidebar] = useState(true);
-    const [showProjectForm, setShowProjectForm] = useState(false);
+    const [showCardForm, setShowCardForm] = useState(false);
     const [activeFilter, setActiveFilter] = useState("Today");
+    const [reloadCards, setReloadCards] = useState(0)
 
     const filterOptions = ["Today", "This Week", "This Month", "All"];
-    const columnData = { "project_board": projectid }
 
+    const columnData = { "project_board": projectid }
     const [columns, setColumns] = useState([])
+
+    const [cardFormData, setCardFormData] = useState({
+        name: '',
+        column: null,
+        description: '',
+    })
     const [cards, setCards] = useState([])
     const [cardsData, setCardsData] = useState()
+
+    function handleAddCard(id) {
+        setShowCardForm(true)
+        setCardFormData({ ...cardFormData, column: id })
+    }
+
+    function handleChangeName(e) {
+        setCardFormData({ ...cardFormData, name: e.target.value })
+        console.log(cardFormData)
+    }
+
+    function handleChangeDescription(e) {
+        setCardFormData({ ...cardFormData, description: e.target.value })
+    }
+
+    async function handleSubmit(e) {
+        e.preventDefault()
+        try {
+            const response = await fetch(`http://localhost:8000/cards/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cardFormData)
+            })
+            if (response.ok) {
+                setShowCardForm(false)
+                setCardFormData({ name: '', column: null, description: '' });
+                setReloadCards(prevReloadCards => prevReloadCards + 1)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -39,7 +78,7 @@ export function Project() {
                 const columnsIds = {
                     'columns_id': body.map(col => col.id)
                 }
-                
+
                 setCardsData(columnsIds)
 
                 try {
@@ -53,13 +92,13 @@ export function Project() {
                 } catch (error) {
                     console.log('error: ', error);
                 }
-                
+
             } catch (error) {
                 console.log('error: ', error);
             }
         }
         fetchData()
-    }, [])
+    }, [reloadCards])
 
     return (
         <div className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"} grid-rows-[70px_1fr_1fr] bg-gray-100`}>
@@ -89,7 +128,7 @@ export function Project() {
                         <MdKeyboardDoubleArrowLeft size={25} />
                     </Link>
                 </div>
-                <div className="max-w-7xl mx-auto space-y-6">
+                <section className="max-w-8xl mx-auto space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3 text-gray-800">
                             <h1 className="text-2xl font-bold">{projectname}</h1>
@@ -154,7 +193,7 @@ export function Project() {
                                         className="mt-2 text-sm text-black hover:text-cyan-700 hover:bg-gray-100 border border-dashed border-cyan-300 rounded-xl py-2 cursor-pointer"
                                         onClick={() => handleAddCard(column.id)}
                                     >
-                                        + Adicionar Card
+                                        + Add new Card
                                     </button>
                                 </div>
                             </div>
@@ -164,7 +203,27 @@ export function Project() {
                             <h2>Add new column</h2>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                {showCardForm && (
+                    <Form
+                        fields={[
+                            {
+                                label: "Card name",
+                                htmlFor: "project",
+                                onChange: handleChangeName,
+                            },
+                            {
+                                label: "Description",
+                                htmlFor: "members",
+                                onChange: handleChangeDescription,
+                            },
+                        ]}
+                        handleSubmit={handleSubmit}
+                        setShowCardForm={setShowCardForm}
+                    />
+                )}
+
             </main>
         </div>
     );

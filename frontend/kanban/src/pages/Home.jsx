@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { GrFormAdd } from "react-icons/gr";
 import { RxDoubleArrowLeft } from "react-icons/rx";
-import { IoIosCloseCircleOutline } from "react-icons/io";
 import { Projects } from "../components/Projects";
 import { Aside } from "../components/aside";
 import { Header } from "../components/Header";
-
+import { Form } from "../components/Forms";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
@@ -15,8 +14,8 @@ export function Home() {
   const [logOut, setLogOut] = useState(false)
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
-  const [response, setResponse] = useState(null);
   const [unauthorized, setUnauthorized] = useState(false);
+  const [reloadProjects, setReloadProjects] = useState(0);
 
   const [favorite, setFavorite] = useState({
     favorite: false,
@@ -28,7 +27,7 @@ export function Home() {
     name: "",
     members: [],
   });
-  
+
   function exit() {
     setLogOut(true);
     window.location.href = "/";
@@ -92,16 +91,11 @@ export function Home() {
     });
     const body = await response.json();
     if (response.ok) {
-      setResponse({ type: "success", message: "Project created sucessfully!" });
+      setShowProjectForm(false)
       setFormData({ name: "", members: [] });
-    } else {
-      setResponse({
-        type: "error",
-        message: body.detail || "Error on create project .",
-      });
+      setReloadProjects(prevReloadProjects => prevReloadProjects + 1)
     }
-
-    setTimeout(() => setResponse(null), 4000);
+    console.log(body)
   }
 
   function sumQnt() {
@@ -136,7 +130,7 @@ export function Home() {
     }
 
     fetchData();
-  }, [qnt, isLogged, token]);
+  }, [qnt, isLogged, token, reloadProjects]);
 
   return (
     <div
@@ -188,72 +182,26 @@ export function Home() {
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
         {/* Modal */}
         {showProjectForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-2">
-            <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6 relative animate-fade-in">
-              <button
-                className="absolute top-3 right-3 text-gray-500 hover:text-red-500 transition"
-                onClick={() => setShowProjectForm(false)}
-              >
-                <IoIosCloseCircleOutline size={28} />
-              </button>
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Create Project
-              </h2>
-
-              <form className="space-y-4" onSubmit={handleSubmit}>
-                {response && (
-                  <div
-                    className={`p-3 rounded-lg text-sm font-medium ${response.type === "success"
-                      ? "bg-green-100 text-green-700 border border-green-300"
-                      : "bg-red-100 text-red-700 border border-red-300"
-                      }`}
-                  >
-                    {response.message}
-                  </div>
-                )}
-
-                <div>
-                  <label
-                    htmlFor="project"
-                    className="block text-sm font-medium text-violet-700"
-                  >
-                    Project's Title
-                  </label>
-                  <input
-                    type="text"
-                    id="project"
-                    className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    onChange={handleChangeName}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="members"
-                    className="block text-sm font-medium text-violet-700"
-                  >
-                    Members Name
-                  </label>
-                  <input
-                    type="text"
-                    id="members"
-                    className="mt-1 w-full h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    onChange={handleChangeMembers}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-violet-500 text-white py-2 rounded-lg hover:bg-violet-600 transition"
-                >
-                  Create
-                </button>
-              </form>
-            </div>
-          </div>
+          <Form
+            toCreate='Project'
+            fields={[
+              {
+                label: "Project name",
+                htmlFor: "project",
+                onChange: handleChangeName,
+              },
+              {
+                label: "Members",
+                htmlFor: "members",
+                onChange: handleChangeMembers,
+              },
+            ]}
+            handleSubmit={handleSubmit}
+            setShowForm={setShowProjectForm}
+          />
         )}
 
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-8xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
             <button

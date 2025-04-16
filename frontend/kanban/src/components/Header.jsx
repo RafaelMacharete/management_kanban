@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
+import { CiBellOn } from "react-icons/ci";
 
 export function Header() {
     const username = localStorage.getItem("username") || localStorage.getItem("user");
@@ -32,6 +33,7 @@ export function Header() {
                             {username}
                         </span>
                     </p>
+                    <CiBellOn size={30}/>
                     <RxExit
                         onClick={exit}
                         className="cursor-pointer text-gray-500 hover:text-red-600 transition"
