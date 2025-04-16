@@ -19,7 +19,7 @@ class Project(models.Model):
 class Column(models.Model):
     name = models.CharField(max_length=30)
     project_board = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="columns")
-    position = models.PositiveIntegerField()
+    position = models.PositiveIntegerField(default=1)
     # creation_date = models.DateField(auto_now_add=True)
 
     def __str__(self):

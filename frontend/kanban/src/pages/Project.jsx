@@ -15,27 +15,40 @@ export function Project() {
     const { projectname } = location.state || {};
     const { projects } = location.state || {};
 
-    const [showSidebar, setShowSidebar] = useState(true);
-    const [showCardForm, setShowCardForm] = useState(false);
     const [activeFilter, setActiveFilter] = useState("Today");
-    const [reloadCards, setReloadCards] = useState(0)
-
     const filterOptions = ["Today", "This Week", "This Month", "All"];
 
-    const columnData = { "project_board": projectid }
-    const [columns, setColumns] = useState([])
+    const [reloadProjects, setReloadProject] = useState(0)
 
+    const [showSidebar, setShowSidebar] = useState(true);
+    const [showCardForm, setShowCardForm] = useState(false);
+    const [showColumnForm, setShowColumnForm] = useState(false)
+
+    const [columnFormData, setColumnFormData] = useState({
+        name: '',
+        project_board: null,
+        position: 1,
+    })
+    const columnData = { "project_board": projectid }
     const [cardFormData, setCardFormData] = useState({
         name: '',
         column: null,
         description: '',
     })
+
+    const [columns, setColumns] = useState([])
+
     const [cards, setCards] = useState([])
     const [cardsData, setCardsData] = useState()
 
     function handleAddCard(id) {
         setShowCardForm(true)
         setCardFormData({ ...cardFormData, column: id })
+    }
+
+    function handleAddColumn(id) {
+        setShowColumnForm(true)
+        setColumnFormData({ ...columnData, column: id })
     }
 
     function handleChangeName(e) {
@@ -45,6 +58,31 @@ export function Project() {
 
     function handleChangeDescription(e) {
         setCardFormData({ ...cardFormData, description: e.target.value })
+    }
+
+    function handleChangeColumnName(e) {
+        setColumnFormData({ ...columnFormData, name: e.target.value })
+    }
+
+    async function handleSubmitColumn(e) {
+        e.preventDefault()
+        try {
+            const response = await fetch(`http://localhost:8000/columns/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(columnFormData)
+            })
+            const body = await response.json()
+            console.log(body)
+
+            if (response.ok) {
+                setShowColumnForm(false)
+                setColumnFormData({ name: '', project_board: null })
+                setReloadProject(prevReloadProjects => prevReloadProjects + 1)
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async function handleSubmit(e) {
@@ -58,7 +96,7 @@ export function Project() {
             if (response.ok) {
                 setShowCardForm(false)
                 setCardFormData({ name: '', column: null, description: '' });
-                setReloadCards(prevReloadCards => prevReloadCards + 1)
+                setReloadProject(prevreloadProjects => prevreloadProjects + 1)
             }
         } catch (error) {
             console.log(error);
@@ -98,7 +136,7 @@ export function Project() {
             }
         }
         fetchData()
-    }, [reloadCards])
+    }, [reloadProjects])
 
     return (
         <div className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"} grid-rows-[70px_1fr_1fr] bg-gray-100`}>
@@ -198,10 +236,13 @@ export function Project() {
                                 </div>
                             </div>
                         ))}
-                        <div className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-15 flex items-center gap-2 cursor-pointer opacity-85">
+                        <button
+                            className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-15 flex items-center gap-2 cursor-pointer opacity-85"
+                            onClick={() => handleAddColumn(projectid)}
+                        >
                             <IoMdAdd />
                             <h2>Add new column</h2>
-                        </div>
+                        </button>
                     </div>
                 </section>
 
@@ -220,10 +261,25 @@ export function Project() {
                             },
                         ]}
                         handleSubmit={handleSubmit}
-                        setShowCardForm={setShowCardForm}
+                        setShowForm={setShowCardForm}
+                        toCreate='Card'
                     />
                 )}
 
+                {showColumnForm && (
+                    <Form
+                        fields={[
+                            {
+                                label: "Column name",
+                                htmlFor: "column",
+                                onChange: handleChangeColumnName,
+                            }
+                        ]}
+                        handleSubmit={handleSubmitColumn}
+                        setShowForm={setShowColumnForm}
+                        toCreate='Project'
+                    />
+                )}
             </main>
         </div>
     );
