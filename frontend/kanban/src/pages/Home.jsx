@@ -100,7 +100,7 @@ export function Home() {
 
   function sumQnt() {
     if (qnt <= projects.length) {
-      setQnt(qnt + 3);
+      setQnt(qnt + 6);
     }
   }
 

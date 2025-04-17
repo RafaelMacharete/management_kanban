@@ -26,6 +26,9 @@ export function Project() {
   const [showCardForm, setShowCardForm] = useState(false);
   const [showColumnForm, setShowColumnForm] = useState(false);
 
+  const date = new Date('2025-04-17')
+  
+  
   const [columnFormData, setColumnFormData] = useState({
     name: "",
     project_board: null,
@@ -278,7 +281,7 @@ export function Project() {
                     ))}
 
                   <button
-                    className="mt-2 text-sm text-black hover:text-cyan-700 hover:bg-gray-100 py-2 cursor-pointer"
+                    className="text-sm text-black hover:text-cyan-700 hover:bg-gray-100 py-2 cursor-pointer"
                     onClick={() => handleAddCard(column.id)}
                   >
                     + Add new Card
