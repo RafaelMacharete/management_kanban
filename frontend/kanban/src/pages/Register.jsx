@@ -70,6 +70,7 @@ export function Register() {
                         { label: "Password", name: "password", type: "password" },
                         { label: "Email", name: "email", type: "email" },
                         { label: "Profile Image", name: "profile_image", type: "file" },
+                        { label: "Cell Phone", name: "cellphone", type: "number" },
                     ].map((field, index) => (
                         <div key={index} className="mb-2">
                             <label htmlFor={field.name} className="block text-sm text-gray-600 mb-1">
