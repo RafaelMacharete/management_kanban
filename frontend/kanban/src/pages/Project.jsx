@@ -6,8 +6,8 @@ import { RxDoubleArrowLeft } from "react-icons/rx";
 import { FaPen } from "react-icons/fa";
 import { CiGrid2H, CiGrid41 } from "react-icons/ci";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { IoIosCloseCircleOutline, IoMdAdd } from "react-icons/io";
-import { Form } from "../components/Forms";
+import { IoMdAdd } from "react-icons/io";
+import { Form } from "../components/Form";
 
 export function Project() {
     const location = useLocation();

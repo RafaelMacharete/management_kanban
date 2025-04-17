@@ -8,10 +8,11 @@ from .views import (ProjectCreateAPIView,
                     CardListCreateAPIView,
                     CardRetrieveUpdateDestroyAPIView,
                     ColumnListByProjectAPIView,
-                    CardListByProjectAPIView
+                    CardListByProjectAPIView,
+                    AccountCreateView
                     )
 urlpatterns = [
-    path('createuser/', view=views.create_account, name='create_user'),
+    path('register/', AccountCreateView.as_view(), name='register'),
     path('login/', view=views.login, name='login'),
 
     path('accounts/<int:pk>', AccountRetrieveUpdateDestroyAPIView.as_view(), name='alter_get_account'),

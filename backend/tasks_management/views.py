@@ -86,23 +86,16 @@ class CardRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = CardSerializer
 
 
-@api_view(['POST'])
-def create_account(req):
-    username = req.data.get('username')
-    password = req.data.get('password')
-
-    if not username or not password:
-        return Response({'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if Account.objects.filter(username = username).exists():
-        return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    account = Account.objects.create_user(
-        username=username,
-        password=password,
-    )
-
-    return Response({'User created successfully'}, status=status.HTTP_201_CREATED)
+class AccountCreateView(APIView):
+    def post(self, request):
+        serializer = AccountSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+        
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def login(req):

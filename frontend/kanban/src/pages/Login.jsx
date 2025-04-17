@@ -1,7 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import { useState } from "react";
 import Banner from '../assets/aaa.jpg'
-import { FcGoogle } from "react-icons/fc";
 import { OrbitProgress } from 'react-loading-indicators'
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from 'jwt-decode'
