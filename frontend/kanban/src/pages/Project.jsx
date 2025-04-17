@@ -8,12 +8,14 @@ import { CiGrid2H, CiGrid41 } from "react-icons/ci";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import { Form } from "../components/Form";
+import { PiTimerLight } from "react-icons/pi";
 
 export function Project() {
   const location = useLocation();
   const { projectid } = location.state || {};
   const { projectname } = location.state || {};
   const { projects } = location.state || {};
+  const token = localStorage.getItem("token");
 
   const [activeFilter, setActiveFilter] = useState("Today");
   const filterOptions = ["Today", "This Week", "This Month", "All"];
@@ -78,7 +80,10 @@ export function Project() {
     try {
       const response = await fetch(`http://localhost:8000/columns/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(columnFormData),
       });
       if (response.ok) {
@@ -100,7 +105,10 @@ export function Project() {
     try {
       const response = await fetch(`http://localhost:8000/cards/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(cardFormData),
       });
       if (response.ok) {
@@ -123,7 +131,11 @@ export function Project() {
       try {
         const response = await fetch(`http://localhost:8000/column/`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+
+          },
           body: JSON.stringify(columnData),
         });
         const body = await response.json();
@@ -135,11 +147,13 @@ export function Project() {
         setCardsData(columnsIds);
 
         try {
-          console.log(columnsIds.columns_id.length);
           if (columnsIds.columns_id.length <= 0) return;
           const response = await fetch(`http://localhost:8000/card/`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify(columnsIds),
           });
           const body = await response.json();
@@ -156,9 +170,8 @@ export function Project() {
 
   return (
     <div
-      className={`min-h-screen grid ${
-        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-      } grid-rows-[70px_1fr_1fr] bg-gray-100`}
+      className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+        } grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       <Aside
         projects={projects}
@@ -169,7 +182,7 @@ export function Project() {
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}
-          className="absolute top-4 left-2 z-50 bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-100 transition"
+          className="absolute top-4 left-2 z-50 bg-white border border-gray-300 p-2 hover:bg-gray-100 transition"
         >
           <RxDoubleArrowLeft
             size={20}
@@ -181,7 +194,7 @@ export function Project() {
       <Header />
 
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-6">
-        <div className="border border-gray-400 w-min rounded-xl hover:bg-gray-100 relative">
+        <div className="border border-gray-400 w-min rounded-full hover:bg-gray-100 relative">
           <Link to="/projects">
             <MdKeyboardDoubleArrowLeft size={25} />
           </Link>
@@ -194,15 +207,14 @@ export function Project() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex gap-2 bg-white p-1 rounded-lg border border-gray-300">
+              <div className="flex gap-2 bg-white p-1 border border-gray-300">
                 {filterOptions.map((option) => (
                   <button
                     key={option}
-                    className={`px-3 py-1 text-sm font-medium rounded-md transition ${
-                      activeFilter === option
-                        ? "bg-violet-500 text-white"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                    className={`px-3 py-1 text-sm font-medium transition ${activeFilter === option
+                      ? "bg-violet-500 text-white"
+                      : "text-gray-700 hover:bg-gray-100"
+                      }`}
                     onClick={() => setActiveFilter(option)}
                   >
                     {option}
@@ -224,7 +236,7 @@ export function Project() {
           </div>
 
           {/* Project content based on activeFilter */}
-          <div className="p-4 bg-white rounded-xl text-center text-gray-500 border-1 border-gray-300">
+          <div className="p-4 bg-white text-center text-gray-500 border-1 border-gray-300">
             <p className="text-sm">
               Showing tasks for:{" "}
               <span className="font-semibold text-gray-800">
@@ -236,7 +248,7 @@ export function Project() {
             {columns.map((column) => (
               <div
                 key={column.id}
-                className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-min"
+                className="bg-white border border-gray-300  w-72 p-2 h-min"
               >
                 <div className="flex items-center py-2 gap-2 ">
                   <h2 className="text-lg font-semibold text-gray-800 text-center">
@@ -253,14 +265,20 @@ export function Project() {
                     .map((card) => (
                       <div
                         key={card.id}
-                        className="bg-gray-100 border border-gray-300 rounded-xl p-3 text-gray-700 hover:bg-gray-200 cursor-pointer"
+                        className="bg-gray-100 border border-gray-300   p-3 text-gray-700 hover:bg-gray-200 cursor-pointer text-sm"
                       >
-                        {card.name}
+                        <p>
+                          {card.name}
+                        </p>
+                        <span className="flex items-center">
+                          <PiTimerLight />
+                          <p className="font-light">{card.creation_date}</p>
+                        </span>
                       </div>
                     ))}
 
                   <button
-                    className="mt-2 text-sm text-black hover:text-cyan-700 hover:bg-gray-100 border border-dashed border-cyan-300 rounded-xl py-2 cursor-pointer"
+                    className="mt-2 text-sm text-black hover:text-cyan-700 hover:bg-gray-100 py-2 cursor-pointer"
                     onClick={() => handleAddCard(column.id)}
                   >
                     + Add new Card
@@ -269,7 +287,7 @@ export function Project() {
               </div>
             ))}
             <button
-              className="bg-white border border-gray-300 rounded-2xl w-72 p-4 h-15 flex items-center gap-2 cursor-pointer opacity-85"
+              className="bg-white border border-gray-300   w-72 p-4 h-15 flex items-center gap-2 cursor-pointer opacity-85"
               onClick={() => handleAddColumn(projectid)}
             >
               <IoMdAdd />

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Project, Column, Card, Account
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -20,6 +21,14 @@ class AccountSerializer(serializers.ModelSerializer):
             role=validated_data.get('role'),
         )
         return user
+
+class LoginSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['user'] = {
+            'username': self.user.username
+        }
+        return data
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:

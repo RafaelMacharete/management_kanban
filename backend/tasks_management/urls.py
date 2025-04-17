@@ -9,11 +9,12 @@ from .views import (ProjectCreateAPIView,
                     CardRetrieveUpdateDestroyAPIView,
                     ColumnListByProjectAPIView,
                     CardListByProjectAPIView,
-                    AccountCreateView
+                    AccountCreateView,
+                    LoginView
                     )
 urlpatterns = [
     path('register/', AccountCreateView.as_view(), name='register'),
-    path('login/', view=views.login, name='login'),
+    path('login/', LoginView.as_view(), name='login'),
 
     path('accounts/<int:pk>', AccountRetrieveUpdateDestroyAPIView.as_view(), name='alter_get_account'),
     path('projects/', ProjectCreateAPIView.as_view(), name='create_project'),

@@ -7,12 +7,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import authenticate
 from .models import Account, Project, Column, Card
-from .serializers import AccountSerializer, ProjectSerializer, ColumnSerializer, CardSerializer
+from .serializers import AccountSerializer, ProjectSerializer, ColumnSerializer, CardSerializer, LoginSerializer
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.generics import (RetrieveUpdateDestroyAPIView, 
                                      UpdateAPIView, 
                                      ListCreateAPIView,
-                                     
                                      )
 from rest_framework.permissions import IsAuthenticated
 
@@ -28,6 +28,8 @@ class ProjectUpdateAPIView(UpdateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
+
 
 '''CRUD Account'''
 # GET PUT PATCH DELETE
@@ -35,11 +37,14 @@ class AccountRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
+    
 
 '''CRUD Column'''
 # POST
 class ColumnListCreateAPIView(ListCreateAPIView):
     serializer_class = ColumnSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         project_id = self.request.query_params.get('project_board')
@@ -48,6 +53,8 @@ class ColumnListCreateAPIView(ListCreateAPIView):
         return Column.objects.all()
 
 class ColumnListByProjectAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         project_id = request.data.get('project_board')
         if not project_id:
@@ -62,14 +69,20 @@ class ColumnRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Column.objects.all()
     serializer_class = ColumnSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
+
 
 '''CRUD Card'''
 # POST
 class CardListCreateAPIView(ListCreateAPIView):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
+    permission_classes = [IsAuthenticated]
+
 
 class CardListByProjectAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         all_columns_id = request.data.get('columns_id')
         print(request.data)
@@ -84,6 +97,7 @@ class CardListByProjectAPIView(APIView):
 class CardRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class AccountCreateView(APIView):
@@ -97,21 +111,8 @@ class AccountCreateView(APIView):
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-def login(req):
-    username = req.data.get('username')
-    password = req.data.get('password')
-    
-    user = authenticate(username=username, password=password)
-    
-    if user:
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            'access': str(refresh.access_token),
-            'refresh':str(refresh),
-            }, status=status.HTTP_200_OK)
-    else:
-        return Response({'Username or Password invalid'}, status=status.HTTP_401_UNAUTHORIZED)
+class LoginView(TokenObtainPairView):
+    serializer_class = LoginSerializer
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -145,22 +146,3 @@ def get_projects_account_validated(req, qnt=None):
 
     else:
         return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
-
-#
-@api_view(['GET', 'PUT', 'DELETE'])
-def alter_get_account(req, pk):
-    try:
-        account = Account.objects.get(pk=pk)
-    except Account.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    if req.method == 'GET':
-        serializer = AccountSerializer(account)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'PUT':
-        serializer = AccountSerializer(account, data=req.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'DELETE':
-        account.delete()
-        return Response('Account deleted', status=status.HTTP_204_NO_CONTENT)

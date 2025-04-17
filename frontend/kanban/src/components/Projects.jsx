@@ -9,7 +9,7 @@ export function Projects({ projects, members, handleFavorite }) {
           to="/project"
           state={{ projectname: project.name, projectid: project.id, projects: projects }}
           key={project.id}
-          className="bg-white p-4 rounded-xl shadow border border-violet-400 hover:shadow-md transition block"
+          className="bg-white p-4 shadow border border-violet-400 hover:shadow-md transition block"
         >
           <div className="flex justify-between items-start">
             <h2 className="text-lg font-semibold text-gray-700">
