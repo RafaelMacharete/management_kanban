@@ -114,6 +114,11 @@ export function Project() {
   }
 
   useEffect(() => {
+    /*
+    when reloadProject state is updated, columns and card also reload,
+    to prevent a error on first column creation, if columnsIds lower or equals
+    than 0 don't do anything forward.
+    */
     async function fetchData() {
       try {
         const response = await fetch(`http://localhost:8000/column/`, {

@@ -34,11 +34,7 @@ export function Register() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
-
             const body = await response.json();
-            console.log(response);
-            console.log(body);
-
             setIsLoading(false);
 
             if (!response.ok || body.error) {
