@@ -1,12 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+
+
+def validate_image_size(image):
+    max_size = 1 * 1024 * 1024
+    if image.size > max_size:
+        raise ValidationError("Imagem size must be lower than 1MB.")
 
 class Account(AbstractUser):
     email = models.EmailField(unique=False)
     nickname = models.CharField(max_length=35, blank=True, null=True)
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    profile_image = models.ImageField(
+        upload_to='profile_images/',
+        default='user_default.png',
+        blank=True, 
+        null=True, 
+        validators=[validate_image_size]
+        )
     role = models.CharField(max_length=50, blank=True, null=True)
-    
+
     def __str__(self):
         return self.username
     

@@ -5,7 +5,7 @@ from .models import Project, Column, Card, Account
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'username', 'password', 'phone_number', 'email', 'nickname', 'profile_image', 'role']
+        fields = ['id', 'username', 'password', 'email', 'nickname', 'profile_image', 'role']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -14,7 +14,6 @@ class AccountSerializer(serializers.ModelSerializer):
         user = Account.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
-            phone_number=validated_data.get('phone_number'),
             email=validated_data.get('email'),
             nickname=validated_data.get('nickname'),
             profile_image=validated_data.get('profile_image'),

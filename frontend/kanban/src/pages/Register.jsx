@@ -7,8 +7,7 @@ import { OrbitProgress } from 'react-loading-indicators';
 export function Register() {
     const [formData, setFormData] = useState({
         username: '',
-        password: '',
-        phone_number: '',
+        password: null,
         email: '',
         nickname: '',
         profile_image: '',
@@ -16,40 +15,51 @@ export function Register() {
     });
 
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(false);
+    const [errors, setErrors] = useState({});
     const [isRegistered, setIsRegistered] = useState(false);
 
     function handleChange(e) {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        const { name, value, files } = e.target;
+        if (name === "profile_image") {
+            setFormData({ ...formData, profile_image: files[0] });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     }
+
 
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
+        const form = new FormData();
+
+        for (const key in formData) {
+            if (formData[key]) {
+                form.append(key, formData[key]);
+            }
+        }
 
         try {
             const response = await fetch('http://localhost:8000/register/', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: form,
             });
+
             const body = await response.json();
             setIsLoading(false);
 
             if (!response.ok || body.error) {
-                setError(true);
+                setErrors(body);
             } else {
-                setError(false);
+                setErrors({});
                 setIsRegistered(true);
             }
         } catch (error) {
-            console.log('aaa',error);
+            console.error(error);
             setIsLoading(false);
-            setError(true);
-            console.log('aa')
         }
     }
+
 
     if (isRegistered) {
         return <Navigate to="/" />;
@@ -70,7 +80,6 @@ export function Register() {
                         { label: "Password", name: "password", type: "password" },
                         { label: "Email", name: "email", type: "email" },
                         { label: "Profile Image", name: "profile_image", type: "file" },
-                        { label: "Cell Phone", name: "cellphone", type: "number" },
                     ].map((field, index) => (
                         <div key={index} className="mb-2">
                             <label htmlFor={field.name} className="block text-sm text-gray-600 mb-1">
@@ -80,20 +89,17 @@ export function Register() {
                                 type={field.type}
                                 id={field.name}
                                 name={field.name}
-                                value={formData[field.name]}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
-                                required
+                                required={field.name !== "profile_image"}
                             />
+                            {errors[field.name] && (
+                                <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
+                            )}
+
+
                         </div>
                     ))}
-
-                    {/* Error Message */}
-                    {error && (
-                        <p className="text-sm text-red-600 mb-2">
-                            Registration failed. Please try again.
-                        </p>
-                    )}
 
                     {/* Footer */}
                     <div className="flex justify-between items-center text-sm mb-2">
@@ -111,7 +117,7 @@ export function Register() {
                     </button>
                 </form>
 
-                {/* Or Divider */}
+                {/* Divider */}
                 <div className="flex items-center my-6 w-full">
                     <div className="flex-1 border-t border-gray-300"></div>
                     <span className="mx-4 text-gray-500 font-medium">Or</span>
