@@ -9,7 +9,6 @@ def validate_image_size(image):
         raise ValidationError("Imagem size must be lower than 1MB.")
 
 class Account(AbstractUser):
-    email = models.EmailField(unique=False)
     nickname = models.CharField(max_length=35, blank=True, null=True)
     profile_image = models.ImageField(
         upload_to='profile_images/',
@@ -35,7 +34,6 @@ class Column(models.Model):
     name = models.CharField(max_length=30)
     project_board = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="columns")
     position = models.PositiveIntegerField(default=1)
-    # creation_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.project_board.name} - {self.name}"
