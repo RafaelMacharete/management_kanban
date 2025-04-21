@@ -35,7 +35,6 @@ export function Home() {
   }
 
   async function handleFavorite(id) {
-    // To fix it
     const updatedProjects = projects.map((project) => {
       if (project.id === id) {
         return { ...project, favorite: !project.favorite };
