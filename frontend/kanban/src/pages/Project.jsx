@@ -185,7 +185,7 @@ export function Project() {
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}
-          className="absolute top-4 left-2 z-50 bg-white border border-gray-300 p-2 hover:bg-gray-100 transition"
+          className="absolute top-4 left-2 z-10 p-2 hover:bg-gray-100 cursor-pointer"
         >
           <RxDoubleArrowLeft
             size={20}
@@ -193,6 +193,7 @@ export function Project() {
           />
         </button>
       )}
+
 
       <Header />
 
@@ -203,49 +204,49 @@ export function Project() {
           </Link>
         </div>
         <section className="max-w-8xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-semibold text-gray-800">{projectname}</h1>
-                  <button className="text-gray-400 hover:text-violet-600 transition">
-                    <FaPen size={16} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold text-gray-800">{projectname}</h1>
+              <button className="text-gray-400 hover:text-violet-600 transition">
+                <FaPen size={16} />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex gap-1 bg-gray-50 rounded-md p-1 border border-gray-200">
+                {filterOptions.map((option) => (
+                  <button
+                    key={option}
+                    className={`px-3 py-1 text-xs font-medium rounded transition ${activeFilter === option
+                      ? "bg-violet-600 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    onClick={() => setActiveFilter(option)}
+                  >
+                    {option}
                   </button>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex gap-1 bg-gray-50 rounded-md p-1 border border-gray-200">
-                    {filterOptions.map((option) => (
-                      <button
-                        key={option}
-                        className={`px-3 py-1 text-xs font-medium rounded transition ${activeFilter === option
-                          ? "bg-violet-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
-                          }`}
-                        onClick={() => setActiveFilter(option)}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button className="p-1 text-gray-400 hover:text-violet-600">
-                      <CiGrid2H size={20} />
-                    </button>
-                    <button className="p-1 text-gray-400 hover:text-violet-600">
-                      <CiGrid41 size={20} />
-                    </button>
-                  </div>
-                </div>
+                ))}
               </div>
 
-              <div className="p-3 bg-white rounded-md border border-gray-200 text-center">
-                <p className="text-sm text-gray-600">
-                  Showing tasks for:{" "}
-                  <span className="font-medium text-gray-800">
-                    {activeFilter}
-                  </span>
-                </p>
+              <div className="flex gap-2">
+                <button className="p-1 text-gray-400 hover:text-violet-600">
+                  <CiGrid2H size={20} />
+                </button>
+                <button className="p-1 text-gray-400 hover:text-violet-600">
+                  <CiGrid41 size={20} />
+                </button>
               </div>
+            </div>
+          </div>
+
+          <div className="p-3 bg-white rounded-md border border-gray-200 text-center">
+            <p className="text-sm text-gray-600">
+              Showing tasks for:{" "}
+              <span className="font-medium text-gray-800">
+                {activeFilter}
+              </span>
+            </p>
+          </div>
           <div className="flex gap-3 p-4 overflow-x-auto bg-cover bg-no-repeat">
             {columns.map((column) => (
               <div
@@ -302,11 +303,13 @@ export function Project() {
               {
                 label: "Card name",
                 htmlFor: "project",
+                placeholder: "Card name",
                 onChange: handleChangeName,
               },
               {
                 label: "Description",
                 htmlFor: "members",
+                placeholder: "Description",
                 onChange: handleChangeDescription,
               },
             ]}
@@ -322,6 +325,7 @@ export function Project() {
               {
                 label: "Column name",
                 htmlFor: "column",
+                placeholder: "Column name",
                 onChange: handleChangeColumnName,
               },
             ]}

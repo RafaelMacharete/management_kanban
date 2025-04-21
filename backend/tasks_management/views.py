@@ -146,3 +146,14 @@ def get_projects_account_validated(req, qnt=None):
 
     else:
         return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+class SearchAllACounts(APIView):
+    def post(self, request):
+        search = request.data.get('search', None)
+        if search:
+            accounts = Account.objects.filter(username__icontains=search).values('id', 'username')
+            serializer = AccountSerializer(accounts, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Search term is required'}, status=status.HTTP_400_BAD_REQUEST)
+

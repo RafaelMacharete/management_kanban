@@ -25,6 +25,7 @@ export function Form({ fields, handleSubmit, setShowForm, toCreate }) {
                             <input
                                 type="text"
                                 id={field.htmlFor}
+                            placeholder={field.placeholder}
                                 className="mt-1 w-full h-9 px-3 border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 text-sm"
                                 onChange={field.onChange}
                             />

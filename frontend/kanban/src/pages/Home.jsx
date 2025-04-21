@@ -11,15 +11,13 @@ export function Home() {
   const [members, setMembers] = useState([]);
   const [qnt, setQnt] = useState(9);
   const token = localStorage.getItem("token");
-  const [logOut, setLogOut] = useState(false)
   const [showSidebar, setShowSidebar] = useState(true);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
   const [reloadProjects, setReloadProjects] = useState(0);
-
-  const [favorite, setFavorite] = useState({
-    favorite: false,
-  });
+  const [allAccounts, setAllAccounts] = useState([]);
+  const [showAllAccounts, setShowAllAccounts] = useState(false);
+  const [membersInput, setMembersInput] = useState([]);
 
   const isLogged = localStorage.getItem("isLogged");
 
@@ -29,7 +27,6 @@ export function Home() {
   });
 
   function exit() {
-    setLogOut(true);
     window.location.href = "/";
     localStorage.clear();
   }
@@ -73,10 +70,39 @@ export function Home() {
   }
 
   function handleChangeMembers(e) {
-    let membersInput = e.target.value.split(",");
-    membersInput = membersInput.map((item) => Number(item));
+    let membersInput = e.target.value;
     setFormData({ ...formData, members: membersInput });
+    setMembersInput(membersInput);
+    console.log(membersInput)
   }
+
+  useEffect(() => {
+    if (membersInput.length <= 0) return;
+    
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await fetch("http://localhost:8000/accounts/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ search: membersInput }),
+        });
+        if (response.status === 401) {
+          setUnauthorized(true);
+          return;
+        }
+        const body = await response.json();
+        setAllAccounts(body);
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
+      }
+    }, 700);
+  
+    return () => clearTimeout(timeoutId);
+  }, [membersInput]);
+
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -88,13 +114,11 @@ export function Home() {
       },
       body: JSON.stringify(formData),
     });
-    const body = await response.json();
     if (response.ok) {
       setShowProjectForm(false)
       setFormData({ name: "", members: [] });
       setReloadProjects(prevReloadProjects => prevReloadProjects + 1)
     }
-    console.log(body)
   }
 
   function sumQnt() {
@@ -119,7 +143,6 @@ export function Home() {
           setUnauthorized(true);
           return;
         }
-
         const body = await response.json();
         setProjects(body.projects);
         setMembers(body.members);
@@ -146,7 +169,7 @@ export function Home() {
       {!showSidebar && (
         <button
           onClick={() => setShowSidebar(!showSidebar)}
-          className="absolute top-4 left-2 z-50 bg-white border border-gray-300 rounded-full p-2 shadow-md hover:bg-gray-100 transition"
+          className="absolute top-4 left-2 z-10 p-2 hover:bg-gray-100 cursor-pointer"
         >
           <RxDoubleArrowLeft
             size={20}
@@ -156,22 +179,22 @@ export function Home() {
       )}
 
       {unauthorized && isLogged && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div className="bg-white w-full max-w-sm p-6 rounded-xl shadow-xl text-center animate-fade-in">
-            <h2 className="text-2xl font-bold text-red-600 mb-2">
-              Session Expired
-            </h2>
-            <p className="text-gray-700 mb-4">
-              Your session has expired. Please log in again to continue.
-            </p>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+        <div className="bg-white w-full max-w-xs p-5 rounded-lg shadow-lg text-center">
+          <h2 className="text-lg font-medium mb-3">Session Expired</h2>
+          <p className="text-gray-600 mb-4 text-sm">
+            Please log in again to continue.
+          </p>
+          <div className="border-t border-gray-100 pt-3">
             <button
               onClick={exit}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+              className="text-blue-500 font-medium text-sm w-full py-2 hover:bg-gray-50 cursor-pointer"
             >
               Go to Login
             </button>
           </div>
         </div>
+      </div>
       )}
 
       {/* Main header*/}
@@ -181,23 +204,28 @@ export function Home() {
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
         {/* Modal */}
         {showProjectForm && (
+          <>
           <Form
             toCreate='Project'
             fields={[
               {
                 label: "Project name",
                 htmlFor: "project",
+                placeholder: "Project name",
                 onChange: handleChangeName,
               },
               {
                 label: "Members",
                 htmlFor: "members",
+                placeholder: "Search for accounts name",
                 onChange: handleChangeMembers,
               },
             ]}
             handleSubmit={handleSubmit}
             setShowForm={setShowProjectForm}
           />
+          <p>oi</p>
+          </>
         )}
 
         <div className="max-w-8xl mx-auto">
@@ -205,7 +233,7 @@ export function Home() {
             <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
             <button
               onClick={handleClickProjectForm}
-              className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition"
+            className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-violet-500 text-white hover:bg-violet-600"
             >
               <GrFormAdd size={20} />
               <span>Create Project</span>

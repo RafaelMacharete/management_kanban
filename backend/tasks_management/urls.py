@@ -10,7 +10,8 @@ from .views import (ProjectCreateAPIView,
                     ColumnListByProjectAPIView,
                     CardListByProjectAPIView,
                     AccountCreateView,
-                    LoginView
+                    LoginView,
+                    SearchAllACounts
                     )
 urlpatterns = [
     path('register/', AccountCreateView.as_view(), name='register'),
@@ -28,5 +29,6 @@ urlpatterns = [
     path('cards/<int:pk>', CardRetrieveUpdateDestroyAPIView.as_view(), name='get_create_cards'),
     path('card/', CardListByProjectAPIView.as_view(), name='get_create_cards'),
     
-    path('jwt/', views.get_projects_account_validated, name='jwt')
+    path('accounts/', views.SearchAllACounts.as_view(), name='search_all_accounts'),
+    path('jwt/', views.get_projects_account_validated, name='jwt'),
 ]
