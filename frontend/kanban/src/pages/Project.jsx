@@ -27,8 +27,8 @@ export function Project() {
   const [showColumnForm, setShowColumnForm] = useState(false);
 
   const date = new Date('2025-04-17')
-  
-  
+
+
   const [columnFormData, setColumnFormData] = useState({
     name: "",
     project_board: null,
@@ -203,50 +203,49 @@ export function Project() {
           </Link>
         </div>
         <section className="max-w-8xl mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 text-gray-800">
-              <h1 className="text-2xl font-bold">{projectname}</h1>
-              <FaPen className="text-gray-500 hover:text-violet-600 transition cursor-pointer" />
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex gap-2 bg-white p-1 border border-gray-300">
-                {filterOptions.map((option) => (
-                  <button
-                    key={option}
-                    className={`px-3 py-1 text-sm font-medium transition ${activeFilter === option
-                      ? "bg-violet-500 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    onClick={() => setActiveFilter(option)}
-                  >
-                    {option}
+        <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-semibold text-gray-800">{projectname}</h1>
+                  <button className="text-gray-400 hover:text-violet-600 transition">
+                    <FaPen size={16} />
                   </button>
-                ))}
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex gap-1 bg-gray-50 rounded-md p-1 border border-gray-200">
+                    {filterOptions.map((option) => (
+                      <button
+                        key={option}
+                        className={`px-3 py-1 text-xs font-medium rounded transition ${activeFilter === option
+                          ? "bg-violet-600 text-white"
+                          : "text-gray-600 hover:bg-gray-100"
+                          }`}
+                        onClick={() => setActiveFilter(option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button className="p-1 text-gray-400 hover:text-violet-600">
+                      <CiGrid2H size={20} />
+                    </button>
+                    <button className="p-1 text-gray-400 hover:text-violet-600">
+                      <CiGrid41 size={20} />
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex gap-2 text-gray-600 cursor-pointer">
-                <CiGrid2H
-                  size={24}
-                  className="hover:text-violet-600 transition"
-                />
-                <CiGrid41
-                  size={24}
-                  className="hover:text-violet-600 transition"
-                />
+              <div className="p-3 bg-white rounded-md border border-gray-200 text-center">
+                <p className="text-sm text-gray-600">
+                  Showing tasks for:{" "}
+                  <span className="font-medium text-gray-800">
+                    {activeFilter}
+                  </span>
+                </p>
               </div>
-            </div>
-          </div>
-
-          {/* Project content based on activeFilter */}
-          <div className="p-4 bg-white text-center text-gray-500 border-1 border-gray-300">
-            <p className="text-sm">
-              Showing tasks for:{" "}
-              <span className="font-semibold text-gray-800">
-                {activeFilter}
-              </span>
-            </p>
-          </div>
           <div className="flex gap-3 p-4 overflow-x-auto bg-cover bg-no-repeat">
             {columns.map((column) => (
               <div
@@ -268,15 +267,13 @@ export function Project() {
                     .map((card) => (
                       <div
                         key={card.id}
-                        className="bg-gray-100 border border-gray-300   p-3 text-gray-700 hover:bg-gray-200 cursor-pointer text-sm"
+                        className="p-3 bg-gray-50 rounded border border-gray-200 hover:border-gray-300 cursor-pointer"
                       >
-                        <p>
-                          {card.name}
-                        </p>
-                        <span className="flex items-center">
-                          <PiTimerLight />
-                          <p className="font-light">{card.creation_date}</p>
-                        </span>
+                        <p className="text-sm font-medium text-gray-800 mb-1">{card.name}</p>
+                        <div className="flex items-center text-xs text-gray-500">
+                          <PiTimerLight className="mr-1" />
+                          <span>{card.creation_date}</span>
+                        </div>
                       </div>
                     ))}
 

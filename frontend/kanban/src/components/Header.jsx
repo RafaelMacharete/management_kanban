@@ -12,33 +12,35 @@ export function Header() {
         window.location.href = "/";
         localStorage.clear();
     }
+    
     return (
-        <header className="bg-white border-b border-gray-300">
-            <div className="flex max-w-6xl mx-auto justify-between items-center h-full">
+        <header className="bg-white border-b border-gray-200 py-3">
+            <div className="flex max-w-6xl mx-auto justify-between items-center h-full px-4">
                 <div className="relative w-full max-w-md">
                     <input
                         type="text"
-                        placeholder="Search for a task"
-                        className="w-full bg-white h-10 px-4 pr-12 rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                        placeholder="Search..."
+                        className="w-full bg-gray-50 h-9 px-4 pr-10 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 text-sm transition"
                     />
-                    <button className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-violet-600 transition">
-                        <CiSearch size={24} />
+                    <button className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                        <CiSearch size={20} />
                     </button>
                 </div>
 
-                {/* User content */}
-                <div className="flex items-center gap-3 text-gray-700 font-medium">
-                    <p>
-                        <span className="text-xl text-cyan-700 underline">
-                            {username}
-                        </span>
-                    </p>
-                    <CiBellOn size={30}/>
-                    <RxExit
+                <div className="flex items-center gap-4">
+                    <button className="text-gray-500 hover:text-gray-700 p-1">
+                        <CiBellOn size={22}/>
+                    </button>
+                    <div className="text-sm font-medium text-gray-700">
+                        {username}
+                    </div>
+                    <button
                         onClick={exit}
-                        className="cursor-pointer text-gray-500 hover:text-red-600 transition"
-                        size={24}
-                    />
+                        className="text-gray-500 hover:text-red-600 p-1 transition"
+                        title="Logout"
+                    >
+                        <RxExit size={20} />
+                    </button>
                 </div>
             </div>
         </header>

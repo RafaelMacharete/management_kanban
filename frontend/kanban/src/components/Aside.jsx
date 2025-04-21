@@ -3,119 +3,85 @@ import { RxDoubleArrowLeft } from "react-icons/rx";
 import { PiSquaresFourLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
 
-export function Aside({ projects, showSidebar, setShowSidebar}) {
-
+export function Aside({ projects, showSidebar, setShowSidebar }) {
     return (
-        // Left Bar
         <aside
-            className={`row-span-3 grid grid-rows-[70px_1fr_1fr] bg-white border-r border-gray-300 ${showSidebar ? "opacity-100" : "opacity-0"
-                } `}
+            className={`fixed md:relative h-screen md:h-auto row-span-3 bg-white border-r border-gray-200 transition-all duration-300 ${
+                showSidebar ? "w-64 opacity-100" : "w-0 md:w-16 opacity-0 md:opacity-100"
+            }`}
         >
-            {/* Button to hide aside */}
-            {showSidebar && (
-                <div className="flex justify-between items-center  px-4 py-2 border-b border-gray-300">
-                    <Link 
-                        className="flex items-center gap-2"
-                        to='/projects'
+            <div className="h-full flex flex-col">
+                {/* Header */}
+                <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
+                    {showSidebar ? (
+                        <Link 
+                            className="flex items-center gap-2"
+                            to='/projects'
                         >
-                        
-                        <FiTrello size={30} className="text-violet-600" />
-                        <h1 className="text-xl font-semibold text-gray-800">Trellio</h1>
-                    </Link>
+                            <FiTrello size={24} className="text-violet-600" />
+                            <h1 className="text-lg font-medium text-gray-800">Trellio</h1>
+                        </Link>
+                    ) : (
+                        <Link to='/projects' className="p-2">
+                            <FiTrello size={24} className="text-violet-600" />
+                        </Link>
+                    )}
                     <button
                         onClick={() => setShowSidebar(!showSidebar)}
-                        className="bg-white border border-gray-300 rounded-full p-2 hover:bg-gray-100 transition"
+                        className="hidden md:flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 transition"
                     >
                         <RxDoubleArrowLeft
-                            size={20}
-                            className="text-gray-600 hover:text-violet-600 transition"
+                            size={18}
+                            className="text-gray-500"
                         />
                     </button>
                 </div>
-            )}
 
-            {/* Links on aside*/}
-            <div className="flex flex-col justify-start gap-4 p-4 text-gray-700">
-                <div className="flex items-center gap-3 group">
-                    <PiSquaresFourLight
-                        size={26}
-                        className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-                    />
-                    <a
-                        href="#"
-                        className="text-base hover:text-pink-600 transition duration-200"
-                    >
-                        Home
-                    </a>
-                </div>
-                <div className="flex items-center gap-3 group">
-                    <PiSquaresFourLight
-                        size={26}
-                        className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-                    />
-                    <a
-                        href="#"
-                        className="text-base hover:text-pink-600 transition duration-200"
-                    >
-                        Projects
-                    </a>
-                </div>
-                <div className="flex items-center gap-3 group">
-                    <PiSquaresFourLight
-                        size={26}
-                        className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-                    />
-                    <a
-                        href="#"
-                        className="text-base hover:text-pink-600 transition duration-200"
-                    >
-                        Teams
-                    </a>
-                </div>
-                <div className="flex items-center gap-3 group">
-                    <PiSquaresFourLight
-                        size={26}
-                        className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-                    />
-                    <a
-                        href="#"
-                        className="text-base hover:text-pink-600 transition duration-200"
-                    >
-                        Tasks
-                    </a>
-                </div>
-                <div className="flex items-center gap-3 group">
-                    <PiSquaresFourLight
-                        size={26}
-                        className="text-gray-500 group-hover:text-pink-600 transition duration-200"
-                    />
-                    <a
-                        href="#"
-                        className="text-base hover:text-pink-600 transition duration-200"
-                    >
-                        Settings
-                    </a>
-                </div>
-            </div>
-
-            {/* Exhibition of projects */}
-            <div className="p-4 bg-white text-sm rounded-b-lg shadow">
-                <div className="flex flex-col gap-4 p-2 border-t border-gray-200">
-                    <b className="text-xl text-violet-700">Favorite Projects</b>
-
-                    {/* Lista de projetos */}
-                    <div className="h-67 overflow-y-scroll flex flex-col gap-2 border-2 border-gray-300 p-2">
-                        {projects
-                            .filter((project) => project.favorite === true)
-                            .map((project) => (
-                                <p key={project.id}>{project.name}</p>
-                            ))}
+                {/* Navigation */}
+                <nav className="flex-1 overflow-y-auto py-4">
+                    <div className="space-y-1 px-2">
+                        {[
+                            { icon: <PiSquaresFourLight size={20} />, label: "Home" },
+                            { icon: <PiSquaresFourLight size={20} />, label: "Projects" },
+                            { icon: <PiSquaresFourLight size={20} />, label: "Teams" },
+                            { icon: <PiSquaresFourLight size={20} />, label: "Tasks" },
+                            { icon: <PiSquaresFourLight size={20} />, label: "Settings" }
+                        ].map((item, index) => (
+                            <a
+                                key={index}
+                                href="#"
+                                className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-50 hover:text-violet-600 transition"
+                            >
+                                <span className="text-gray-500">{item.icon}</span>
+                                {showSidebar && <span>{item.label}</span>}
+                            </a>
+                        ))}
                     </div>
-                </div>
+
+                    {/* Projects section */}
+                    <div className="mt-8 px-4">
+                        {showSidebar && (
+                            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                Favorite Projects
+                            </h3>
+                        )}
+                        <div className="space-y-1">
+                            {projects
+                                .filter((project) => project.favorite)
+                                .map((project) => (
+                                    <a
+                                        key={project.id}
+                                        href="#"
+                                        className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-50 transition truncate"
+                                    >
+                                        <span className="w-2 h-2 rounded-full bg-violet-500"></span>
+                                        {showSidebar && <span>{project.name}</span>}
+                                    </a>
+                                ))}
+                        </div>
+                    </div>
+                </nav>
             </div>
         </aside>
-
-
-
-    )
+    );
 }
