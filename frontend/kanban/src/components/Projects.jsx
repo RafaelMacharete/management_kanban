@@ -30,13 +30,22 @@ export function Projects({ projects, members, handleFavorite }) {
             </button>
           </div>
 
-          {members
-            .filter((member) => project.members.includes(member.id))
-            .map((member) => (
-              <p key={member.id} className="text-sm text-gray-500 mt-1">
-                {member.username}
-              </p>
-            ))}
+          <div className="mt-2 flex items-center gap-2 flex-wrap">
+            {members
+              .filter((member) => project.members.includes(member.id))
+              .map((member) => (
+                <div key={member.id} className="flex items-center gap-1">
+                  <img 
+                    src={member.profile_image} 
+                    alt={member.username}
+                    className="w-6 h-6 rounded-full object-cover border border-gray-200"
+                  />
+                  <span className="text-sm text-gray-500">
+                    {member.username}
+                  </span>
+                </div>
+              ))}
+          </div>
         </Link>
       ))}
     </div>

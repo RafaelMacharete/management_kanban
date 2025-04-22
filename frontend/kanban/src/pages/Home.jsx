@@ -17,6 +17,8 @@ export function Home() {
   const [reloadProjects, setReloadProjects] = useState(0);
   const [allAccounts, setAllAccounts] = useState([]);
   const [membersInput, setMembersInput] = useState([]);
+  const [addedAccounts, setAddedAccounts] = useState([]);
+  const [formError, setFormError] = useState(null);
 
   const isLogged = localStorage.getItem("isLogged");
 
@@ -55,8 +57,16 @@ export function Home() {
       console.error(error);
     }
   }
+
   const handleClickProjectForm = (e) => {
     setShowProjectForm(!showProjectForm);
+    setFormError(null);
+    if (!showProjectForm) {
+      setFormData({ name: "", members: [] });
+      setAddedAccounts([]);
+      setAllAccounts([]);
+      setMembersInput("");
+    }
   };
 
   if (!isLogged || !token) {
@@ -70,12 +80,14 @@ export function Home() {
 
   function handleChangeMembers(e) {
     let membersInput = e.target.value;
-    setFormData({ ...formData, members: [membersInput] });
     setMembersInput(membersInput);
   }
 
   useEffect(() => {
-    if (membersInput.length <= 0) return;
+    if (membersInput.length <= 0) {
+      setAllAccounts([]);
+      return;
+    }
 
     const timeoutId = setTimeout(async () => {
       try {
@@ -88,7 +100,6 @@ export function Home() {
           body: JSON.stringify({ search: membersInput }),
         });
         if (response.status === 401) {
-          console.log(response)
           setUnauthorized(true);
           return;
         }
@@ -102,25 +113,49 @@ export function Home() {
     return () => clearTimeout(timeoutId);
   }, [membersInput]);
 
-  function addMember(account) {
-    console.log("Membro clicado:", account);
-  } 
+  function addMember(accountId) {
+    if (!formData.members.includes(accountId)) {
+      const account = allAccounts.find((acc) => acc.id === accountId);
+      if (!account) return;
+
+      setFormData((prev) => ({ ...prev, members: [...prev.members, accountId] }));
+
+      setAddedAccounts((prev) => [...prev, account]);
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const response = await fetch("http://localhost:8000/projects/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(formData),
-    });
-    const body = await response.json();
-    if (response.ok) {
+    setFormError(null);
+
+    if (!formData.name.trim()) {
+      setFormError("Project name is required");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/projects/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create project");
+      }
+
       setShowProjectForm(false);
       setFormData({ name: "", members: [] });
-      setReloadProjects((prevReloadProjects) => prevReloadProjects + 1);
+      setAddedAccounts([]);
+      setAllAccounts([]);
+      setMembersInput("");
+      setReloadProjects(prev => prev + 1);
+    } catch (error) {
+      setFormError(error.message);
     }
   }
 
@@ -158,9 +193,8 @@ export function Home() {
 
   return (
     <div
-      className={`min-h-screen grid ${
-        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-      } 
+      className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+        } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       <Aside
@@ -223,10 +257,15 @@ export function Home() {
                 onChange: handleChangeMembers,
               },
             ]}
+            formDataSetter={setFormData}
+            formData={formData}
             handleSubmit={handleSubmit}
             setShowForm={setShowProjectForm}
             allAccounts={allAccounts}
             addMember={addMember}
+            addedAccounts={addedAccounts}
+            setAddedAccounts={setAddedAccounts}
+            formError={formError}
           />
         )}
 

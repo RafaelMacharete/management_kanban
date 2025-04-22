@@ -8,8 +8,27 @@ export function Form({
   toCreate,
   allAccounts,
   addMember,
+  formData,
+  formDataSetter,
+  addedAccounts,
+  setAddedAccounts,
+  formError,
 }) {
-  console.log(allAccounts);
+  function removeMember(id) {
+    const updated = formData.members.filter((memberId) => memberId !== id);
+    formDataSetter((prev) => ({ ...prev, members: updated }));
+    setAddedAccounts((prev) => prev.filter((acc) => acc.id !== id));
+  }
+
+  function handleMembersInputChange(e) {
+    const value = e.target.value;
+    if (value === "") {
+      formDataSetter((prev) => ({ ...prev, members: [] }));
+      setAddedAccounts([]);
+    }
+    fields.find(f => f.htmlFor === "members").onChange(e);
+  }
+
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 relative animate-fade-in">
@@ -24,8 +43,35 @@ export function Form({
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {formError && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+              {formError}
+            </div>
+          )}
           {fields.map((field, idx) => (
             <div key={idx} className="space-y-2">
+              {field.htmlFor === "members" && formData.members.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {formData.members.map((id) => {
+                    const selected = addedAccounts.find((acc) => acc.id === id);
+                    return selected ? (
+                      <span
+                        key={id}
+                        className="flex items-center gap-2 bg-violet-100 text-violet-700 px-3 py-1 rounded-full text-sm font-medium"
+                      >
+                        {selected.username}
+                        <button
+                          onClick={() => removeMember(id)}
+                          className="text-violet-500 hover:text-red-500 transition"
+                          title="Remove member"
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              )}
               <label
                 htmlFor={field.htmlFor}
                 className="block text-sm font-medium text-gray-700"
@@ -37,7 +83,7 @@ export function Form({
                 id={field.htmlFor}
                 placeholder={field.placeholder}
                 className="w-full h-10 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
-                onChange={field.onChange}
+                onChange={field.htmlFor === "members" ? handleMembersInputChange : field.onChange}
               />
             </div>
           ))}
@@ -64,8 +110,11 @@ export function Form({
                       <img
                         src={account.profile_image}
                         alt={account.username}
-                        onClick={() => addMember(account)}
-                        className="w-12 h-12 rounded-full hover:scale-125  object-cover border-2 border-gray-200 group-hover:border-violet-400 transition-all"
+                        onClick={() => addMember(account.id)}
+                        className={`w-12 h-12 rounded-full object-cover border-2 transition-all cursor-pointer
+    ${formData.members.includes(account.id)
+                            ? 'border-violet-500 ring-2 ring-violet-400'
+                            : 'border-gray-200 hover:scale-125 group-hover:border-violet-400'}`}
                       />
                     </div>
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-all pointer-events-none">

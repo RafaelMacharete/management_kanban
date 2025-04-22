@@ -24,7 +24,10 @@ class Account(AbstractUser):
             'unique': _("A user with that username already exists."),
         },
     )
-    
+    role_choice = (
+        ('admin', 'Admin'),
+        ('user', 'User'),
+    )
     
     nickname = models.CharField(max_length=35, blank=True, null=True)
     profile_image = models.ImageField(
@@ -34,7 +37,7 @@ class Account(AbstractUser):
         null=True, 
         validators=[validate_image_size]
         )
-    role = models.CharField(max_length=50, blank=True, null=True)
+    role = models.CharField(max_length=50, blank=True, null=True, choices=role_choice)
 
     def __str__(self):
         return self.username
