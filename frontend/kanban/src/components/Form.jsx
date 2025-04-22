@@ -7,7 +7,9 @@ export function Form({
   setShowForm,
   toCreate,
   allAccounts,
+  addMember,
 }) {
+  console.log(allAccounts);
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 relative animate-fade-in">
@@ -22,8 +24,8 @@ export function Form({
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {fields.map((field, index) => (
-            <div key={index} className="space-y-2">
+          {fields.map((field, idx) => (
+            <div key={idx} className="space-y-2">
               <label
                 htmlFor={field.htmlFor}
                 className="block text-sm font-medium text-gray-700"
@@ -53,15 +55,16 @@ export function Form({
                 Existing accounts:
               </p>
               <div className="grid grid-cols-4 gap-3">
-                {allAccounts.map((account, index) => (
+                {allAccounts.map((account, idx) => (
                   <div
-                    key={index}
+                    key={idx}
                     className="relative group flex flex-col items-center"
                   >
                     <div className="relative">
                       <img
                         src={account.profile_image}
                         alt={account.username}
+                        onClick={() => addMember(account)}
                         className="w-12 h-12 rounded-full hover:scale-125  object-cover border-2 border-gray-200 group-hover:border-violet-400 transition-all"
                       />
                     </div>

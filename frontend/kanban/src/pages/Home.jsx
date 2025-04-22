@@ -16,7 +16,6 @@ export function Home() {
   const [unauthorized, setUnauthorized] = useState(false);
   const [reloadProjects, setReloadProjects] = useState(0);
   const [allAccounts, setAllAccounts] = useState([]);
-  const [showAllAccounts, setShowAllAccounts] = useState(false);
   const [membersInput, setMembersInput] = useState([]);
 
   const isLogged = localStorage.getItem("isLogged");
@@ -77,7 +76,7 @@ export function Home() {
 
   useEffect(() => {
     if (membersInput.length <= 0) return;
-    
+
     const timeoutId = setTimeout(async () => {
       try {
         const response = await fetch("http://localhost:8000/accounts/", {
@@ -89,6 +88,7 @@ export function Home() {
           body: JSON.stringify({ search: membersInput }),
         });
         if (response.status === 401) {
+          console.log(response)
           setUnauthorized(true);
           return;
         }
@@ -98,10 +98,13 @@ export function Home() {
         console.error("Error fetching accounts:", error);
       }
     }, 700);
-  
+
     return () => clearTimeout(timeoutId);
   }, [membersInput]);
 
+  function addMember(account) {
+    console.log("Membro clicado:", account);
+  } 
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -114,11 +117,10 @@ export function Home() {
       body: JSON.stringify(formData),
     });
     const body = await response.json();
-    console.log(body)
     if (response.ok) {
-      setShowProjectForm(false)
+      setShowProjectForm(false);
       setFormData({ name: "", members: [] });
-      setReloadProjects(prevReloadProjects => prevReloadProjects + 1)
+      setReloadProjects((prevReloadProjects) => prevReloadProjects + 1);
     }
   }
 
@@ -156,8 +158,9 @@ export function Home() {
 
   return (
     <div
-      className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-        } 
+      className={`min-h-screen grid ${
+        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+      } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       <Aside
@@ -180,21 +183,21 @@ export function Home() {
 
       {unauthorized && isLogged && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-        <div className="bg-white w-full max-w-xs p-5 rounded-lg shadow-lg text-center">
-          <h2 className="text-lg font-medium mb-3">Session Expired</h2>
-          <p className="text-gray-600 mb-4 text-sm">
-            Please log in again to continue.
-          </p>
-          <div className="border-t border-gray-100 pt-3">
-            <button
-              onClick={exit}
-              className="text-blue-500 font-medium text-sm w-full py-2 hover:bg-gray-50 cursor-pointer"
-            >
-              Go to Login
-            </button>
+          <div className="bg-white w-full max-w-xs p-5 rounded-lg shadow-lg text-center">
+            <h2 className="text-lg font-medium mb-3">Session Expired</h2>
+            <p className="text-gray-600 mb-4 text-sm">
+              Please log in again to continue.
+            </p>
+            <div className="border-t border-gray-100 pt-3">
+              <button
+                onClick={exit}
+                className="text-blue-500 font-medium text-sm w-full py-2 hover:bg-gray-50 cursor-pointer"
+              >
+                Go to Login
+              </button>
+            </div>
           </div>
         </div>
-      </div>
       )}
 
       {/* Main header*/}
@@ -204,9 +207,8 @@ export function Home() {
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
         {/* Modal */}
         {showProjectForm && (
-          <>
           <Form
-            toCreate='Project'
+            toCreate="Project"
             fields={[
               {
                 label: "Project name",
@@ -224,9 +226,8 @@ export function Home() {
             handleSubmit={handleSubmit}
             setShowForm={setShowProjectForm}
             allAccounts={allAccounts}
+            addMember={addMember}
           />
-          <p>oi</p>
-          </>
         )}
 
         <div className="max-w-8xl mx-auto">
@@ -234,7 +235,7 @@ export function Home() {
             <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
             <button
               onClick={handleClickProjectForm}
-            className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-violet-500 text-white hover:bg-violet-600"
+              className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-violet-500 text-white hover:bg-violet-600"
             >
               <GrFormAdd size={20} />
               <span>Create Project</span>
@@ -246,19 +247,18 @@ export function Home() {
             members={members}
             handleFavorite={handleFavorite}
           />
-
-
         </div>
         <div className="text-sm text-gray-600 mb-2 text-right">
-          Showing <span className="font-semibold text-gray-800">{projects.length}</span> project{projects.length !== 1 && 's'}
+          Showing{" "}
+          <span className="font-semibold text-gray-800">{projects.length}</span>{" "}
+          project{projects.length !== 1 && "s"}
         </div>
-
 
         <p
           className="cursor-pointer underline font-light w-20 text-center mx-auto"
           onClick={sumQnt}
         >
-          {qnt <= projects.length ? "Show More" : ''}
+          {qnt <= projects.length ? "Show More" : ""}
         </p>
       </main>
     </div>

@@ -1,14 +1,31 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.translation import gettext_lazy as _   
 
 def validate_image_size(image):
     max_size = 1 * 1024 * 1024
     if image.size > max_size:
         raise ValidationError("Imagem size must be lower than 1MB.")
 
+class MyValidator(UnicodeUsernameValidator):
+    regex = r'^[\w.@+\- ]+$'
+    
 class Account(AbstractUser):
+    username_validator = MyValidator()
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+            error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
+    
+    
     nickname = models.CharField(max_length=35, blank=True, null=True)
     profile_image = models.ImageField(
         upload_to='profile_images/',

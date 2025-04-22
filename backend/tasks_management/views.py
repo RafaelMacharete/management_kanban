@@ -157,4 +157,3 @@ class SearchAllACounts(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Search term is required'}, status=status.HTTP_400_BAD_REQUEST)
-
