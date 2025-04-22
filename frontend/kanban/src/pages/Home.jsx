@@ -71,9 +71,8 @@ export function Home() {
 
   function handleChangeMembers(e) {
     let membersInput = e.target.value;
-    setFormData({ ...formData, members: membersInput });
+    setFormData({ ...formData, members: [membersInput] });
     setMembersInput(membersInput);
-    console.log(membersInput)
   }
 
   useEffect(() => {
@@ -114,6 +113,8 @@ export function Home() {
       },
       body: JSON.stringify(formData),
     });
+    const body = await response.json();
+    console.log(body)
     if (response.ok) {
       setShowProjectForm(false)
       setFormData({ name: "", members: [] });
@@ -131,7 +132,6 @@ export function Home() {
     async function fetchData() {
       try {
         if (!isLogged || !token) return;
-
         const response = await fetch(`http://localhost:8000/jwt/?qnt=${qnt}`, {
           method: "POST",
           headers: {
@@ -223,6 +223,7 @@ export function Home() {
             ]}
             handleSubmit={handleSubmit}
             setShowForm={setShowProjectForm}
+            allAccounts={allAccounts}
           />
           <p>oi</p>
           </>
