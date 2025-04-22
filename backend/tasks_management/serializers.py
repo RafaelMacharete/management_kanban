@@ -3,9 +3,11 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Project, Column, Card, Account
 
 class AccountSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField('get_image_url')
+
     class Meta:
         model = Account
-        fields = ['id', 'username', 'password', 'email', 'nickname', 'profile_image', 'role']
+        fields = ['id', 'username', 'password', 'email', 'nickname', 'profile_image', 'role', 'image_url']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -20,6 +22,17 @@ class AccountSerializer(serializers.ModelSerializer):
             role=validated_data.get('role'),
         )
         return user
+    
+    
+    def get_image_url(self, obj):
+        request = self.context.get('request', None)
+        if request is not None and obj.profile_image:
+            return request.build_absolute_uri(obj.profile_image.url)
+        elif obj.profile_image:
+            return obj.profile_image.url
+        return '/media/no_profile_image.webp'
+
+
 
 class LoginSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
