@@ -12,10 +12,11 @@ import { PiTimerLight } from "react-icons/pi";
 
 export function Project() {
   const location = useLocation();
-  const { projectid } = location.state || {};
-  const { projectname } = location.state || {};
-  const { projects } = location.state || {};
+  const { projectid, projectname, projects } = location.state || {};
   const token = localStorage.getItem("token");
+
+  const [allAccounts, setAllAccounts] = useState([]);
+
 
   const [activeFilter, setActiveFilter] = useState("Today");
   const filterOptions = ["Today", "This Week", "This Month", "All"];
@@ -46,6 +47,9 @@ export function Project() {
   const [cards, setCards] = useState([]);
   const [cardsData, setCardsData] = useState();
 
+  if (!location.state) {
+    window.location.href = "/projects";
+  }
   function handleAddCard(id) {
     // Set Modal on and add id to column on CardFormData
     setShowCardForm(true);
@@ -248,7 +252,7 @@ export function Project() {
             </p>
           </div>
           <div className="flex gap-3 p-4 overflow-x-auto bg-cover bg-no-repeat">
-            {columns.map((column) => (
+            {columns && columns.map((column) => (
               <div
                 key={column.id}
                 className="bg-white border border-gray-300  w-72 p-2 h-min"
@@ -316,6 +320,8 @@ export function Project() {
             handleSubmit={handleSubmit}
             setShowForm={setShowCardForm}
             toCreate="Card"
+            allAccounts={allAccounts}
+            isHome={false}
           />
         )}
 
@@ -332,6 +338,7 @@ export function Project() {
             handleSubmit={handleSubmitColumn}
             setShowForm={setShowColumnForm}
             toCreate="Project"
+            allAccounts={allAccounts}
           />
         )}
       </main>

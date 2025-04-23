@@ -13,12 +13,14 @@ export function Form({
   addedAccounts,
   setAddedAccounts,
   formError,
+  isHome
 }) {
   function removeMember(id) {
     const updated = formData.members.filter((memberId) => memberId !== id);
     formDataSetter((prev) => ({ ...prev, members: updated }));
     setAddedAccounts((prev) => prev.filter((acc) => acc.id !== id));
   }
+
 
   function handleMembersInputChange(e) {
     const value = e.target.value;
@@ -95,12 +97,12 @@ export function Form({
             Create
           </button>
 
-          {allAccounts.length > 0 && (
+          {allAccounts.length > 0 && isHome &&(
             <div className="mt-6">
               <p className="text-sm font-medium text-gray-700 mb-3">
                 Existing accounts:
               </p>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-zs-4 gap-3">
                 {allAccounts.map((account, idx) => (
                   <div
                     key={idx}
@@ -126,7 +128,7 @@ export function Form({
                   </div>
                 ))}
               </div>
-              {allAccounts.length > 1 && (
+              {allAccounts.length > 1 && isHome &&(
                 <p className="text-xs text-gray-500 mt-3 text-center">
                   {allAccounts.length} accounts found
                 </p>

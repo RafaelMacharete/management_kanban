@@ -8,7 +8,7 @@ def validate_image_size(image):
     max_size = 1 * 1024 * 1024
     if image.size > max_size:
         raise ValidationError("Imagem size must be lower than 1MB.")
-
+    
 class MyValidator(UnicodeUsernameValidator):
     regex = r'^[\w.@+\- ]+$'
     
