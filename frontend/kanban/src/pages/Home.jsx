@@ -4,7 +4,7 @@ import { RxDoubleArrowLeft } from "react-icons/rx";
 import { Projects } from "../components/Projects";
 import { Aside } from "../components/aside";
 import { Header } from "../components/Header";
-import { Form } from "../components/Form";
+import { FormProject } from "../components/FormProject";
 
 export function Home() {
   const [projects, setProjects] = useState([]);
@@ -241,7 +241,7 @@ export function Home() {
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
         {/* Modal */}
         {showProjectForm && (
-          <Form
+          <FormProject
             toCreate="Project"
             fields={[
               {

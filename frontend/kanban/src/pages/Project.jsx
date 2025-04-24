@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Aside } from "../components/aside";
 import { Header } from "../components/Header";
 import { RxDoubleArrowLeft } from "react-icons/rx";
-import { FaPen } from "react-icons/fa";
+import { FaPen, FaCheck } from "react-icons/fa";
 import { CiGrid2H, CiGrid41 } from "react-icons/ci";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
@@ -16,7 +16,8 @@ export function Project() {
   const token = localStorage.getItem("token");
 
   const [allAccounts, setAllAccounts] = useState([]);
-
+  const [projectName, setProjectName] = useState(projectname);
+  const [isEditingProjectName, setIsEditingProjectName] = useState(false);
 
   const [activeFilter, setActiveFilter] = useState("Today");
   const filterOptions = ["Today", "This Week", "This Month", "All"];
@@ -27,8 +28,7 @@ export function Project() {
   const [showCardForm, setShowCardForm] = useState(false);
   const [showColumnForm, setShowColumnForm] = useState(false);
 
-  const date = new Date('2025-04-17')
-
+  const date = new Date('2025-04-17');
 
   const [columnFormData, setColumnFormData] = useState({
     name: "",
@@ -43,46 +43,67 @@ export function Project() {
   });
 
   const [columns, setColumns] = useState([]);
-
   const [cards, setCards] = useState([]);
   const [cardsData, setCardsData] = useState();
 
   if (!location.state) {
     window.location.href = "/projects";
   }
+
+  const updateProjectName = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/projects/${projectid}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: projectName }),
+      });
+
+      if (response.ok) {
+        setIsEditingProjectName(false);
+      } else {
+        console.error("Failed to update project name");
+      }
+    } catch (error) {
+      console.error("Error updating project name:", error);
+    }
+  };
+
+  const handleProjectNameChange = (e) => {
+    setProjectName(e.target.value);
+  };
+
+  const handleProjectNameKeyDown = (e) => {
+    if (e.key === "Enter") {
+      updateProjectName();
+    }
+  };
+
   function handleAddCard(id) {
-    // Set Modal on and add id to column on CardFormData
     setShowCardForm(true);
     setCardFormData({ ...cardFormData, column: id });
   }
 
   function handleAddColumn(id) {
-    // Set Modal on and add id to column on ColumnFormData
     setShowColumnForm(true);
     setColumnFormData({ ...columnData, column: id });
   }
 
   function handleChangeName(e) {
-    // On name input change, add into cardFormData
     setCardFormData({ ...cardFormData, name: e.target.value });
-    console.log(cardFormData);
   }
 
   function handleChangeDescription(e) {
-    // On description input change, add into cardFormData
     setCardFormData({ ...cardFormData, description: e.target.value });
   }
 
   function handleChangeColumnName(e) {
-    // On name input change, add into columnFormData
     setColumnFormData({ ...columnFormData, name: e.target.value });
   }
 
   async function handleSubmitColumn(e) {
-    /* 
-    On submit column form, if input is valid, create a new column,
-    clear the input, and reload component listening to reloadProject state
-    */
     e.preventDefault();
     try {
       const response = await fetch(`http://localhost:8000/columns/`, {
@@ -104,10 +125,6 @@ export function Project() {
   }
 
   async function handleSubmit(e) {
-    /* 
-    On submit card form, if inputs are valid, create a new card,
-    clear the input, and reload component listening to reloadProject state
-    */
     e.preventDefault();
     try {
       const response = await fetch(`http://localhost:8000/cards/`, {
@@ -129,11 +146,6 @@ export function Project() {
   }
 
   useEffect(() => {
-    /*
-    when reloadProject state is updated, columns and card also reload,
-    to prevent a error on first column creation, if columnsIds lower or equals
-    than 0 don't do anything forward.
-    */
     async function fetchData() {
       try {
         const response = await fetch(`http://localhost:8000/column/`, {
@@ -141,7 +153,6 @@ export function Project() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-
           },
           body: JSON.stringify(columnData),
         });
@@ -198,7 +209,6 @@ export function Project() {
         </button>
       )}
 
-
       <Header />
 
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-6">
@@ -210,10 +220,33 @@ export function Project() {
         <section className="max-w-[1400px] mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-gray-800">{projectname}</h1>
-              <button className="text-gray-400 hover:text-violet-600 transition">
-                <FaPen size={16} />
-              </button>
+              {isEditingProjectName ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    className="text-2xl font-semibold text-gray-800 border-b border-gray-400 focus:outline-none focus:border-violet-600"
+                    value={projectName}
+                    onChange={handleProjectNameChange}
+                    onKeyDown={handleProjectNameKeyDown}
+                    autoFocus
+                  />
+                  <button
+                    className="text-violet-600 hover:text-violet-800 transition"
+                    onClick={updateProjectName}
+                  >
+                    <FaCheck size={16} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-semibold text-gray-800">{projectName}</h2>
+                  <button
+                    className="text-gray-400 hover:text-violet-600 transition"
+                    onClick={() => setIsEditingProjectName(true)}
+                  >
+                    <FaPen size={16} />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-4">
@@ -320,8 +353,6 @@ export function Project() {
             handleSubmit={handleSubmit}
             setShowForm={setShowCardForm}
             toCreate="Card"
-            allAccounts={allAccounts}
-            isHome={false}
           />
         )}
 
