@@ -13,7 +13,7 @@ export function Form({
   addedAccounts,
   setAddedAccounts,
   formError,
-  isHome
+  isHome,
 }) {
   function removeMember(id) {
     const updated = formData.members.filter((memberId) => memberId !== id);
@@ -21,14 +21,13 @@ export function Form({
     setAddedAccounts((prev) => prev.filter((acc) => acc.id !== id));
   }
 
-
   function handleMembersInputChange(e) {
     const value = e.target.value;
     if (value === "") {
       formDataSetter((prev) => ({ ...prev, members: [] }));
       setAddedAccounts([]);
     }
-    fields.find(f => f.htmlFor === "members").onChange(e);
+    fields.find((f) => f.htmlFor === "members").onChange(e);
   }
 
   return (
@@ -85,7 +84,11 @@ export function Form({
                 id={field.htmlFor}
                 placeholder={field.placeholder}
                 className="w-full h-10 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
-                onChange={field.htmlFor === "members" ? handleMembersInputChange : field.onChange}
+                onChange={
+                  field.htmlFor === "members"
+                    ? handleMembersInputChange
+                    : field.onChange
+                }
               />
             </div>
           ))}
@@ -97,12 +100,12 @@ export function Form({
             Create
           </button>
 
-          {allAccounts.length > 0 && isHome &&(
+          {allAccounts.length > 0 && isHome && (
             <div className="mt-6">
               <p className="text-sm font-medium text-gray-700 mb-3">
                 Existing accounts:
               </p>
-              <div className="grid grid-zs-4 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 {allAccounts.map((account, idx) => (
                   <div
                     key={idx}
@@ -114,9 +117,11 @@ export function Form({
                         alt={account.username}
                         onClick={() => addMember(account.id)}
                         className={`w-12 h-12 rounded-full object-cover border-2 transition-all cursor-pointer
-    ${formData.members.includes(account.id)
-                            ? 'border-violet-500 ring-2 ring-violet-400'
-                            : 'border-gray-200 hover:scale-125 group-hover:border-violet-400'}`}
+    ${
+      formData.members.includes(account.id)
+        ? "border-violet-500 ring-2 ring-violet-400"
+        : "border-gray-200 hover:scale-125 group-hover:border-violet-400"
+    }`}
                       />
                     </div>
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-all pointer-events-none">
@@ -128,7 +133,7 @@ export function Form({
                   </div>
                 ))}
               </div>
-              {allAccounts.length > 1 && isHome &&(
+              {allAccounts.length > 1 && isHome && (
                 <p className="text-xs text-gray-500 mt-3 text-center">
                   {allAccounts.length} accounts found
                 </p>

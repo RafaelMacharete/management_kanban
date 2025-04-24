@@ -217,11 +217,11 @@ export function Project() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex gap-1 bg-gray-50 rounded-md p-1 border border-gray-200">
+              <div className="flex gap-1 bg-gray-50 p-1 border border-gray-200">
                 {filterOptions.map((option) => (
                   <button
                     key={option}
-                    className={`px-3 py-1 text-xs font-medium rounded transition ${activeFilter === option
+                    className={`px-3 py-1 text-xs font-medium transition ${activeFilter === option
                       ? "bg-violet-600 text-white"
                       : "text-gray-600 hover:bg-gray-100"
                       }`}
@@ -243,7 +243,7 @@ export function Project() {
             </div>
           </div>
 
-          <div className="p-3 bg-white rounded-md border border-gray-200 text-center">
+          <div className="p-3 bg-white border border-gray-200 text-center">
             <p className="text-sm text-gray-600">
               Showing tasks for:{" "}
               <span className="font-medium text-gray-800">
@@ -251,7 +251,7 @@ export function Project() {
               </span>
             </p>
           </div>
-          <div className="flex gap-3 p-4 overflow-x-auto bg-cover bg-no-repeat">
+          <div className="flex gap-3 overflow-x-auto bg-cover bg-no-repeat">
             {columns && columns.map((column) => (
               <div
                 key={column.id}
@@ -272,7 +272,7 @@ export function Project() {
                     .map((card) => (
                       <div
                         key={card.id}
-                        className="p-3 bg-gray-50 rounded border border-gray-200 hover:border-gray-300 cursor-pointer"
+                        className="p-3 bg-gray-50 border border-gray-200 hover:border-gray-300 cursor-pointer"
                       >
                         <p className="text-sm font-medium text-gray-800 mb-1">{card.name}</p>
                         <div className="flex items-center text-xs text-gray-500">

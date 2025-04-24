@@ -15,11 +15,11 @@ export function Header() {
     
     return (
         <header className="bg-white border-b border-gray-200 py-3">
-            <div className="flex max-w-6xl mx-auto justify-between items-center h-full px-4">
+            <div className="flex max-w-7xl mx-auto justify-between items-center h-full ">
                 <div className="relative w-full max-w-md">
                     <input
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Search for projects"
                         className="w-full bg-gray-50 h-9 px-4 pr-10 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 text-sm transition"
                     />
                     <button className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
