@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Project, Column, Card, Account
 
+
 class AccountSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_image_url')
 
@@ -31,8 +32,6 @@ class AccountSerializer(serializers.ModelSerializer):
         elif obj.profile_image:
             return obj.profile_image.url
         return '/media/no_profile_image.webp'
-
-
 
 class LoginSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):

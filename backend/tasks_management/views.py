@@ -1,13 +1,8 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Account
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.contrib.auth import authenticate
-from .models import Account, Project, Column, Card
-from .serializers import AccountSerializer, ProjectSerializer, ColumnSerializer, CardSerializer, LoginSerializer
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.generics import (RetrieveUpdateDestroyAPIView, 
@@ -15,6 +10,11 @@ from rest_framework.generics import (RetrieveUpdateDestroyAPIView,
                                      ListCreateAPIView,
                                      )
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsProjectOwner
+
+from .models import Account
+from .models import Account, Project, Column, Card
+from .serializers import AccountSerializer, ProjectSerializer, ColumnSerializer, CardSerializer, LoginSerializer
 
 '''CRUD Project'''
 # GET POST
@@ -28,7 +28,7 @@ class ProjectUpdateAPIView(UpdateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     lookup_field = 'pk'
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsProjectOwner]
 
 
 '''CRUD Account'''

@@ -24,10 +24,6 @@ class Account(AbstractUser):
             'unique': _("A user with that username already exists."),
         },
     )
-    role_choice = (
-        ('admin', 'Admin'),
-        ('user', 'User'),
-    )
     
     nickname = models.CharField(max_length=35, blank=True, null=True)
     profile_image = models.ImageField(
@@ -37,12 +33,18 @@ class Account(AbstractUser):
         null=True, 
         validators=[validate_image_size]
         )
+    '''
+    role_choice = (
+        ('owner', 'Owner'),
+        ('user', 'User'),
+    )
     role = models.CharField(max_length=50, blank=True, null=True, choices=role_choice)
-
+    '''
     def __str__(self):
         return self.username
     
 class Project(models.Model):
+    owner = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="projects")
     name = models.CharField(max_length=50)
     members = models.ManyToManyField(Account)
     favorite = models.BooleanField(default=False)

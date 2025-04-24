@@ -9,6 +9,9 @@ import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import { Form } from "../components/Form";
 import { PiTimerLight } from "react-icons/pi";
+import { HiMiniPencilSquare } from "react-icons/hi2";
+import { FaRegCircle } from "react-icons/fa";
+
 
 export function Project() {
   const location = useLocation();
@@ -46,11 +49,17 @@ export function Project() {
   const [cards, setCards] = useState([]);
   const [cardsData, setCardsData] = useState();
 
+  const [showCardInfo, setShowCardInfo] = useState(false);
+
   if (!location.state) {
     window.location.href = "/projects";
   }
 
-  const updateProjectName = async () => {
+  async function updateProjectName() {
+    if (projectName.trim() === "") {
+      alert("Project name cannot be empty");
+      return;
+    }
     try {
       const response = await fetch(`http://localhost:8000/projects/${projectid}`, {
         method: "PATCH",
@@ -145,6 +154,10 @@ export function Project() {
     }
   }
 
+  function handleSetShowCardInfo() {
+    setShowCardInfo(!showCardInfo);
+  }
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -185,6 +198,8 @@ export function Project() {
     }
     fetchData();
   }, [reloadProjects]);
+
+
 
   return (
     <div
@@ -294,6 +309,7 @@ export function Project() {
                   <h2 className="text-lg font-semibold text-gray-800 text-center">
                     {column.name}
                   </h2>
+
                   <h2 className="bg-gray-300 rounded-full w-[24px] text-center font-light">
                     {cards.filter((card) => card.column === column.id).length}
                   </h2>
@@ -304,13 +320,19 @@ export function Project() {
                     .filter((card) => card.column === column.id)
                     .map((card) => (
                       <div
+                        onClick={() => handleSetShowCardInfo(card.id)}
+                        // onMouseEnter={() => setShowCardInfo(true)}
+                        // onMouseLeave={() => setShowCardInfo(false)} 
                         key={card.id}
                         className="p-3 bg-gray-50 border border-gray-200 hover:border-gray-300 cursor-pointer"
                       >
                         <p className="text-sm font-medium text-gray-800 mb-1">{card.name}</p>
                         <div className="flex items-center text-xs text-gray-500">
-                          <PiTimerLight className="mr-1" />
-                          <span>{card.creation_date}</span>
+                          <PiTimerLight size={12} className="mr-1" />
+                          <span>{date.toLocaleDateString()}</span>
+                          <div className="flex items-center gap-1 ml-auto" onClick={handleSetShowCardInfo}>
+                            <HiMiniPencilSquare size={12} className="text-gray-400" />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -371,6 +393,15 @@ export function Project() {
             toCreate="Project"
             allAccounts={allAccounts}
           />
+        )}
+
+        {showCardInfo && (
+          <div className="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+            <div >
+              <FaRegCircle title="Set as concluded" />
+
+            </div>
+          </div>
         )}
       </main>
     </div>

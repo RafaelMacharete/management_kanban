@@ -27,6 +27,7 @@ export function Home() {
     members: [],
   });
 
+
   function exit() {
     window.location.href = "/";
     localStorage.clear();
