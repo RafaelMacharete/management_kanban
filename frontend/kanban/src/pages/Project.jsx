@@ -207,7 +207,7 @@ export function Project() {
             <MdKeyboardDoubleArrowLeft size={25} />
           </Link>
         </div>
-        <section className="max-w-8xl mx-auto space-y-6">
+        <section className="max-w-[1400px] mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-semibold text-gray-800">{projectname}</h1>

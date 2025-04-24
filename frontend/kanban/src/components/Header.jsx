@@ -3,7 +3,7 @@ import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { CiBellOn } from "react-icons/ci";
 
-export function Header() {
+export function Header({ showSidebar }) {
     const username = localStorage.getItem("username") || localStorage.getItem("user");
     const [logOut, setLogOut] = useState(false);
 
@@ -12,10 +12,10 @@ export function Header() {
         window.location.href = "/";
         localStorage.clear();
     }
-    
+
     return (
         <header className="bg-white border-b border-gray-200 py-3">
-            <div className="flex max-w-7xl mx-auto justify-between items-center h-full ">
+            <div className={`flex max-w-[1400px] ${!showSidebar && "px-10"} mx-auto justify-between items-center h-full `}>
                 <div className="relative w-full max-w-md">
                     <input
                         type="text"
@@ -29,7 +29,7 @@ export function Header() {
 
                 <div className="flex items-center gap-4">
                     <button className="text-gray-500 hover:text-gray-700 p-1">
-                        <CiBellOn size={22}/>
+                        <CiBellOn size={22} />
                     </button>
                     <div className="text-sm font-medium text-gray-700">
                         {username}

@@ -235,7 +235,7 @@ export function Home() {
       )}
 
       {/* Main header*/}
-      <Header />
+      <Header showSidebar={showSidebar} />
 
       {/* Main content */}
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
@@ -270,7 +270,7 @@ export function Home() {
           />
         )}
 
-        <div className="max-w-7xl mx-auto">
+        <div className={`max-w-[1400px] mx-auto ${!showSidebar && "px-4"}`}>
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
             <button

@@ -85,9 +85,9 @@ export function Form({
                 placeholder={field.placeholder}
                 className="w-full h-10 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
                 onChange={
-                  field.htmlFor === "members"
-                    ? handleMembersInputChange
-                    : field.onChange
+                  // field.htmlFor === "members"
+                    // ? handleMembersInputChange
+                    field.onChange
                 }
               />
             </div>
