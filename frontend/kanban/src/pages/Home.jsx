@@ -19,6 +19,7 @@ export function Home() {
   const [membersInput, setMembersInput] = useState([]);
   const [addedAccounts, setAddedAccounts] = useState([]);
   const [formError, setFormError] = useState(null);
+  const [projectSearched, setProjectSearched] = useState([]);
 
   const isLogged = localStorage.getItem("isLogged");
 
@@ -26,7 +27,6 @@ export function Home() {
     name: "",
     members: [],
   });
-
 
   function exit() {
     window.location.href = "/";
@@ -119,7 +119,10 @@ export function Home() {
       const account = allAccounts.find((acc) => acc.id === accountId);
       if (!account) return;
 
-      setFormData((prev) => ({ ...prev, members: [...prev.members, accountId] }));
+      setFormData((prev) => ({
+        ...prev,
+        members: [...prev.members, accountId],
+      }));
 
       setAddedAccounts((prev) => [...prev, account]);
     }
@@ -154,7 +157,7 @@ export function Home() {
       setAddedAccounts([]);
       setAllAccounts([]);
       setMembersInput("");
-      setReloadProjects(prev => prev + 1);
+      setReloadProjects((prev) => prev + 1);
     } catch (error) {
       setFormError(error.message);
     }
@@ -194,8 +197,9 @@ export function Home() {
 
   return (
     <div
-      className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-        } 
+      className={`min-h-screen grid ${
+        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+      } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       <Aside
@@ -236,7 +240,11 @@ export function Home() {
       )}
 
       {/* Main header*/}
-      <Header showSidebar={showSidebar} />
+      <Header
+        showSidebar={showSidebar}
+        projectSearched={projectSearched}
+        setProjectSearched={setProjectSearched}
+      />
 
       {/* Main content */}
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-7">
@@ -284,10 +292,11 @@ export function Home() {
           </div>
 
           <Projects
-            projects={projects}
+            projects={projectSearched.length > 0 ? projectSearched : projects}
             members={members}
             handleFavorite={handleFavorite}
           />
+          
         </div>
         <div className="text-sm text-gray-600 mb-2 text-right">
           Showing{" "}

@@ -31,6 +31,9 @@ export function Project() {
   const [showCardForm, setShowCardForm] = useState(false);
   const [showColumnForm, setShowColumnForm] = useState(false);
 
+  const [projectSearched, setProjectSearched] = useState([]);
+
+
   const date = new Date('2025-04-17');
 
   const [columnFormData, setColumnFormData] = useState({
@@ -224,7 +227,11 @@ export function Project() {
         </button>
       )}
 
-      <Header />
+  <Header
+        showSidebar={showSidebar}
+        projectSearched={projectSearched}
+        setProjectSearched={setProjectSearched}
+      />
 
       <main className="row-span-2 bg-gray-50 p-6 overflow-y-auto space-y-6">
         <div className="border border-gray-400 w-min rounded-full hover:bg-gray-100 relative">

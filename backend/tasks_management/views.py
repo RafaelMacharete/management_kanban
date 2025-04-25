@@ -10,7 +10,7 @@ from rest_framework.generics import (RetrieveUpdateDestroyAPIView,
                                      ListCreateAPIView,
                                      )
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsProjectOwner
+# from .permissions import IsProjectOwner
 
 from .models import Account
 from .models import Account, Project, Column, Card
@@ -28,7 +28,7 @@ class ProjectUpdateAPIView(UpdateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     lookup_field = 'pk'
-    permission_classes = [IsProjectOwner]
+    # permission_classes = [IsProjectOwner]
 
 
 '''CRUD Account'''
@@ -154,6 +154,23 @@ class SearchAllACounts(APIView):
         if search:
             accounts = Account.objects.filter(username__icontains=search)
             serializer = AccountSerializer(accounts, many=True, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Search term is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+class SearchSpecificProject(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        search_project = request.data.get('search', None)
+        user = request.user
+
+        if search_project:
+            projects = Project.objects.filter(
+                members=user,
+                name__icontains=search_project
+            )
+            serializer = ProjectSerializer(projects, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Search term is required'}, status=status.HTTP_400_BAD_REQUEST)

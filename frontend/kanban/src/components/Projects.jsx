@@ -32,9 +32,9 @@ export function Projects({ projects, members, handleFavorite }) {
                 className="transition-transform duration-200 ease-in-out transform hover:scale-110 cursor-pointer"
               >
                 {project.favorite ? (
-                  <FaStar size={23} className="text-cyan-700" />
+                  <FaStar size={23} className="text-yellow-400" />
                 ) : (
-                  <FaRegStar size={20} className="text-gray-500 hover:text-cyan-700" />
+                  <FaRegStar size={20} className="text-gray-500 hover:text-yellow-400" />
                 )}
               </button>
             </div>

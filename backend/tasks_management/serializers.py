@@ -8,7 +8,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'username', 'password', 'email', 'nickname', 'profile_image', 'role', 'image_url']
+        fields = ['id', 'username', 'password', 'email', 'nickname', 'profile_image', 'image_url']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -20,7 +20,6 @@ class AccountSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             nickname=validated_data.get('nickname'),
             profile_image=validated_data.get('profile_image'),
-            role=validated_data.get('role'),
         )
         return user
     

@@ -1,23 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { CiBellOn } from "react-icons/ci";
 
-export function Header({ showSidebar }) {
+export function Header({ showSidebar, projectSearched, setProjectSearched }) {
     const username = localStorage.getItem("username") || localStorage.getItem("user");
-    const [logOut, setLogOut] = useState(false);
+    const [inputValue, setInputValue] = useState({ search: '' });
+    const token = localStorage.getItem("token");
 
     function exit() {
-        setLogOut(true);
         window.location.href = "/";
         localStorage.clear();
     }
+
+    function handleInputChange(e) {
+        e.preventDefault();
+        setInputValue({ ...inputValue, search: e.target.value });
+    }
+
+    useEffect(() => {
+        if (inputValue.search === '') {
+            setProjectSearched([]);
+            return;
+        }
+
+        const timeoutId = setTimeout(async () => {
+            try {
+                const response = await fetch('http://localhost:8000/projects/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(inputValue)
+                });
+                const body = await response.json();
+                setProjectSearched(body); 
+            } catch (error) {
+                console.log(error);
+            }
+        }, 700);
+
+        return () => clearTimeout(timeoutId);
+    }, [inputValue, token, setProjectSearched]);
 
     return (
         <header className="bg-white border-b border-gray-200 py-3">
             <div className={`flex max-w-[1400px] ${!showSidebar && "px-10"} mx-auto justify-between items-center h-full `}>
                 <div className="relative w-full max-w-md">
                     <input
+                    onChange={handleInputChange}
                         type="text"
                         placeholder="Search for projects"
                         className="w-full bg-gray-50 h-9 px-4 pr-10 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 text-sm transition"

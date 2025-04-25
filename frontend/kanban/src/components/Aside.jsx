@@ -2,6 +2,7 @@ import { FiTrello } from "react-icons/fi";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { PiSquaresFourLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
 export function Aside({ projects, showSidebar, setShowSidebar }) {
 
@@ -72,17 +73,14 @@ export function Aside({ projects, showSidebar, setShowSidebar }) {
                             <a
                                 key={project.id}
                                 href="#"
-                                className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-200"
+                                className="flex items-center text-center gap-3 px-3 py-2 text-sm rounded-lg text-gray-600 hover:bg-gray-200"
                             >
-                                <span className="w-2 h-2 rounded-full bg-violet-500"></span>
+                                <span className="text-yellow-400"><FaStar></FaStar></span>
                                 {showSidebar && <span>{project.name}</span>}
                             </a>
                         ))}
                 </div>
             </div>
         </aside>
-
-
-
     )
 }
