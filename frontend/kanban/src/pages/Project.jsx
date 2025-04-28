@@ -54,9 +54,162 @@ export function Project() {
 
   const [showCardInfo, setShowCardInfo] = useState(false);
 
+  const [selectedCard, setSelectedCard] = useState(null);
+
   if (!location.state) {
     window.location.href = "/projects";
   }
+
+
+
+
+
+
+
+
+
+
+  async function fetchCardDetails(cardId) {
+    try {
+      const response = await fetch(`http://localhost:8000/cards/${cardId}/detail/`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching card details:', error);
+      return null;
+    }
+  }
+
+  async function updateCard(cardId, data) {
+    try {
+      const response = await fetch(`http://localhost:8000/cards/${cardId}/update/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating card:', error);
+      return null;
+    }
+  }
+
+
+
+
+
+
+  // Atualizar informações do card
+  const handleCardUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedCard = await updateCard(selectedCard.card.id, {
+        name: selectedCard.card.name,
+        description: selectedCard.card.description,
+        due_date: selectedCard.card.due_date,
+        priority: selectedCard.card.priority,
+        assigned_to: selectedCard.card.assigned_to?.id || null,
+        column: selectedCard.card.column
+      });
+
+      if (updatedCard) {
+        // Atualiza a lista de cards
+        setCards(cards.map(card =>
+          card.id === updatedCard.id ? updatedCard : card
+        ));
+        setShowCardInfo(false);
+      }
+    } catch (error) {
+      console.error("Error updating card:", error);
+    }
+  };
+
+  // Manipular mudanças nos campos do card
+  const handleCardFieldChange = (field, value) => {
+    setSelectedCard(prev => ({
+      ...prev,
+      card: {
+        ...prev.card,
+        [field]: value
+      }
+    }));
+  };
+
+  // Adicionar novo comentário
+  const [newComment, setNewComment] = useState("");
+
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    try {
+      const response = await fetch('http://localhost:8000/comments/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          card: selectedCard.card.id,
+          text: newComment
+        })
+      });
+
+      if (response.ok) {
+        const comment = await response.json();
+        setSelectedCard(prev => ({
+          ...prev,
+          comments: [...prev.comments, comment]
+        }));
+        setNewComment("");
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
+
+  // Manipular upload de arquivos
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('card', selectedCard.card.id);
+
+    try {
+      const response = await fetch('http://localhost:8000/attachments/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const attachment = await response.json();
+        setSelectedCard(prev => ({
+          ...prev,
+          attachments: [...prev.attachments, attachment]
+        }));
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+
+
+
+
+
+
 
   async function updateProjectName() {
     if (projectName.trim() === "") {
@@ -157,9 +310,34 @@ export function Project() {
     }
   }
 
-  function handleSetShowCardInfo() {
-    setShowCardInfo(!showCardInfo);
+  async function handleSetShowCardInfo(cardId) {
+    try {
+      const cardDetails = await fetchCardDetails(cardId);
+      setSelectedCard(cardDetails);
+      setShowCardInfo(true);
+    } catch (error) {
+      console.error("Error fetching card details:", error);
+    }
   }
+
+
+  useEffect(() => {
+    async function fetchProjectMembers() {
+      try {
+        const response = await fetch(`http://localhost:8000/projects/${projectid}/members/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const members = await response.json();
+        setAllAccounts(members);
+      } catch (error) {
+        console.error("Error fetching project members:", error);
+      }
+    }
+
+    fetchProjectMembers();
+  }, [projectid, token]);
 
   useEffect(() => {
     async function fetchData() {
@@ -202,8 +380,6 @@ export function Project() {
     fetchData();
   }, [reloadProjects]);
 
-
-
   return (
     <div
       className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
@@ -227,7 +403,7 @@ export function Project() {
         </button>
       )}
 
-  <Header
+      <Header
         showSidebar={showSidebar}
         projectSearched={projectSearched}
         setProjectSearched={setProjectSearched}
@@ -328,8 +504,6 @@ export function Project() {
                     .map((card) => (
                       <div
                         onClick={() => handleSetShowCardInfo(card.id)}
-                        // onMouseEnter={() => setShowCardInfo(true)}
-                        // onMouseLeave={() => setShowCardInfo(false)} 
                         key={card.id}
                         className="p-3 bg-gray-50 border border-gray-200 hover:border-gray-300 cursor-pointer"
                       >
@@ -402,11 +576,213 @@ export function Project() {
           />
         )}
 
-        {showCardInfo && (
+        {showCardInfo && selectedCard && (
           <div className="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-            <div >
-              <FaRegCircle title="Set as concluded" />
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="border-b border-gray-200 p-4 flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-800">Card Details</h3>
+                <button
+                  onClick={() => setShowCardInfo(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
 
+              {/* Modal Content */}
+              <div className="p-6">
+                {/* Card Title */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 text-lg font-medium"
+                    value={selectedCard.card.name || ''}
+                    onChange={(e) => handleCardFieldChange('name', e.target.value)}
+                  />
+                </div>
+
+                {/* Card Description */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    rows="4"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    value={selectedCard.card.description || ''}
+                    onChange={(e) => handleCardFieldChange('description', e.target.value)}
+                  ></textarea>
+                </div>
+
+                {/* Card Meta Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  {/* Due Date */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                    <input
+                      type="date"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      value={selectedCard.card.due_date || ''}
+                      onChange={(e) => handleCardFieldChange('due_date', e.target.value)}
+                    />
+                  </div>
+
+                  {/* Priority */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                    <select
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      value={selectedCard.card.priority || 'medium'}
+                      onChange={(e) => handleCardFieldChange('priority', e.target.value)}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="critical">Critical</option>
+                    </select>
+                  </div>
+
+                  {/* Status */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      value={selectedCard.card.column}
+                      onChange={(e) => handleCardFieldChange('column', parseInt(e.target.value))}
+                    >
+                      {columns.map(column => (
+                        <option key={column.id} value={column.id}>{column.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Assignee */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Assignee</label>
+                    <select
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      value={selectedCard.card.assigned_to?.id || ''}
+                      onChange={(e) => handleCardFieldChange('assigned_to', e.target.value ? parseInt(e.target.value) : null)}
+                    >
+                      <option value="">Unassigned</option>
+                      {allAccounts.map(account => (
+                        <option key={account.id} value={account.id}>{account.username}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Attachments */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Attachments</label>
+                  {selectedCard.attachments.length > 0 && (
+                    <div className="mb-4 space-y-2">
+                      {selectedCard.attachments.map(attachment => (
+                        <div key={attachment.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <a
+                            href={attachment.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {attachment.name}
+                          </a>
+                          <button className="text-red-500 hover:text-red-700">
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
+                    <p className="text-sm text-gray-500 mb-2">Drag & drop files here or click to upload</p>
+                    <input
+                      type="file"
+                      id="file-upload"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 transition cursor-pointer inline-block"
+                    >
+                      Upload Files
+                    </label>
+                  </div>
+                </div>
+
+                {/* Comments Section */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Comments</label>
+                  <div className="space-y-4">
+                    {/* Comment Input */}
+                    <form onSubmit={handleAddComment} className="flex gap-3">
+                      <div className="flex-shrink-0">
+                        <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                          <span className="text-gray-600">U</span>
+                        </div>
+                      </div>
+                      <div className="flex-grow">
+                        <textarea
+                          rows="2"
+                          placeholder="Add a comment..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                        ></textarea>
+                        <div className="mt-2 flex justify-end">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 transition"
+                          >
+                            Comment
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+
+                    {/* Existing Comments */}
+                    <div className="border-t border-gray-200 pt-4 space-y-4">
+                      {selectedCard.comments.map(comment => (
+                        <div key={comment.id} className="flex gap-3">
+                          <div className="flex-shrink-0">
+                            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                              <span className="text-gray-600">{comment.user.username.charAt(0)}</span>
+                            </div>
+                          </div>
+                          <div className="flex-grow">
+                            <div className="bg-gray-50 p-3 rounded-md">
+                              <div className="flex justify-between items-center mb-1">
+                                <span className="text-sm font-medium">{comment.user.username}</span>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(comment.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-700">{comment.text}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="border-t border-gray-200 p-4 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowCardInfo(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCardUpdate}
+                  className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 transition"
+                >
+                  Save Changes
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -12,9 +12,16 @@ from rest_framework.generics import (RetrieveUpdateDestroyAPIView,
 from rest_framework.permissions import IsAuthenticated
 # from .permissions import IsProjectOwner
 
+from rest_framework.parsers import MultiPartParser, FormParser
+
 from .models import Account
-from .models import Account, Project, Column, Card
-from .serializers import AccountSerializer, ProjectSerializer, ColumnSerializer, CardSerializer, LoginSerializer
+from .models import Account, Project, Column, Card, Comment, Attachment
+
+from .serializers import (AccountSerializer, ProjectSerializer, 
+                         ColumnSerializer, CardSerializer, 
+                         LoginSerializer, CommentSerializer,
+                         AttachmentSerializer)
+
 
 '''CRUD Project'''
 # GET POST
@@ -174,3 +181,104 @@ class SearchSpecificProject(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Search term is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
+'''CRUD Comment'''
+class CommentListCreateAPIView(ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        card_id = self.request.query_params.get('card_id')
+        if card_id:
+            return Comment.objects.filter(card=card_id)
+        return Comment.objects.none()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'pk'
+
+'''CRUD Attachment'''
+class AttachmentListCreateAPIView(ListCreateAPIView):
+    queryset = Attachment.objects.all()
+    serializer_class = AttachmentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        card_id = self.request.query_params.get('card_id')
+        if card_id:
+            return Attachment.objects.filter(card=card_id)
+        return Attachment.objects.none()
+
+class AttachmentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Attachment.objects.all()
+    serializer_class = AttachmentSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'pk'
+
+'''Enhanced Card Views'''
+class CardDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            card = Card.objects.get(pk=pk)
+            card_serializer = CardSerializer(card)
+            
+            comments = Comment.objects.filter(card=card)
+            comments_serializer = CommentSerializer(comments, many=True)
+            
+            attachments = Attachment.objects.filter(card=card)
+            attachments_serializer = AttachmentSerializer(attachments, many=True)
+            
+            return Response({
+                'card': card_serializer.data,
+                'comments': comments_serializer.data,
+                'attachments': attachments_serializer.data
+            }, status=status.HTTP_200_OK)
+            
+        except Card.DoesNotExist:
+            return Response({'error': 'Card not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class CardUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        try:
+            card = Card.objects.get(pk=pk)
+            serializer = CardSerializer(card, data=request.data, partial=True)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Card.DoesNotExist:
+            return Response({'error': 'Card not found'}, status=status.HTTP_404_NOT_FOUND)
+
+'''Project Members'''
+class ProjectMembersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, project_id):
+        try:
+            project = Project.objects.get(pk=project_id)
+            members = project.members.all()
+            serializer = AccountSerializer(members, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Project.DoesNotExist:
+            return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+        

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Project, Column, Card, Account
+from .models import Project, Column, Card, Account, Comment, Attachment
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -50,7 +50,49 @@ class ColumnSerializer(serializers.ModelSerializer):
         model = Column
         fields = '__all__'
 
+class CommentSerializer(serializers.ModelSerializer):
+    user = AccountSerializer(read_only=True)
+    
+    class Meta:
+        model = Comment
+        fields = ['id', 'card', 'user', 'text', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    uploaded_by = AccountSerializer(read_only=True)
+    file_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Attachment
+        fields = ['id', 'card', 'file', 'file_url', 'name', 'uploaded_by', 'uploaded_at']
+        read_only_fields = ['uploaded_by', 'uploaded_at']
+
+    def get_file_url(self, obj):
+        request = self.context.get('request')
+        if obj.file and request:
+            return request.build_absolute_uri(obj.file.url)
+        return None
+
+# Atualize o CardSerializer para incluir os novos campos e relacionamentos
 class CardSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
+    assigned_to = AccountSerializer(read_only=True)
+    assigned_to_id = serializers.PrimaryKeyRelatedField(
+        queryset=Account.objects.all(),
+        source='assigned_to',
+        write_only=True,
+        required=False,
+        allow_null=True
+    )
+
     class Meta:
         model = Card
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'column', 'description', 'creation_date', 
+            'due_date', 'priority', 'assigned_to', 'assigned_to_id',
+            'position', 'comments', 'attachments'
+        ]
+        extra_kwargs = {
+            'column': {'required': True}
+        }

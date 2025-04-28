@@ -55,11 +55,46 @@ class Column(models.Model):
         return f"{self.project_board.name} - {self.name}"
 
 class Card(models.Model):
+    PRIORITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
+    ]
+    
     name = models.CharField(max_length=35)
     column = models.ForeignKey(Column, on_delete=models.CASCADE)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     creation_date = models.DateField(auto_now_add=True)
+    due_date = models.DateField(blank=True, null=True)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
+    assigned_to = models.ForeignKey(Account, on_delete=models.SET_NULL, blank=True, null=True)
     position = models.PositiveIntegerField(default=1)
     
     def __str__(self):
         return self.name
+
+class Comment(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.card.name}"
+
+class Attachment(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='attachments')
+    file = models.FileField(upload_to='attachments/')
+    uploaded_by = models.ForeignKey(Account, on_delete=models.CASCADE)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name if self.name else f"Attachment {self.id} for {self.card.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.name and self.file:
+            self.name = self.file.name
+        super().save(*args, **kwargs)
