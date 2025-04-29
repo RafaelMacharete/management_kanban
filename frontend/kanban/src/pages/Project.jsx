@@ -42,6 +42,7 @@ export function Project() {
     position: 1,
   });
   const columnData = { project_board: projectid };
+  
   const [cardFormData, setCardFormData] = useState({
     name: "",
     column: null,
@@ -59,15 +60,6 @@ export function Project() {
   if (!location.state) {
     window.location.href = "/projects";
   }
-
-
-
-
-
-
-
-
-
 
   async function fetchCardDetails(cardId) {
     try {
@@ -100,13 +92,8 @@ export function Project() {
     }
   }
 
-
-
-
-
-
   // Atualizar informações do card
-  const handleCardUpdate = async (e) => {
+  async function handleCardUpdate(e) {
     e.preventDefault();
     try {
       const updatedCard = await updateCard(selectedCard.card.id, {
@@ -120,9 +107,7 @@ export function Project() {
 
       if (updatedCard) {
         // Atualiza a lista de cards
-        setCards(cards.map(card =>
-          card.id === updatedCard.id ? updatedCard : card
-        ));
+        setCards(cards.map(card => card.id === updatedCard.id ? updatedCard : card));
         setShowCardInfo(false);
       }
     } catch (error) {
@@ -132,19 +117,13 @@ export function Project() {
 
   // Manipular mudanças nos campos do card
   const handleCardFieldChange = (field, value) => {
-    setSelectedCard(prev => ({
-      ...prev,
-      card: {
-        ...prev.card,
-        [field]: value
-      }
-    }));
+    setSelectedCard(prev => ({ ...prev, card: { ...prev.card, [field]: value } }));
   };
 
   // Adicionar novo comentário
   const [newComment, setNewComment] = useState("");
 
-  const handleAddComment = async (e) => {
+  async function handleAddComment(e) {
     e.preventDefault();
     if (!newComment.trim()) return;
 
@@ -163,10 +142,7 @@ export function Project() {
 
       if (response.ok) {
         const comment = await response.json();
-        setSelectedCard(prev => ({
-          ...prev,
-          comments: [...prev.comments, comment]
-        }));
+        setSelectedCard(prev => ({ ...prev, comments: [...prev.comments, comment] }));
         setNewComment("");
       }
     } catch (error) {
@@ -175,7 +151,7 @@ export function Project() {
   };
 
   // Manipular upload de arquivos
-  const handleFileUpload = async (e) => {
+  async function handleFileUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -194,22 +170,12 @@ export function Project() {
 
       if (response.ok) {
         const attachment = await response.json();
-        setSelectedCard(prev => ({
-          ...prev,
-          attachments: [...prev.attachments, attachment]
-        }));
+        setSelectedCard(prev => ({ ...prev, attachments: [...prev.attachments, attachment] }));
       }
     } catch (error) {
       console.error("Error uploading file:", error);
     }
   };
-
-
-
-
-
-
-
 
   async function updateProjectName() {
     if (projectName.trim() === "") {
@@ -240,7 +206,7 @@ export function Project() {
     setProjectName(e.target.value);
   };
 
-  const handleProjectNameKeyDown = (e) => {
+  function handleProjectNameKeyDown(e) {
     if (e.key === "Enter") {
       updateProjectName();
     }
@@ -644,7 +610,7 @@ export function Project() {
 
                   {/* Status */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Column</label>
                     <select
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                       value={selectedCard.card.column}
