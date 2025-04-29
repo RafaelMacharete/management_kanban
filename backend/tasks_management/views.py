@@ -92,7 +92,6 @@ class CardListByProjectAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         all_columns_id = request.data.get('columns_id')
-        print(request.data)
         if not all_columns_id:
             return Response({'detail': 'must contain column id'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -110,12 +109,9 @@ class CardRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class AccountCreateView(APIView):
     def post(self, request):
         serializer = AccountSerializer(data=request.data)
-        
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
-        
-        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(TokenObtainPairView):
@@ -181,14 +177,6 @@ class SearchSpecificProject(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Search term is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
-
-
-
 
 '''CRUD Comment'''
 class CommentListCreateAPIView(ListCreateAPIView):

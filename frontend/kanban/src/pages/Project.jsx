@@ -10,7 +10,6 @@ import { IoMdAdd } from "react-icons/io";
 import { Form } from "../components/Form";
 import { PiTimerLight } from "react-icons/pi";
 import { HiMiniPencilSquare } from "react-icons/hi2";
-import { FaRegCircle } from "react-icons/fa";
 
 
 export function Project() {

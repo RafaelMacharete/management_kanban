@@ -20,7 +20,7 @@ export function Home() {
   const [addedAccounts, setAddedAccounts] = useState([]);
   const [formError, setFormError] = useState(null);
   const [projectSearched, setProjectSearched] = useState([]);
-
+  const id = localStorage.getItem('id')
   const isLogged = localStorage.getItem("isLogged");
 
   const [formData, setFormData] = useState({
@@ -28,6 +28,7 @@ export function Home() {
     members: [],
   });
 
+  
   function exit() {
     window.location.href = "/";
     localStorage.clear();
@@ -62,6 +63,7 @@ export function Home() {
   const handleClickProjectForm = (e) => {
     setShowProjectForm(!showProjectForm);
     setFormError(null);
+    setFormData((prevFormData) => ({...prevFormData, members : [Number(id)]}))
     if (!showProjectForm) {
       setFormData({ name: "", members: [] });
       setAddedAccounts([]);
@@ -115,6 +117,7 @@ export function Home() {
   }, [membersInput]);
 
   function addMember(accountId) {
+    console.log(1, id);
     if (!formData.members.includes(accountId)) {
       const account = allAccounts.find((acc) => acc.id === accountId);
       if (!account) return;
@@ -138,6 +141,7 @@ export function Home() {
     }
 
     try {
+      console.log(formData)
       const response = await fetch("http://localhost:8000/projects/", {
         method: "POST",
         headers: {

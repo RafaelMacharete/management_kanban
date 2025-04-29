@@ -26,7 +26,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
 
         const timeoutId = setTimeout(async () => {
             try {
-                const response = await fetch('http://localhost:8000/projects/search', {
+                const response = await fetch('http://localhost:8000/projects/search/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

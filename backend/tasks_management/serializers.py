@@ -36,8 +36,10 @@ class LoginSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         data['user'] = {
-            'username': self.user.username
+            'username': self.user.username,
+            'id': self.user.id
         }
+        print(data)
         return data
 
 class ProjectSerializer(serializers.ModelSerializer):

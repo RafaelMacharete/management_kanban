@@ -15,6 +15,8 @@ export function FormProject({
   formError,
   isHome,
 }) {
+  console.log(formData);
+
   function removeMember(id) {
     const updated = formData.members.filter((memberId) => memberId !== id);
     formDataSetter((prev) => ({ ...prev, members: updated }));
@@ -86,8 +88,8 @@ export function FormProject({
                 className="w-full h-10 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm"
                 onChange={
                   // field.htmlFor === "members"
-                    // ? handleMembersInputChange
-                    field.onChange
+                  // ? handleMembersInputChange
+                  field.onChange
                 }
               />
             </div>
@@ -117,11 +119,10 @@ export function FormProject({
                         alt={account.username}
                         onClick={() => addMember(account.id)}
                         className={`w-12 h-12 rounded-full object-cover border-2 transition-all cursor-pointer
-    ${
-      formData.members.includes(account.id)
-        ? "border-violet-500 ring-2 ring-violet-400"
-        : "border-gray-200 hover:scale-125 group-hover:border-violet-400"
-    }`}
+    ${formData.members.includes(account.id)
+                            ? "border-violet-500 ring-2 ring-violet-400"
+                            : "border-gray-200 hover:scale-125 group-hover:border-violet-400"
+                          }`}
                       />
                     </div>
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-all pointer-events-none">
