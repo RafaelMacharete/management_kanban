@@ -37,6 +37,11 @@ class Account(AbstractUser):
     def __str__(self):
         return self.username
     
+class PasswordResetToken(models.Model):
+    user = models.OneToOneField('Account', on_delete=models.CASCADE)
+    token = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
 class Project(models.Model):
     # owner = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="projects")
     name = models.CharField(max_length=50)

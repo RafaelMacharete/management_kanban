@@ -20,7 +20,10 @@ from .views import (
     AttachmentRetrieveUpdateDestroyAPIView,
     CardDetailView,
     CardUpdateView,
-    ProjectMembersView
+    ProjectMembersView,
+    SendEmailTokenView,
+    VerifyTokenView,
+    ResetPasswordView
 )
 
 urlpatterns = [
@@ -60,4 +63,8 @@ urlpatterns = [
     
     # JWT
     path('jwt/', views.get_projects_account_validated, name='jwt'),
+
+    path('send-reset-email/', SendEmailTokenView.as_view(), name='send_reset_email'),
+    path('verify-token/', VerifyTokenView.as_view(), name='verify_token'),
+    path('reset-password/', ResetPasswordView.as_view(), name='reset_password'),
 ]

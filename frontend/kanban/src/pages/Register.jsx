@@ -27,7 +27,6 @@ export function Register() {
         }
     }
 
-
     async function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
@@ -60,82 +59,107 @@ export function Register() {
         }
     }
 
-
     if (isRegistered) {
         return <Navigate to="/" />;
     }
 
     return (
-        <div className="flex min-h-screen">
-            {/* Form Side */}
-            <div className="flex flex-col w-1/2 p-6 py-12">
-                <form className="bg-white flex flex-col gap-4" onSubmit={handleSubmit}>
-                    <h2 className="text-2xl font-bold text-center text-black mb-6">
-                        Register
-                    </h2>
-
-                    {/* Fields */}
-                    {[
-                        { label: "Username", name: "username", type: "text" },
-                        { label: "Password", name: "password", type: "password" },
-                        { label: "Email", name: "email", type: "email" },
-                        { label: "Profile Image", name: "profile_image", type: "file" },
-                    ].map((field, index) => (
-                        <div key={index} className="mb-2">
-                            <label htmlFor={field.name} className="block text-sm text-gray-600 mb-1">
-                                {field.label}
-                            </label>
-                            <input
-                                type={field.type}
-                                id={field.name}
-                                name={field.name}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5030E5]"
-                                required={field.name !== "profile_image"}
-                            />
-                            {errors[field.name] && (
-                                <p className="text-sm text-red-600 mt-1">{errors[field.name][0]}</p>
-                            )}
-
-
+        <div className="flex min-h-screen bg-gray-50">
+            {/* Formulário - Estilo consistente com Login */}
+            <div className="flex w-full lg:w-1/2 items-center justify-center p-6">
+                <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-10">
+                    {/* Cabeçalho com ícone */}
+                    <div className="text-center mb-8">
+                        <div className="mx-auto w-16 h-16 bg-[#5030E5]/10 rounded-full flex items-center justify-center mb-4">
+                            <svg className="w-8 h-8 text-[#5030E5]" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                            </svg>
                         </div>
-                    ))}
-
-                    {/* Footer */}
-                    <div className="flex justify-between items-center text-sm mb-2">
-                        <span className="text-gray-500">Already have an account?</span>
-                        <Link to="/" className="text-[#5030E5] hover:underline">
-                            Log In
-                        </Link>
+                        <h2 className="text-3xl font-bold text-gray-800">Create your account</h2>
+                        <p className="text-gray-500 mt-2">Join us to start organizing your projects</p>
                     </div>
 
-                    <button
-                        type="submit"
-                        className="w-full bg-[#5030E5] text-white py-2 rounded-lg hover:bg-[#4025b8] transition-colors"
-                    >
-                        {isLoading ? <OrbitProgress color="#9272d2" size="small" text="" textColor="" /> : 'Register'}
-                    </button>
-                </form>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
+                            {[
+                                { label: "Username", name: "username", type: "text" },
+                                { label: "Password", name: "password", type: "password" },
+                                { label: "Email", name: "email", type: "email" },
+                                { label: "Profile Image", name: "profile_image", type: "file" },
+                            ].map((field, index) => (
+                                <div key={index} className="mb-2">
+                                    <label htmlFor={field.name} className="block text-sm font-medium text-gray-700 mb-1">
+                                        {field.label}
+                                    </label>
+                                    <input
+                                        type={field.type}
+                                        id={field.name}
+                                        name={field.name}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5030E5] focus:border-transparent transition-all"
+                                        required={field.name !== "profile_image"}
+                                    />
+                                    {errors[field.name] && (
+                                        <div className="mt-1 text-sm text-red-600 flex items-start">
+                                            <svg className="w-4 h-4 mr-1 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                            </svg>
+                                            <span>{errors[field.name][0]}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
 
-                {/* Divider */}
-                <div className="flex items-center my-6 w-full">
-                    <div className="flex-1 border-t border-gray-300"></div>
-                    <span className="mx-4 text-gray-500 font-medium">Or</span>
-                    <div className="flex-1 border-t border-gray-300"></div>
-                </div>
+                        <button
+                            type="submit"
+                            className="w-full flex justify-center items-center bg-[#5030E5] hover:bg-[#4025b8] text-white font-medium py-3 px-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <OrbitProgress color="#ffffff" size="small" text="" textColor="" />
+                            ) : (
+                                'Register'
+                            )}
+                        </button>
+                    </form>
 
-                {/* Google Button */}
-                <div className="w-full">
-                    <button className="border rounded-lg flex gap-3 w-full py-3 items-center justify-center hover:bg-gray-100 transition">
-                        <FcGoogle size={24} />
-                        Continue with Google
+                    {/* Divider */}
+                    <div className="my-6 relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center">
+                            <span className="px-3 bg-white text-sm text-gray-500">Or</span>
+                        </div>
+                    </div>
+
+                    {/* Google button */}
+                    <button className="flex items-center justify-center w-full border border-gray-300 rounded-lg py-3 gap-3 hover:bg-gray-50 transition-colors">
+                        <FcGoogle size={20} />
+                        <span className="text-sm font-medium">Continue with Google</span>
                     </button>
+
+                    {/* Footer */}
+                    <div className="text-center text-sm mt-8 pt-6 border-t border-gray-100">
+                        <span className="text-gray-500">Already have an account? </span>
+                        <Link to="/" className="text-[#5030E5] hover:text-[#4025b8] font-medium">Log In</Link>
+                    </div>
                 </div>
             </div>
 
-            {/* Banner Side */}
-            <div className="max-h-screen w-1/2">
-                <img src={Banner} alt="Banner of Kanban" className="w-full h-full object-cover" />
+            {/* Banner - Estilo consistente com Login */}
+            <div className="hidden lg:flex w-1/2 relative overflow-hidden">
+                <img
+                    src={Banner}
+                    alt="Register Banner"
+                    className="w-full h-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#5030E5] to-transparent opacity-80"></div>
+                <div className="absolute inset-0 flex flex-col justify-center p-16 text-white">
+                    <h1 className="text-5xl font-bold mb-4">Get Started</h1>
+                    <p className="text-xl opacity-90">Join thousands of teams who use Trellio to manage their projects.</p>
+                </div>
             </div>
         </div>
     );

@@ -14,14 +14,16 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Account
-from .models import Account, Project, Column, Card, Comment, Attachment
+from .models import Account, Project, Column, Card, Comment, Attachment, PasswordResetToken
 
 from .serializers import (AccountSerializer, ProjectSerializer, 
                          ColumnSerializer, CardSerializer, 
                          LoginSerializer, CommentSerializer,
                          AttachmentSerializer)
 
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+from django.conf import settings
 
 '''CRUD Project'''
 # GET POST
@@ -269,4 +271,56 @@ class ProjectMembersView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Project.DoesNotExist:
             return Response({'error': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class VerifyTokenView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        token = request.data.get('token')
+
+        try:
+            user = Account.objects.get(email=email)
+            record = PasswordResetToken.objects.get(user=user)
+
+            if record.token == token:
+                return Response({'valid': True})
+            return Response({'valid': False}, status=400)
+        except (Account.DoesNotExist, PasswordResetToken.DoesNotExist):
+            return Response({'valid': False}, status=404)
+
+class SendEmailTokenView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = Account.objects.get(email=email)
+            token = get_random_string(6, allowed_chars='0123456789')
+            PasswordResetToken.objects.update_or_create(user=user, defaults={'token': token})
+
+            send_mail(
+                'Password Reset Code',
+                f'Your password reset code is: {token}',
+                settings.DEFAULT_FROM_EMAIL,
+                [email]
+            )
+            return Response({'message': 'Token sent to email'}, status=200)
+        except Account.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
         
+class ResetPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        new_password = request.data.get('password')
+
+        if not email or not new_password:
+            return Response({'error': 'Missing data'}, status=400)
+
+        try:
+            user = Account.objects.get(email=email)
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Password reset successful'}, status=200)
+        except Account.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
