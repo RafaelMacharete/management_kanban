@@ -64,7 +64,7 @@ export function Home() {
     setShowProjectForm(!showProjectForm);
     setFormError(null);
     setFormData((prevFormData) => ({...prevFormData, members : [Number(id)]}))
-
+    
     if (!showProjectForm) {
       setFormData({ name: "", members: [] });
       setAddedAccounts([]);
@@ -80,7 +80,7 @@ export function Home() {
 
   function handleChangeName(e) {
     setFormData({ ...formData, name: e.target.value });
-
+    setFormData((prevFormData) => ({...prevFormData, members : [Number(id)]}))
   }
 
   function handleChangeMembers(e) {

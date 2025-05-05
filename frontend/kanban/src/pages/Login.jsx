@@ -26,7 +26,6 @@ export function Login() {
         const response = await fetch("https://trellio.onrender.com/login/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            credentials: 'include',
             body: JSON.stringify(formData),
         });
         const body = await response.json();
