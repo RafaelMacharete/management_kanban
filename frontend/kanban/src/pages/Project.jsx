@@ -32,9 +32,6 @@ export function Project() {
 
   const [projectSearched, setProjectSearched] = useState([]);
 
-
-  const date = new Date('2025-04-17');
-
   const [columnFormData, setColumnFormData] = useState({
     name: "",
     project_board: null,
@@ -46,6 +43,7 @@ export function Project() {
     name: "",
     column: null,
     description: "",
+    due_date: new Date().toISOString().split('T')[0]
   });
 
   const [columns, setColumns] = useState([]);
@@ -84,8 +82,14 @@ export function Project() {
         },
         body: JSON.stringify(data)
       });
-      console.log(data);
-      return await response.json();
+
+      const body = await response.json();
+
+      if (!response.ok) {
+        console.error("Erro ao atualizar card:", body);
+      }
+
+      return body;
     } catch (error) {
       console.error('Error updating card:', error);
       return null;
@@ -100,13 +104,18 @@ export function Project() {
         description: selectedCard.card.description,
         due_date: selectedCard.card.due_date,
         priority: selectedCard.card.priority,
-        assigned_to: selectedCard.card.assigned_to?.id || null,
+        assigned_to_id: selectedCard.card.assigned_to?.id || null,
         column: selectedCard.card.column
       });
+
+      if (updatedCard?.due_date !== selectedCard.card.due_date) {
+        console.warn("Due date not updated:", updatedCard);
+      }
 
       if (updatedCard) {
         setCards(cards.map(card => card.id === updatedCard.id ? updatedCard : card));
         setShowCardInfo(false);
+
       }
     } catch (error) {
       console.error("Error updating card:", error);
@@ -115,6 +124,7 @@ export function Project() {
 
   const handleCardFieldChange = (field, value) => {
     setSelectedCard(prev => ({ ...prev, card: { ...prev.card, [field]: value } }));
+
   };
 
   const [newComment, setNewComment] = useState("");
@@ -221,6 +231,10 @@ export function Project() {
     setCardFormData({ ...cardFormData, name: e.target.value });
   }
 
+  function handleDueDate(e) {
+    setCardFormData({ ...cardFormData, due_date: e.target.value })
+  }
+
   function handleChangeDescription(e) {
     setCardFormData({ ...cardFormData, description: e.target.value });
   }
@@ -261,6 +275,8 @@ export function Project() {
         },
         body: JSON.stringify(cardFormData),
       });
+      console.log(await response.json());
+
       if (response.ok) {
         setShowCardForm(false);
         setCardFormData({ name: "", column: null, description: "" });
