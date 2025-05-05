@@ -53,7 +53,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'trellio.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'trellio.onrender.com', '*']
 
 CORS_ALLOW_METHODS = (
     "DELETE",
