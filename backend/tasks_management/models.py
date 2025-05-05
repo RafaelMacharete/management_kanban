@@ -77,7 +77,7 @@ class Card(models.Model):
     column = models.ForeignKey(Column, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     creation_date = models.DateField(auto_now_add=True)
-    due_date = models.DateField(blank=True, null=True)
+    due_date = models.DateField(auto_now_add=True)
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
     assigned_to = models.ForeignKey(Account, on_delete=models.SET_NULL, blank=True, null=True)
     position = models.PositiveIntegerField(default=1)
