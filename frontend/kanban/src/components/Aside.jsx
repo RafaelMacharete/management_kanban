@@ -3,7 +3,7 @@ import { RxDoubleArrowLeft } from "react-icons/rx";
 import { PiSquaresFourLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { FaStar, FaRegStar } from "react-icons/fa";
-
+import aa from '../assets/logo.png'
 export function Aside({ projects, showSidebar, setShowSidebar }) {
 
     return (
@@ -20,8 +20,7 @@ export function Aside({ projects, showSidebar, setShowSidebar }) {
                         to='/projects'
                     >
 
-                        <FiTrello size={30} className="text-violet-600" />
-                        <h1 className="text-xl font-semibold text-gray-800">Trellio</h1>
+                        <img src={aa} alt="trellio logo" width={120}/>
                     </Link>
                     <button
                         onClick={() => setShowSidebar(!showSidebar)}
