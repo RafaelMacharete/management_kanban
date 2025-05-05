@@ -84,6 +84,7 @@ export function Project() {
         },
         body: JSON.stringify(data)
       });
+      console.log(data);
       return await response.json();
     } catch (error) {
       console.error('Error updating card:', error);
@@ -470,7 +471,7 @@ export function Project() {
                         <p className="text-sm font-medium text-gray-800 mb-1">{card.name}</p>
                         <div className="flex items-center text-xs text-gray-500">
                           <PiTimerLight size={12} className="mr-1" />
-                          <span>{card.due_date.toLocaleDateString()}</span>
+                          <span>{new Date(card.due_date).toLocaleDateString()}</span>
                           <div className="flex items-center gap-1 ml-auto" onClick={handleSetShowCardInfo}>
                             <HiMiniPencilSquare size={12} className="text-gray-400" />
                           </div>
