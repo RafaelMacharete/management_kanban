@@ -47,7 +47,7 @@ export function Home() {
     const newFavorite = { favorite: updatedProject.favorite };
 
     try {
-      await fetch(`http://trellio.onrender.com/projects/${id}`, {
+      await fetch(`https://trellio.onrender.com/projects/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export function Home() {
 
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetch("http://trellio.onrender.com/accounts/", {
+        const response = await fetch("https://trellio.onrender.com/accounts/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -144,7 +144,7 @@ export function Home() {
 
     try {
       console.log(formData)
-      const response = await fetch("http://trellio.onrender.com/projects/", {
+      const response = await fetch("https://trellio.onrender.com/projects/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +179,7 @@ export function Home() {
     async function fetchData() {
       try {
         if (!isLogged || !token) return;
-        const response = await fetch(`http://trellio.onrender.com/jwt/?qnt=${qnt}`, {
+        const response = await fetch(`https://trellio.onrender.com/jwt/?qnt=${qnt}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
