@@ -12,14 +12,13 @@ export function VerifyResetToken() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Get email from location state or empty string
   const [email, setEmail] = useState(location.state?.email || "");
 
   async function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/verify-token/", {
+      const res = await fetch("http://localhost:8000/verify-token/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, token }),

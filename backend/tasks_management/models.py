@@ -25,6 +25,12 @@ class Account(AbstractUser):
         },
     )
     
+    email = models.EmailField(
+        _('email address'),
+        max_length=254,
+        unique=True,
+)
+
     nickname = models.CharField(max_length=35, blank=True, null=True)
     profile_image = models.ImageField(
         upload_to='profile_images/',

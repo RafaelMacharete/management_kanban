@@ -43,12 +43,12 @@ export function Register() {
                 method: 'POST',
                 body: form,
             });
-
             const body = await response.json();
             setIsLoading(false);
             console.log(body)
             if (!response.ok || body.error) {
                 setErrors(body);
+                
             } else {
                 setErrors({});
                 setIsRegistered(true);

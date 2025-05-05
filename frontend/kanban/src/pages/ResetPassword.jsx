@@ -15,7 +15,6 @@ export function ResetPassword() {
     const [success, setSuccess] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    // Get email from location state
     const email = location.state?.email;
 
     if (!email) {
@@ -51,7 +50,7 @@ export function ResetPassword() {
 
         setIsLoading(true);
         try {
-            const res = await fetch("http://127.0.0.1:8000/reset-password/", {
+            const res = await fetch("http://localhost:8000/reset-password/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
