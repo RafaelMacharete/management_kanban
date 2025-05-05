@@ -17,7 +17,7 @@ export function ForgotPassword() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await fetch("http://trellio.onrender.com/send-reset-email/", {
+            const res = await fetch("https://trellio.onrender.com/send-reset-email/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),

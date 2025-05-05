@@ -39,7 +39,7 @@ export function Register() {
         }
 
         try {
-            const response = await fetch('http://trellio.onrender.com/register/', {
+            const response = await fetch('https://trellio.onrender.com/register/', {
                 method: 'POST',
                 body: form,
             });
