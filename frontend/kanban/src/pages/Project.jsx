@@ -62,7 +62,7 @@ export function Project() {
 
   async function fetchCardDetails(cardId) {
     try {
-      const response = await fetch(`http://localhost:8000/cards/${cardId}/detail/`, {
+      const response = await fetch(`https://trellio.onrender.com/cards/${cardId}/detail/`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -76,7 +76,7 @@ export function Project() {
 
   async function updateCard(cardId, data) {
     try {
-      const response = await fetch(`http://localhost:8000/cards/${cardId}/update/`, {
+      const response = await fetch(`https://trellio.onrender.com/cards/${cardId}/update/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ export function Project() {
     if (!newComment.trim()) return;
 
     try {
-      const response = await fetch('http://localhost:8000/comments/', {
+      const response = await fetch('https://trellio.onrender.com/comments/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ export function Project() {
     formData.append('card', selectedCard.card.id);
 
     try {
-      const response = await fetch('http://localhost:8000/attachments/', {
+      const response = await fetch('https://trellio.onrender.com/attachments/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -177,7 +177,7 @@ export function Project() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8000/projects/${projectid}`, {
+      const response = await fetch(`https://trellio.onrender.com/projects/${projectid}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -231,7 +231,7 @@ export function Project() {
   async function handleSubmitColumn(e) {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:8000/columns/`, {
+      const response = await fetch(`https://trellio.onrender.com/columns/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -252,7 +252,7 @@ export function Project() {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:8000/cards/`, {
+      const response = await fetch(`https://trellio.onrender.com/cards/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -284,7 +284,7 @@ export function Project() {
   useEffect(() => {
     async function fetchProjectMembers() {
       try {
-        const response = await fetch(`http://localhost:8000/projects/${projectid}/members/`, {
+        const response = await fetch(`https://trellio.onrender.com/projects/${projectid}/members/`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -302,7 +302,7 @@ export function Project() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`http://localhost:8000/column/`, {
+        const response = await fetch(`https://trellio.onrender.com/column/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -320,7 +320,7 @@ export function Project() {
 
         try {
           if (columnsIds.columns_id.length <= 0) return;
-          const response = await fetch(`http://localhost:8000/card/`, {
+          const response = await fetch(`https://trellio.onrender.com/card/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
