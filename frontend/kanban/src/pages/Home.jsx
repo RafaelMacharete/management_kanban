@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { GrFormAdd } from "react-icons/gr";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { Projects } from "../components/Projects";
-import { Aside } from "../components/aside";
+import { Aside } from "../components/Aside";
 import { Header } from "../components/Header";
 import { FormProject } from "../components/FormProject";
 

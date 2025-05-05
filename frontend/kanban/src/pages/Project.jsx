@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Aside } from "../components/aside";
+import { Aside } from "../components/Aside";
 import { Header } from "../components/Header";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { FaPen, FaCheck } from "react-icons/fa";
@@ -41,7 +41,7 @@ export function Project() {
     position: 1,
   });
   const columnData = { project_board: projectid };
-  
+
   const [cardFormData, setCardFormData] = useState({
     name: "",
     column: null,
@@ -91,7 +91,6 @@ export function Project() {
     }
   }
 
-  // Atualizar informações do card
   async function handleCardUpdate(e) {
     e.preventDefault();
     try {
@@ -105,7 +104,6 @@ export function Project() {
       });
 
       if (updatedCard) {
-        // Atualiza a lista de cards
         setCards(cards.map(card => card.id === updatedCard.id ? updatedCard : card));
         setShowCardInfo(false);
       }
@@ -114,12 +112,10 @@ export function Project() {
     }
   };
 
-  // Manipular mudanças nos campos do card
   const handleCardFieldChange = (field, value) => {
     setSelectedCard(prev => ({ ...prev, card: { ...prev.card, [field]: value } }));
   };
 
-  // Adicionar novo comentário
   const [newComment, setNewComment] = useState("");
 
   async function handleAddComment(e) {
@@ -149,7 +145,6 @@ export function Project() {
     }
   };
 
-  // Manipular upload de arquivos
   async function handleFileUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
