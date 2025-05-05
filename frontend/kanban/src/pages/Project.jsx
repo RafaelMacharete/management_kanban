@@ -275,7 +275,6 @@ export function Project() {
         },
         body: JSON.stringify(cardFormData),
       });
-      console.log(await response.json());
 
       if (response.ok) {
         setShowCardForm(false);

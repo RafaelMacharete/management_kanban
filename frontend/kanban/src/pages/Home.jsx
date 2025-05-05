@@ -119,7 +119,6 @@ export function Home() {
   }, [membersInput]);
 
   function addMember(accountId) {
-    console.log(1, id);
     if (!formData.members.includes(accountId)) {
       const account = allAccounts.find((acc) => acc.id === accountId);
       if (!account) return;
@@ -143,7 +142,6 @@ export function Home() {
     }
 
     try {
-      console.log(formData)
       const response = await fetch("https://trellio.onrender.com/projects/", {
         method: "POST",
         headers: {
