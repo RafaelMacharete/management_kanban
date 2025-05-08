@@ -278,7 +278,7 @@ export function Project() {
 
       if (response.ok) {
         setShowCardForm(false);
-        setCardFormData({ name: "", column: null, description: "" });
+        setCardFormData({ name: "", column: null, description: "", due_date: new Date().toISOString().split('T')[0]});
         setReloadProject((prevreloadProjects) => prevreloadProjects + 1);
       }
     } catch (error) {
