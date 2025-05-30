@@ -78,7 +78,7 @@ export function Home() {
   }
 
   function handleChangeName(e) {
-    setFormData({ ...formData, name: e.target.value });
+    setFormData({ ...formData, name: e.target.value, members : [Number(id)] });
   }
 
   function handleChangeMembers(e) {
