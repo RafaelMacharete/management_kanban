@@ -24,10 +24,9 @@ export function Login() {
 
         setIsLoading(true);
 
-        const response = await fetch("http://127.0.0.1:8000/login/", {
+        const response = await fetch("https://trellio.onrender.com/login/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            credentials: 'include',
             body: JSON.stringify(formData),
         });
         const body = await response.json();
@@ -38,7 +37,6 @@ export function Login() {
             localStorage.setItem('username', formData.username)
             localStorage.setItem('isLogged', true)
             localStorage.setItem('id', body.user.id)
-            console.log(body.user.id);
         } else {
             setError(true)
         }

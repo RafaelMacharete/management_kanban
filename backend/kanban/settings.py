@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-2r6poe7ic^b-jemyemfv1xx(z0hsgy9_&wtd&6x$d0tdns1=xa'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -51,11 +51,9 @@ REST_FRAMEWORK = {
     ),
 }
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  
-    "http://localhost:5174",
-]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'trellio.onrender.com', '*']
 
 CORS_ALLOW_METHODS = (
     "DELETE",

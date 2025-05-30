@@ -47,7 +47,7 @@ export function Home() {
     const newFavorite = { favorite: updatedProject.favorite };
 
     try {
-      await fetch(`http://localhost:8000/projects/${id}`, {
+      await fetch(`https://trellio.onrender.com/projects/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -64,6 +64,7 @@ export function Home() {
     setShowProjectForm(!showProjectForm);
     setFormError(null);
     setFormData((prevFormData) => ({...prevFormData, members : [Number(id)]}))
+    
     if (!showProjectForm) {
       setFormData({ name: "", members: [] });
       setAddedAccounts([]);
@@ -78,7 +79,8 @@ export function Home() {
   }
 
   function handleChangeName(e) {
-    setFormData({ ...formData, name: e.target.value, members : [Number(id)] });
+    setFormData({ ...formData, name: e.target.value });
+    setFormData((prevFormData) => ({...prevFormData, members : [Number(id)]}))
   }
 
   function handleChangeMembers(e) {
@@ -94,7 +96,7 @@ export function Home() {
 
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await fetch("http://localhost:8000/accounts/", {
+        const response = await fetch("https://trellio.onrender.com/accounts/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -117,7 +119,6 @@ export function Home() {
   }, [membersInput]);
 
   function addMember(accountId) {
-    console.log(1, id);
     if (!formData.members.includes(accountId)) {
       const account = allAccounts.find((acc) => acc.id === accountId);
       if (!account) return;
@@ -141,8 +142,7 @@ export function Home() {
     }
 
     try {
-      console.log(formData)
-      const response = await fetch("http://localhost:8000/projects/", {
+      const response = await fetch("https://trellio.onrender.com/projects/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -177,7 +177,7 @@ export function Home() {
     async function fetchData() {
       try {
         if (!isLogged || !token) return;
-        const response = await fetch(`http://localhost:8000/jwt/?qnt=${qnt}`, {
+        const response = await fetch(`https://trellio.onrender.com/jwt/?qnt=${qnt}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

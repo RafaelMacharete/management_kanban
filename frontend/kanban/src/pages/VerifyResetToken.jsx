@@ -18,7 +18,7 @@ export function VerifyResetToken() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/verify-token/", {
+      const res = await fetch("https://trellio.onrender.com/verify-token/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, token }),
