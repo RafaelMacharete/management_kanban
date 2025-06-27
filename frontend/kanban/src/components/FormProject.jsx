@@ -15,8 +15,6 @@ export function FormProject({
   formError,
   isHome,
 }) {
-  console.log(formData);
-
   function removeMember(id) {
     const updated = formData.members.filter((memberId) => memberId !== id);
     formDataSetter((prev) => ({ ...prev, members: updated }));

@@ -26,7 +26,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
 
         const timeoutId = setTimeout(async () => {
             try {
-                const response = await fetch('http://trellio.onrender.com/projects/search/', {
+                const response = await fetch('https://trellio.onrender.com/projects/search/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

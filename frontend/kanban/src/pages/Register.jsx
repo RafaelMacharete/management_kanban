@@ -45,7 +45,6 @@ export function Register() {
             });
             const body = await response.json();
             setIsLoading(false);
-            console.log(body)
             if (!response.ok || body.error) {
                 setErrors(body);
                 
