@@ -39,7 +39,6 @@ class LoginSerializer(TokenObtainPairSerializer):
             'username': self.user.username,
             'id': self.user.id
         }
-        print(data)
         return data
 
 class ProjectSerializer(serializers.ModelSerializer):

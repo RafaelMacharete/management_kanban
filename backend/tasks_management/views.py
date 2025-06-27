@@ -121,7 +121,6 @@ class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def get_projects_account_validated(req, qnt=None):
     jwt_authenticator = JWTAuthentication()
     qnt = req.query_params.get('qnt', None)
