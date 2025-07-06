@@ -35,7 +35,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
                     body: JSON.stringify(inputValue)
                 });
                 const body = await response.json();
-                setProjectSearched(body); 
+                setProjectSearched(body);
             } catch (error) {
                 console.log(error);
             }
@@ -49,7 +49,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
             <div className={`flex max-w-[1400px] ${!showSidebar && "px-10"} mx-auto justify-between items-center h-full `}>
                 <div className="relative w-full max-w-md">
                     <input
-                    onChange={handleInputChange}
+                        onChange={handleInputChange}
                         type="text"
                         placeholder="Search for projects"
                         className="w-full bg-gray-50 h-9 px-4 pr-10 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 text-sm transition"

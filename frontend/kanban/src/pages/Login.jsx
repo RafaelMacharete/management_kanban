@@ -47,7 +47,7 @@ export function Login() {
     }
     return (
         <div className="flex min-h-screen bg-gray-50">
-            {/* Banner - Melhorado com overlay e alinhamento */}
+            {/* Banner  */}
             <div className="hidden lg:flex w-1/2 relative overflow-hidden">
                 <img
                     src={Banner}
@@ -61,10 +61,10 @@ export function Login() {
                 </div>
             </div>
 
-            {/* Form - Ajustado para melhor espaçamento */}
+            {/* Form  */}
             <div className="flex w-full lg:w-1/2 items-center justify-center p-6">
                 <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-10">
-                    {/* Título com ícone */}
+                    {/* Icone with title */}
                     <div className="text-center mb-8">
                         <div className="mx-auto w-16 h-16 bg-[#5030E5]/10 rounded-full flex items-center justify-center mb-4">
                             <svg className="w-8 h-8 text-[#5030E5]" fill="currentColor" viewBox="0 0 20 20">
@@ -77,7 +77,6 @@ export function Login() {
                         <p className="text-gray-500 mt-2">Sign in to continue to your dashboard</p>
                     </div>
 
-                    {/* Formulário com melhor espaçamento */}
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-4">
                             <div>
@@ -155,7 +154,7 @@ export function Login() {
                         </button>
                     </form>
 
-                    {/* Divider com melhor estilo */}
+                    {/* Divider  */}
                     <div className="my-6 relative">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-300"></div>
@@ -165,7 +164,7 @@ export function Login() {
                         </div>
                     </div>
 
-                    {/* Google button centralizado */}
+                    {/* Google auth */}
                     <div className="flex justify-center">
                         <GoogleLogin
                             onSuccess={(cred) => console.log(jwtDecode(cred.credential))}
@@ -177,7 +176,7 @@ export function Login() {
                         />
                     </div>
 
-                    {/* Footer com melhor espaçamento */}
+                    {/* Footer */}
                     <div className="text-center text-sm mt-8 pt-6 border-t border-gray-100">
                         <span className="text-gray-500">Don't have an account? </span>
                         <Link to="/register" className="text-[#5030E5] hover:text-[#4025b8] font-medium">Sign up</Link>

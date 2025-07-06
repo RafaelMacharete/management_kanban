@@ -73,10 +73,10 @@ export function Home() {
     }
   };
 
-  if (!isLogged || !token) {
-    window.location.href = "/";
-    return null;
-  }
+  // if (!isLogged || !token) {
+  //   window.location.href = "/";
+  //   return null;
+  // }
 
   function handleChangeName(e) {
     setFormData({ ...formData, name: e.target.value });
@@ -224,7 +224,7 @@ export function Home() {
         </button>
       )}
 
-      {unauthorized && isLogged && (
+      {unauthorized || !isLogged && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
           <div className="bg-white w-full max-w-xs p-5 rounded-lg shadow-lg text-center">
             <h2 className="text-lg font-medium mb-3">Session Expired</h2>
