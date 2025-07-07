@@ -300,14 +300,15 @@ class SendEmailTokenView(APIView):
             PasswordResetToken.objects.update_or_create(user=user, defaults={'token': token})
 
             send_mail(
-                'Password Reset Code',
-                f'Your password reset code is: {token}',
-                settings.DEFAULT_FROM_EMAIL,
-                [email]
+                subject='Password Reset Code',
+                message=f'Your password reset code is: {token}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
             )
             return Response({'message': 'Token sent to email'}, status=200)
         except Account.DoesNotExist:
-            return Response({'error': 'User not found'}, status=404)
+            return Response({'error': 'Email not found'}, status=404)
         
 class ResetPasswordView(APIView):
     def post(self, request):

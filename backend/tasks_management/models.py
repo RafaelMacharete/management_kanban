@@ -3,6 +3,14 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _   
+import os
+import uuid
+from datetime import datetime
+
+def user_profile_image_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{instance.username}_{uuid.uuid4().hex}.{ext}"
+    return os.path.join('profile_images/', filename)
 
 def validate_image_size(image):
     max_size = 32 * 1024 * 1024
@@ -33,12 +41,12 @@ class Account(AbstractUser):
 
     nickname = models.CharField(max_length=35, blank=True, null=True)
     profile_image = models.ImageField(
-        upload_to='profile_images/',
+        upload_to=user_profile_image_path,
         default='user_default.png',
         blank=True, 
         null=True, 
         validators=[validate_image_size]
-        )
+    )
 
     def __str__(self):
         return self.username

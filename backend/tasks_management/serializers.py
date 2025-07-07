@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Project, Column, Card, Account, Comment, Attachment
 
-
 class AccountSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_image_url')
 

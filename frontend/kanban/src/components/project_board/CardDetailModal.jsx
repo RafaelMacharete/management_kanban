@@ -11,6 +11,8 @@ export default function CardDetailModal({
     handleCardUpdate,
     handleDeleteCard,
 }) {
+    const profileImage = localStorage.getItem("profileImage");
+
     return (
         <div className="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -148,8 +150,16 @@ export default function CardDetailModal({
                         <div className="space-y-4">
                             <form onSubmit={handleAddComment} className="flex gap-3">
                                 <div className="flex-shrink-0">
-                                    <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                        <span className="text-gray-600">U</span>
+                                    <div className="h-15 w-15 rounded-full bg-gray-300 flex items-center justify-center">
+                                        {profileImage ? (
+                                            <img
+                                                src={profileImage}
+                                                alt="Profile"
+                                                className="w-13 h-13 rounded-full object-cover border border-gray-300"
+                                            />
+                                        ) : (
+                                            <div className="w-13 h-13 rounded-full bg-gray-300" />
+                                        )}
                                     </div>
                                 </div>
                                 <div className="flex-grow">
@@ -175,8 +185,12 @@ export default function CardDetailModal({
                                 {selectedCard.comments.map(comment => (
                                     <div key={comment.id} className="flex gap-3">
                                         <div className="flex-shrink-0">
-                                            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                                <span className="text-gray-600">{comment.user.username.charAt(0)}</span>
+                                            <div className="h-15 w-15 rounded-full bg-gray-300 flex items-center justify-center">
+                                                <img
+                                                    src={profileImage}
+                                                    alt="Profile"
+                                                    className="w-15 h-15 rounded-full object-cover border border-gray-300"
+                                                />
                                             </div>
                                         </div>
                                         <div className="flex-grow">
@@ -207,7 +221,7 @@ export default function CardDetailModal({
                     </button>
                     <button
                         onClick={handleDeleteCard}
-                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                        className="px-4 py-2 border border-red-300 rounded-md hover:bg-gray-50 transition"
                     >
                         Delete
                     </button>
