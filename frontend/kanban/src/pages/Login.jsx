@@ -38,8 +38,7 @@ export function Login() {
                 localStorage.setItem('username', formData.username)
                 localStorage.setItem('isLogged', true)
                 localStorage.setItem('currentUser', body.user.id)
-                console.log(body.user);
-                
+                localStorage.setItem('profileImage', body.user.image_url)
             } else {
                 setError(true)
             }

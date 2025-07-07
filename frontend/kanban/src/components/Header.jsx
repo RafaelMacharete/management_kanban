@@ -7,7 +7,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
     const username = localStorage.getItem("username") || localStorage.getItem("user");
     const token = localStorage.getItem("token");
     const profileImage = localStorage.getItem("profileImage");
-
+    
     const [inputValue, setInputValue] = useState({ search: '' });
 
     function exit() {

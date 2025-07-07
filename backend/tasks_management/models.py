@@ -5,9 +5,9 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext_lazy as _   
 
 def validate_image_size(image):
-    max_size = 1 * 1024 * 1024
+    max_size = 32 * 1024 * 1024
     if image.size > max_size:
-        raise ValidationError("Imagem size must be lower than 1MB.")
+        raise ValidationError("Imagem size must be lower than 32MB.")
     
 class MyValidator(UnicodeUsernameValidator):
     regex = r'^[\w.@+\- ]+$'
