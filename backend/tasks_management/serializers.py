@@ -37,7 +37,8 @@ class LoginSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         data['user'] = {
             'username': self.user.username,
-            'id': self.user.id
+            'id': self.user.id,
+            'user_image': self.user.profile_image
         }
         return data
 
@@ -74,7 +75,6 @@ class AttachmentSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.file.url)
         return None
 
-# Atualize o CardSerializer para incluir os novos campos e relacionamentos
 class CardSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     attachments = AttachmentSerializer(many=True, read_only=True)
