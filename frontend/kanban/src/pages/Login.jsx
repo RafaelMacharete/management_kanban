@@ -36,7 +36,7 @@ export function Login() {
             setNavigate(true);
             localStorage.setItem('username', formData.username)
             localStorage.setItem('isLogged', true)
-            localStorage.setItem('id', body.user.id)
+            localStorage.setItem('currentUser', body.user.id)
         } else {
             setError(true)
         }

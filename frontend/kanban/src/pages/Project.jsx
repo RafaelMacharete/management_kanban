@@ -345,7 +345,9 @@ export function Project() {
 
         {showCardInfo && (
           <CardDetailModal
-            card={selectedCard}
+            selectedCard={selectedCard}
+            columns={columns}
+            allAccounts={allAccounts}
             setShowCardInfo={setShowCardInfo}
             handleCardUpdate={handleCardUpdate}
             handleCardFieldChange={handleCardFieldChange}

@@ -22,7 +22,7 @@ export async function updateCard(cardId, data) {
   try {
     const res = await fetch(`${API_URL}/cards/${cardId}/update/`, {
       method: "PATCH",
-      headers,
+      headers: getHeaders(),
       body: JSON.stringify(data),
     });
     const body = await res.json();

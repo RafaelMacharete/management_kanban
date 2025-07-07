@@ -21,7 +21,7 @@ export function Home() {
   const [addedAccounts, setAddedAccounts] = useState([]);
   const [formError, setFormError] = useState(null);
   const [projectSearched, setProjectSearched] = useState([]);
-  const id = localStorage.getItem('id')
+  const currentUser = localStorage.getItem('currentUser')
   const isLogged = localStorage.getItem("isLogged");
 
   const [formData, setFormData] = useState({
@@ -48,7 +48,7 @@ export function Home() {
     const newFavorite = { favorite: updatedProject.favorite };
 
     try {
-      const res = await fetch(`https://trellio.onrender.com/projects/${id}`, {
+      const res = await fetch(`https://trellio.onrender.com/projects/${id}/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ export function Home() {
   const handleClickProjectForm = (e) => {
     setShowProjectForm(!showProjectForm);
     setFormError(null);
-    setFormData((prevFormData) => ({ ...prevFormData, members: [Number(id)] }))
+    setFormData((prevFormData) => ({ ...prevFormData, members: [Number(currentUser)] }))
 
     if (!showProjectForm) {
       setFormData({ name: "", members: [] });
@@ -96,7 +96,7 @@ export function Home() {
 
   function handleChangeName(e) {
     setFormData({ ...formData, name: e.target.value });
-    setFormData((prevFormData) => ({ ...prevFormData, members: [Number(id)] }))
+    setFormData((prevFormData) => ({ ...prevFormData, members: [Number(currentUser)] }))
   }
 
   function handleChangeMembers(e) {
@@ -135,7 +135,18 @@ export function Home() {
   }, [membersInput]);
 
   function addMember(accountId) {
-    if (!formData.members.includes(accountId)) {
+    const isAlreadyAdded = formData.members.includes(accountId);
+
+    if (isAlreadyAdded) {
+      // If already added, remove it
+      setFormData((prev) => ({
+        ...prev,
+        members: prev.members.filter((id) => id !== accountId),
+      }));
+
+      setAddedAccounts((prev) => prev.filter((acc) => acc.id !== accountId));
+    } else {
+      // If not added, add it
       const account = allAccounts.find((acc) => acc.id === accountId);
       if (!account) return;
 
@@ -295,6 +306,7 @@ export function Home() {
             setAddedAccounts={setAddedAccounts}
             formError={formError}
             isHome={true}
+            userId={currentUser}
           />
         )}
 

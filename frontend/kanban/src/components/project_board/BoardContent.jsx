@@ -120,7 +120,7 @@ export default function BoardContent({
                                             <p className="text-sm font-medium text-gray-800 mb-1">{card.name}</p>
                                             <div className="flex items-center text-xs text-gray-500">
                                                 <PiTimerLight size={12} className="mr-1" />
-                                                <span>{new Date(card.due_date).toLocaleDateString()}</span>
+                                                <span>{new Date(card.due_date + 'T12:00:00').toLocaleDateString()}</span>
                                                 <div className="flex items-center gap-1 ml-auto">
                                                     <HiMiniPencilSquare size={12} className="text-gray-400" />
                                                 </div>

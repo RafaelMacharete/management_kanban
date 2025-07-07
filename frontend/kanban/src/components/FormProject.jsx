@@ -14,6 +14,7 @@ export function FormProject({
   setAddedAccounts,
   formError,
   isHome,
+  userId
 }) {
   function removeMember(id) {
     const updated = formData.members.filter((memberId) => memberId !== id);
@@ -106,35 +107,40 @@ export function FormProject({
                 Existing accounts:
               </p>
               <div className="grid grid-cols-4 gap-3">
-                {allAccounts.map((account, idx) => (
-                  <div
-                    key={idx}
-                    className="relative group flex flex-col items-center"
-                  >
-                    <div className="relative">
-                      <img
-                        src={account.profile_image}
-                        alt={account.username}
-                        onClick={() => addMember(account.id)}
-                        className={`w-12 h-12 rounded-full object-cover border-2 transition-all cursor-pointer
-    ${formData.members.includes(account.id)
-                            ? "border-violet-500 ring-2 ring-violet-400"
-                            : "border-gray-200 hover:scale-125 group-hover:border-violet-400"
-                          }`}
-                      />
-                    </div>
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-all pointer-events-none">
-                      <div className="bg-white px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap text-sm font-medium">
-                        <p className="text-gray-800">{account.username}</p>
-                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-white rotate-45"></div>
+                {allAccounts
+                  .filter(account => account.id !== parseInt(userId))
+                  .map((account, idx) => (
+                    <div
+                      key={idx}
+                      className="relative group flex flex-col items-center"
+                    >
+                      <div className="relative">
+                        <img
+                          src={account.profile_image}
+                          alt={account.username}
+                          onClick={() => addMember(account.id)}
+                          className={`w-12 h-12 rounded-full object-cover border-2 transition-all cursor-pointer
+            active:scale-90 duration-150
+            ${formData.members.includes(account.id)
+                              ? "border-violet-500 ring-2 ring-violet-400"
+                              : "border-gray-200 hover:scale-110 group-hover:border-violet-400"
+                            }`}
+                        />
+                      </div>
+                      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-all pointer-events-none">
+                        <div className="bg-white px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap text-sm font-medium">
+                          <p className="text-gray-800">{account.username}</p>
+                          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-white rotate-45"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
-              {allAccounts.length > 1 && isHome && (
+              {allAccounts.length >= 1 && isHome && (
                 <p className="text-xs text-gray-500 mt-3 text-center">
-                  {allAccounts.length} accounts found
+                  {
+                    allAccounts.filter(account => account.id !== parseInt(userId)).length
+                  } accounts found
                 </p>
               )}
             </div>
