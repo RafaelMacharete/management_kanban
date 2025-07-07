@@ -110,8 +110,7 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
     'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://trellio_db_user:xlzZ0iCHKvokIDtDrtHgzbXXBZfSaSaL@dpg-d1lvbm2dbo4c73adrkeg-a/trellio_db',
+        default= dj_database_url.parse(os.environ.get('DATABASE_URL')),
         conn_max_age=600
     )
 }
