@@ -45,7 +45,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
     }, [inputValue, token, setProjectSearched]);
 
     return (
-        <header className="bg-white border-b border-gray-200 py-3">
+        <header className="bg-white border-b border-gray-200 py-3 px-10">
             <div className={`flex max-w-[1400px] ${!showSidebar && "px-10"} mx-auto justify-between items-center h-full `}>
                 <div className="relative w-full max-w-md">
                     <input

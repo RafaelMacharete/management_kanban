@@ -178,7 +178,7 @@ export function Project() {
     }
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmitCard(e) {
     e.preventDefault();
     try {
       const response = await createCard(cardFormData, token);
@@ -320,7 +320,7 @@ export function Project() {
                 onChange: handleChangeDescription,
               },
             ]}
-            handleSubmit={handleSubmit}
+            handleSubmit={handleSubmitCard}
             setShowForm={setShowCardForm}
             toCreate="Card"
           />
@@ -338,7 +338,7 @@ export function Project() {
             ]}
             handleSubmit={handleSubmitColumn}
             setShowForm={setShowColumnForm}
-            toCreate="Project"
+            toCreate="Column"
             allAccounts={allAccounts}
           />
         )}

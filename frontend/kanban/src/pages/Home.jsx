@@ -5,6 +5,7 @@ import { Projects } from "../components/Projects";
 import { Aside } from "../components/Aside";
 import { Header } from "../components/Header";
 import { FormProject } from "../components/FormProject";
+import { deleteProject } from "../services/projectService"; // ajuste o caminho
 
 export function Home() {
   const [projects, setProjects] = useState([]);
@@ -28,7 +29,7 @@ export function Home() {
     members: [],
   });
 
-  
+
   function exit() {
     window.location.href = "/";
     localStorage.clear();
@@ -60,11 +61,24 @@ export function Home() {
     }
   }
 
+
+  const handleDeleteProject = async (projectId) => {
+    const confirm = window.confirm("Tem certeza que deseja excluir este projeto?");
+    if (!confirm) return;
+
+    const success = await deleteProject(projectId);
+    if (success) {
+      setProjects((prev) => prev.filter((p) => p.id !== projectId));
+    } else {
+      alert("Erro ao excluir projeto.");
+    }
+  };
+
   const handleClickProjectForm = (e) => {
     setShowProjectForm(!showProjectForm);
     setFormError(null);
-    setFormData((prevFormData) => ({...prevFormData, members : [Number(id)]}))
-    
+    setFormData((prevFormData) => ({ ...prevFormData, members: [Number(id)] }))
+
     if (!showProjectForm) {
       setFormData({ name: "", members: [] });
       setAddedAccounts([]);
@@ -73,14 +87,14 @@ export function Home() {
     }
   };
 
-  // if (!isLogged || !token) {
-  //   window.location.href = "/";
-  //   return null;
-  // }
+  if (!isLogged || !token) {
+    window.location.href = "/";
+    return null;
+  }
 
   function handleChangeName(e) {
     setFormData({ ...formData, name: e.target.value });
-    setFormData((prevFormData) => ({...prevFormData, members : [Number(id)]}))
+    setFormData((prevFormData) => ({ ...prevFormData, members: [Number(id)] }))
   }
 
   function handleChangeMembers(e) {
@@ -201,9 +215,8 @@ export function Home() {
 
   return (
     <div
-      className={`min-h-screen grid ${
-        showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
-      } 
+      className={`min-h-screen grid ${showSidebar ? "grid-cols-[250px_1fr]" : "grid-cols-[0px_1fr]"
+        } 
     grid-rows-[70px_1fr_1fr] bg-gray-100`}
     >
       <Aside
@@ -299,8 +312,9 @@ export function Home() {
             projects={projectSearched.length > 0 ? projectSearched : projects}
             members={members}
             handleFavorite={handleFavorite}
+            handleDeleteProject={handleDeleteProject}
           />
-          
+
         </div>
         <div className="text-sm text-gray-600 mb-2 text-right">
           Showing{" "}
@@ -315,6 +329,7 @@ export function Home() {
           {qnt <= projects.length ? "Show More" : ""}
         </p>
       </main>
+      
     </div>
   );
 }

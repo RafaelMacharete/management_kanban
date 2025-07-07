@@ -33,7 +33,7 @@ class ProjectCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
 # PUT PATCH
-class ProjectUpdateAPIView(UpdateAPIView):
+class ProjectRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     lookup_field = 'pk'

@@ -142,7 +142,7 @@ export async function createColumn(columnData) {
       headers: getHeaders(),
       body: JSON.stringify(columnData),
     });
-    return await res.json();
+    return await res;
   } catch (error) {
     console.error("Error creating column:", error);
     throw error;
@@ -164,6 +164,29 @@ export async function deleteCard(cardId) {
     return true;
   } catch (error) {
     console.error("Erro ao deletar o card:", error);
+    return false;
+  }
+}
+
+export async function deleteProject(projectId) {
+  try {
+    const res = await fetch(`${API_URL}/projects/${projectId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      console.error("Erro ao excluir projeto:", res.status, body);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Erro ao excluir projeto:", error);
     return false;
   }
 }
