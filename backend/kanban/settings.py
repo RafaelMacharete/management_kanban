@@ -53,8 +53,11 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",
     "https://trellio.vercel.app",
 ]
+
 CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'trellio.onrender.com', '*']
 
