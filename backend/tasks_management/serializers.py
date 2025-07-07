@@ -35,10 +35,19 @@ class AccountSerializer(serializers.ModelSerializer):
 class LoginSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
+
+        request = self.context.get("request")
+        if request and self.user.profile_image:
+            image_url = request.build_absolute_uri(self.user.profile_image.url)
+        elif self.user.profile_image:
+            image_url = self.user.profile_image.url
+        else:
+            image_url = '/media/no_profile_image.webp'
+
         data['user'] = {
             'username': self.user.username,
             'id': self.user.id,
-            'user_image': self.user.profile_image
+            'image_url': image_url
         }
         return data
 

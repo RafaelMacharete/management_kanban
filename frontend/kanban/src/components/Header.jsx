@@ -5,8 +5,10 @@ import { CiBellOn } from "react-icons/ci";
 
 export function Header({ showSidebar, projectSearched, setProjectSearched }) {
     const username = localStorage.getItem("username") || localStorage.getItem("user");
-    const [inputValue, setInputValue] = useState({ search: '' });
     const token = localStorage.getItem("token");
+    const profileImage = localStorage.getItem("profileImage");
+
+    const [inputValue, setInputValue] = useState({ search: '' });
 
     function exit() {
         window.location.href = "/";
@@ -46,7 +48,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
 
     return (
         <header className="bg-white border-b border-gray-200 py-3 px-10">
-            <div className={`flex max-w-[1400px] ${!showSidebar && "px-10"} mx-auto justify-between items-center h-full `}>
+            <div className={`flex max-w-[1400px] ${!showSidebar && "px-10"} mx-auto justify-between items-center h-full`}>
                 <div className="relative w-full max-w-md">
                     <input
                         onChange={handleInputChange}
@@ -63,9 +65,22 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
                     <button className="text-gray-500 hover:text-gray-700 p-1">
                         <CiBellOn size={22} />
                     </button>
-                    <div className="text-sm font-medium text-gray-700">
-                        {username}
+
+                    <div className="flex items-center gap-2">
+                        {profileImage ? (
+                            <img
+                                src={profileImage}
+                                alt="Profile"
+                                className="w-8 h-8 rounded-full object-cover border border-gray-300"
+                            />
+                        ) : (
+                            <div className="w-8 h-8 rounded-full bg-gray-300" />
+                        )}
+                        <div className="text-sm font-medium text-gray-700">
+                            {username}
+                        </div>
                     </div>
+
                     <button
                         onClick={exit}
                         className="text-gray-500 hover:text-red-600 p-1 transition"
@@ -76,5 +91,5 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
                 </div>
             </div>
         </header>
-    )
+    );
 }

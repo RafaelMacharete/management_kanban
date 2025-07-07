@@ -21,6 +21,8 @@ export function FormProject({
     formDataSetter((prev) => ({ ...prev, members: updated }));
     setAddedAccounts((prev) => prev.filter((acc) => acc.id !== id));
   }
+  console.log(allAccounts);
+  
 
   function handleMembersInputChange(e) {
     const value = e.target.value;

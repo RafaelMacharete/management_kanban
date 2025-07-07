@@ -24,21 +24,29 @@ export function Login() {
 
         setIsLoading(true);
 
-        const response = await fetch("https://trellio.onrender.com/login/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-        });
-        const body = await response.json();
-        setIsLoading(false)
-        if (body.access) {
-            localStorage.setItem('token', body.access)
-            setNavigate(true);
-            localStorage.setItem('username', formData.username)
-            localStorage.setItem('isLogged', true)
-            localStorage.setItem('currentUser', body.user.id)
-        } else {
-            setError(true)
+        try {
+            const response = await fetch("https://trellio.onrender.com/login/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+            const body = await response.json();
+            setIsLoading(false)
+            if (body.access) {
+                localStorage.setItem('token', body.access)
+                setNavigate(true);
+                localStorage.setItem('username', formData.username)
+                localStorage.setItem('isLogged', true)
+                localStorage.setItem('currentUser', body.user.id)
+                console.log(body.user);
+                
+            } else {
+                setError(true)
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            setIsLoading(false);
+            setError(true);
         }
     }
 
