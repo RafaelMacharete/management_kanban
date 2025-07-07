@@ -25,7 +25,12 @@ export function Projects({ projects, members, handleFavorite, handleDeleteProjec
               className="bg-white p-4 shadow border border-violet-400 hover:shadow-md transition block"
             >
               <div className="flex justify-between items-start">
-                <h2 className="text-lg font-semibold text-gray-700">{project.name}</h2>
+                <h2
+                  className="text-lg font-semibold text-gray-700 truncate max-w-[170px]"
+                  title={project.name} 
+                >
+                  {project.name}
+                </h2>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={(e) => {

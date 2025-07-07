@@ -48,7 +48,7 @@ export function Home() {
     const newFavorite = { favorite: updatedProject.favorite };
 
     try {
-      await fetch(`https://trellio.onrender.com/projects/${id}`, {
+      const res = await fetch(`https://trellio.onrender.com/projects/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -56,6 +56,8 @@ export function Home() {
         },
         body: JSON.stringify(newFavorite),
       });
+      console.log(JSON.stringify(newFavorite));
+
     } catch (error) {
       console.error(error);
     }
@@ -329,7 +331,7 @@ export function Home() {
           {qnt <= projects.length ? "Show More" : ""}
         </p>
       </main>
-      
+
     </div>
   );
 }

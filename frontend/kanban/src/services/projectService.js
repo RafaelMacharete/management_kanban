@@ -142,7 +142,7 @@ export async function createColumn(columnData) {
       headers: getHeaders(),
       body: JSON.stringify(columnData),
     });
-    return await res;
+    return res;
   } catch (error) {
     console.error("Error creating column:", error);
     throw error;

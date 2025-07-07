@@ -3,7 +3,7 @@ from . import views
 from .views import (
     ProjectCreateAPIView, 
     AccountRetrieveUpdateDestroyAPIView, 
-    ProjectUpdateAPIView,
+    ProjectRetrieveUpdateDestroyAPIView,
     ColumnListCreateAPIView,
     ColumnRetrieveUpdateDestroyAPIView,
     CardListCreateAPIView,
@@ -37,7 +37,7 @@ urlpatterns = [
     
     # Project
     path('projects/', ProjectCreateAPIView.as_view(), name='create_project'),
-    path('projects/<int:pk>/', ProjectUpdateAPIView.as_view(), name='update_project'),
+    path('projects/<int:pk>/', ProjectRetrieveUpdateDestroyAPIView.as_view(), name='update_project'),
     path('projects/search/', SearchSpecificProject.as_view(), name='search_projects'),
     path('projects/<int:project_id>/members/', ProjectMembersView.as_view(), name='project_members'),
     
