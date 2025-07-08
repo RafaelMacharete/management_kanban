@@ -20,7 +20,7 @@ export function Aside({ projects, showSidebar, setShowSidebar }) {
                         to='/projects'
                     >
 
-                        <img src={aa} alt="trellio logo" width={120}/>
+                        <img src={aa} alt="tilo logo" width={120}/>
                     </Link>
                     <button
                         onClick={() => setShowSidebar(!showSidebar)}

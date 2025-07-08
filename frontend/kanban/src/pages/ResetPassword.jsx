@@ -58,7 +58,11 @@ export function ResetPassword() {
 
             if (res.ok) {
                 setSuccess("Password reset successfully! Redirecting to login...");
-                setTimeout(() => navigate("/"), 2000);
+                setTimeout(() => {
+                    navigate("/", {
+                        state: { message: "Password reset successfully!" }
+                    });
+                }, 2000);
             } else {
                 setError("Failed to reset password. Please try again.");
             }

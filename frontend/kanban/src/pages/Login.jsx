@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
@@ -8,6 +10,20 @@ export function Login() {
     const [navigate, setNavigate] = useState(false);
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const location = useLocation();
+    const [toastMessage, setToastMessage] = useState("");
+
+    useEffect(() => {
+        if (location.state?.message) {
+            setToastMessage(location.state.message);
+
+            const timer = setTimeout(() => {
+                setToastMessage("");
+            }, 5000); // Hide after 5 seconds
+
+            return () => clearTimeout(timer);
+        }
+    }, [location.state]);
 
     function handleChange(e) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -121,6 +137,12 @@ export function Login() {
                     </Link>
                 </div>
             </div>
+            {toastMessage && (
+                <div className="fixed top-5 right-5 bg-green-300  px-4 py-2 rounded shadow-lg z-50 text-sm">
+                    {toastMessage}
+                </div>
+            )}
         </div>
+
     );
 }
