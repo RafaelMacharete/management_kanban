@@ -5,7 +5,7 @@ export function Settings() {
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        fetch("https://trellio.onrender.com/accounts/me/", {
+        fetch("https://trellio.onrender.com/profile/", {
             headers: {
                 Authorization: `Bearer ${token}`
             }
