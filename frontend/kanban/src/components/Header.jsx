@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { CiBellOn } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 export function Header({ showSidebar, projectSearched, setProjectSearched }) {
     const username = localStorage.getItem("username") || localStorage.getItem("user");
     const token = localStorage.getItem("token");
     const profileImage = localStorage.getItem("profileImage");
-    
+
     const [inputValue, setInputValue] = useState({ search: '' });
+    const navigate = useNavigate();
 
     function exit() {
         window.location.href = "/";
@@ -71,10 +73,14 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
                             <img
                                 src={profileImage}
                                 alt="Profile"
-                                className="w-8 h-8 rounded-full object-cover border border-gray-300"
+                                className="w-8 h-8 rounded-full object-cover border border-gray-300 cursor-pointer"
+                                onClick={() => navigate("/settings")}
                             />
                         ) : (
-                            <div className="w-8 h-8 rounded-full bg-gray-300" />
+                            <div
+                                className="w-8 h-8 rounded-full bg-gray-300"
+                                onClick={() => navigate("/settings")}
+                            />
                         )}
                         <div className="text-sm font-medium text-gray-700">
                             {username}

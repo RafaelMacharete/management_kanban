@@ -325,3 +325,10 @@ class ResetPasswordView(APIView):
             return Response({'message': 'Password reset successful'}, status=200)
         except Account.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
+        
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = AccountSerializer(request.user, context={'request': request})
+        return Response(serializer.data)

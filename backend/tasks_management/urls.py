@@ -23,7 +23,8 @@ from .views import (
     ProjectMembersView,
     SendEmailTokenView,
     VerifyTokenView,
-    ResetPasswordView
+    ResetPasswordView,
+    UserProfileView
 )
 
 urlpatterns = [
@@ -67,4 +68,8 @@ urlpatterns = [
     path('send-reset-email/', SendEmailTokenView.as_view(), name='send_reset_email'),
     path('verify-token/', VerifyTokenView.as_view(), name='verify_token'),
     path('reset-password/', ResetPasswordView.as_view(), name='reset_password'),
+
+    # User
+    path('profile/', UserProfileView.as_view(), name='user-profile'),
+
 ]
