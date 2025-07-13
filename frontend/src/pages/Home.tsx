@@ -5,10 +5,17 @@ import { Projects } from "../components/Projects";
 import { Aside } from "../components/Aside";
 import { Header } from "../components/Header";
 import { FormProject } from "../components/FormProject";
-import { deleteProject } from "../services/projectService"; // ajuste o caminho
+import { deleteProject } from "../services/projectService";
+
+interface IProjects {
+  id: string;
+  name: string;
+  favorite: string;
+  members: string;
+}
 
 export function Home() {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<IProjects[]>([]);
   const [members, setMembers] = useState([]);
   const [qnt, setQnt] = useState(9);
   const token = localStorage.getItem("token");
@@ -35,7 +42,7 @@ export function Home() {
     localStorage.clear();
   }
 
-  async function handleFavorite(id) {
+  async function handleFavorite(id: number) {
     const updatedProjects = projects.map((project) => {
       if (project.id === id) {
         return { ...project, favorite: !project.favorite };
@@ -56,7 +63,6 @@ export function Home() {
         },
         body: JSON.stringify(newFavorite),
       });
-      console.log(JSON.stringify(newFavorite));
 
     } catch (error) {
       console.error(error);
@@ -88,11 +94,6 @@ export function Home() {
       setMembersInput("");
     }
   };
-
-  if (!isLogged || !token) {
-    window.location.href = "/";
-    return null;
-  }
 
   function handleChangeName(e) {
     setFormData({ ...formData, name: e.target.value });
@@ -217,6 +218,7 @@ export function Home() {
         }
         const body = await response.json();
         setProjects(body.projects);
+
         setMembers(body.members);
       } catch (error) {
         console.error("Error while authenticating:", error);

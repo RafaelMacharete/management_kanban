@@ -3,13 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { Aside } from "../components/Aside";
 import { Header } from "../components/Header";
 import { RxDoubleArrowLeft } from "react-icons/rx";
-import { FaPen, FaCheck } from "react-icons/fa";
-import { CiGrid2H, CiGrid41 } from "react-icons/ci";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { IoMdAdd } from "react-icons/io";
 import { Form } from "../components/Form";
-import { PiTimerLight } from "react-icons/pi";
-import { HiMiniPencilSquare } from "react-icons/hi2";
 import BoardContent from "../components/project_board/BoardContent";
 import CardDetailModal from "../components/project_board/CardDetailModal";
 

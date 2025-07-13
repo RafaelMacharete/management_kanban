@@ -10,7 +10,6 @@ export function Login() {
     const [navigate, setNavigate] = useState(false);
     const [error, setError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const location = useLocation();
     const [toastMessage, setToastMessage] = useState("");
 
     useEffect(() => {
