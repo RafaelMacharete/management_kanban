@@ -1,5 +1,14 @@
 import { getHeaders, API_URL } from "./baseService";
 
+interface ISelectedCard {
+  name: string;
+  due_date: Date;
+  priority: string;
+  assigned_to_id: number | null;
+  column: number;
+}
+
+
 export async function fetchCardDetails(cardId: number) {
   try {
     const res = await fetch(`${API_URL}/cards/${cardId}/detail/`, { headers: getHeaders(), });
@@ -10,7 +19,7 @@ export async function fetchCardDetails(cardId: number) {
   }
 }
 
-export async function updateCard(cardId: string, data) {
+export async function updateCard(cardId: string, data: ISelectedCard) {
   try {
     const res = await fetch(`${API_URL}/cards/${cardId}/update/`, {
       method: "PATCH",
@@ -29,7 +38,7 @@ export async function updateCard(cardId: string, data) {
 }
 
 
-export async function fetchCards(columns_id) {
+export async function fetchCards(columns_id: number[]) {
   try {
     const res = await fetch(`${API_URL}/card/`, {
       method: "POST",
@@ -45,6 +54,8 @@ export async function fetchCards(columns_id) {
 
 export async function createCard(cardData) {
   try {
+    console.log(cardData);
+    
     const res = await fetch(`${API_URL}/cards/`, {
       method: "POST",
       headers: getHeaders(),

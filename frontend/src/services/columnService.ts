@@ -7,6 +7,10 @@ export async function fetchColumns(columnData) {
             headers: getHeaders(),
             body: JSON.stringify(columnData),
         });
+        if (res.status === 401){
+            window.location.href = '/projects'            
+        }
+        
         return await res.json();
     } catch (error) {
         console.error("Error fetching columns:", error);

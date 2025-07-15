@@ -1,3 +1,5 @@
+import { API_URL, getHeaders } from "./baseService";
+
 export async function updateProjectName(projectId: number, name) {
   try {
     const res = await fetch(`${API_URL}/projects/${projectId}`, {

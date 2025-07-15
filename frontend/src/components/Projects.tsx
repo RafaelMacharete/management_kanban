@@ -2,14 +2,42 @@ import { FaStar, FaRegStar } from "react-icons/fa";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+interface IProjects {
+  id: number;
+  name: string;
+  favorite: boolean;
+  members: number[];
+}
 
-export function Projects({ projects, members, handleFavorite, handleDeleteProject }) {
-  const [menuOpenId, setMenuOpenId] = useState(null);
-  const dropdownRef = useRef(null);
+interface IAccounts {
+  id: number;
+  username: string;
+  email: string;
+  image_url: string;
+  nickname: string | null;
+  profile_image: string;
+}
+
+
+interface IProjectsProps {
+  projects: IProjects[];
+  members: IAccounts[];
+  handleFavorite: (id: number) => Promise<void>;
+  handleDeleteProject: (id: number) => Promise<void>;
+}
+
+export function Projects({ projects, members, handleFavorite, handleDeleteProject }: IProjectsProps) {
+
+  const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) // contains function expects 'Node' to avoid type error
+      ) {
         setMenuOpenId(null);
       }
     }

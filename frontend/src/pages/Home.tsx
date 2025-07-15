@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { GrFormAdd } from "react-icons/gr";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { Projects } from "../components/Projects";
@@ -8,30 +8,46 @@ import { FormProject } from "../components/FormProject";
 import { deleteProject } from "../services/projectService";
 
 interface IProjects {
-  id: string;
+  id: number;
   name: string;
-  favorite: string;
-  members: string;
+  favorite: boolean;
+  members: number[];
 }
+
+interface IFormData {
+  name: string;
+  members: number[]
+}
+
+interface IAccounts {
+  id: number;
+  username: string;
+  email: string;
+  image_url: string;
+  nickname: string | null;
+  profile_image: string;
+}
+
+
 
 export function Home() {
   const [projects, setProjects] = useState<IProjects[]>([]);
-  const [members, setMembers] = useState([]);
-  const [qnt, setQnt] = useState(9);
+  const [members, setMembers] = useState<IAccounts[]>([]);
+  const [qnt, setQnt] = useState<number>(9);
   const token = localStorage.getItem("token");
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [showProjectForm, setShowProjectForm] = useState(false);
-  const [unauthorized, setUnauthorized] = useState(false);
-  const [reloadProjects, setReloadProjects] = useState(0);
-  const [allAccounts, setAllAccounts] = useState([]);
-  const [membersInput, setMembersInput] = useState([]);
-  const [addedAccounts, setAddedAccounts] = useState([]);
-  const [formError, setFormError] = useState(null);
-  const [projectSearched, setProjectSearched] = useState([]);
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
+  const [showProjectForm, setShowProjectForm] = useState<boolean>(false);
+  const [unauthorized, setUnauthorized] = useState<boolean>(false);
+  const [reloadProjects, setReloadProjects] = useState<number>(0);
+  const [membersInput, setMembersInput] = useState<string>('');
+  const [allAccounts, setAllAccounts] = useState<IAccounts[]>([]);
+  const [addedAccounts, setAddedAccounts] = useState<IAccounts[]>([]);
+  const [formError, setFormError] = useState<string>('');
+  const [projectSearched, setProjectSearched] = useState<IProjects[]>([]);
   const currentUser = localStorage.getItem('currentUser')
   const isLogged = localStorage.getItem("isLogged");
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<IFormData>({
     name: "",
     members: [],
   });
@@ -43,6 +59,7 @@ export function Home() {
   }
 
   async function handleFavorite(id: number) {
+
     const updatedProjects = projects.map((project) => {
       if (project.id === id) {
         return { ...project, favorite: !project.favorite };
@@ -52,8 +69,8 @@ export function Home() {
     setProjects(updatedProjects);
 
     const updatedProject = updatedProjects.find((project) => project.id === id);
-    const newFavorite = { favorite: updatedProject.favorite };
-
+    const newFavorite = { favorite: updatedProject?.favorite };
+    
     try {
       const res = await fetch(`https://trellio.onrender.com/projects/${id}/`, {
         method: "PATCH",
@@ -70,7 +87,7 @@ export function Home() {
   }
 
 
-  const handleDeleteProject = async (projectId) => {
+  const handleDeleteProject = async (projectId: number) => {
     const confirm = window.confirm("Tem certeza que deseja excluir este projeto?");
     if (!confirm) return;
 
@@ -82,9 +99,9 @@ export function Home() {
     }
   };
 
-  const handleClickProjectForm = (e) => {
+  const handleClickProjectForm = () => {
     setShowProjectForm(!showProjectForm);
-    setFormError(null);
+    setFormError('');
     setFormData((prevFormData) => ({ ...prevFormData, members: [Number(currentUser)] }))
 
     if (!showProjectForm) {
@@ -95,18 +112,20 @@ export function Home() {
     }
   };
 
-  function handleChangeName(e) {
+  function handleChangeName(e: ChangeEvent<HTMLInputElement>) {
     setFormData({ ...formData, name: e.target.value });
     setFormData((prevFormData) => ({ ...prevFormData, members: [Number(currentUser)] }))
   }
 
-  function handleChangeMembers(e) {
+  function handleChangeMembers(e: ChangeEvent<HTMLInputElement>) {
     let membersInput = e.target.value;
+    
     setMembersInput(membersInput);
   }
 
   useEffect(() => {
     if (membersInput.length <= 0) {
+
       setAllAccounts([]);
       return;
     }
@@ -135,7 +154,7 @@ export function Home() {
     return () => clearTimeout(timeoutId);
   }, [membersInput]);
 
-  function addMember(accountId) {
+  function addMember(accountId: number) {
     const isAlreadyAdded = formData.members.includes(accountId);
 
     if (isAlreadyAdded) {
@@ -148,6 +167,7 @@ export function Home() {
       setAddedAccounts((prev) => prev.filter((acc) => acc.id !== accountId));
     } else {
       // If not added, add it
+
       const account = allAccounts.find((acc) => acc.id === accountId);
       if (!account) return;
 
@@ -160,9 +180,9 @@ export function Home() {
     }
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setFormError(null);
+    setFormError('');
 
     if (!formData.name.trim()) {
       setFormError("Project name is required");
@@ -174,7 +194,7 @@ export function Home() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -190,8 +210,12 @@ export function Home() {
       setAllAccounts([]);
       setMembersInput("");
       setReloadProjects((prev) => prev + 1);
-    } catch (error) {
-      setFormError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setFormError(error.message);
+      } else {
+        setFormError("An unknown error occurred");
+      }
     }
   }
 
@@ -252,7 +276,7 @@ export function Home() {
         </button>
       )}
 
-      {unauthorized || !isLogged && (
+      {unauthorized && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
           <div className="bg-white w-full max-w-xs p-5 rounded-lg shadow-lg text-center">
             <h2 className="text-lg font-medium mb-3">Session Expired</h2>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Aside } from "../components/Aside";
 import { Header } from "../components/Header";
@@ -13,34 +13,101 @@ import { addComment } from "../services/commentService";
 import { uploadFile } from "../services/fileService";
 import { fetchColumns } from "../services/columnService";
 
+type Comment = {
+  card: number;
+  created_at: string;
+  id: number;
+  text: string;
+  updated_at: string;
+}
+
+type Card = {
+  id: number;
+  name: string;
+  position: number;
+  priority: number;
+  assigned_to: number | null;
+  attachments: any[];
+  column: number;
+  comments: Comment[];
+  creation_date: string;
+  description: string;
+}
+
+interface IProjects {
+  id: number;
+  name: string;
+  favorite: boolean;
+  members: number[];
+}
+interface IAccounts {
+  id: number;
+  username: string;
+  email: string;
+  image_url: string;
+  nickname: string | null;
+  profile_image: string;
+}
+
+interface IColumnFormData {
+  id?: number;
+  name: string;
+  project_board: number | null;
+  position: number;
+}
+
+interface ICardDetails {
+  attachments: any[];
+  card: Card;
+  comments: Comment[]
+}
+
+interface ICardFormData {
+  name: string;
+  column: number | null;
+  description: string;
+  due_date: string;
+}
+
+export interface ICard {
+  id: number;
+  name: string;
+  column: number;
+  description: string;
+  creation_date: string; 
+}
+
+type FilterOptions = 'Today' | 'This Week' | 'This Month' | 'All'
+
 export function Project() {
   const location = useLocation();
   const { projectid, projectname, projects } = location.state || {};
   const token = localStorage.getItem("token");
 
   const [allAccounts, setAllAccounts] = useState([]);
-  const [projectName, setProjectName] = useState(projectname);
-  const [isEditingProjectName, setIsEditingProjectName] = useState(false);
+  const [projectName, setProjectName] = useState<string>(projectname);
+  const [isEditingProjectName, setIsEditingProjectName] = useState<boolean>(false);
 
-  const [activeFilter, setActiveFilter] = useState("Today");
+  const [activeFilter, setActiveFilter] = useState<FilterOptions>("Today");
   const filterOptions = ["Today", "This Week", "This Month", "All"];
 
-  const [reloadProjects, setReloadProject] = useState(0);
+  const [reloadProjects, setReloadProject] = useState<number>(0);
 
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [showCardForm, setShowCardForm] = useState(false);
-  const [showColumnForm, setShowColumnForm] = useState(false);
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
+  const [showCardForm, setShowCardForm] = useState<boolean>(false);
+  const [showColumnForm, setShowColumnForm] = useState<boolean>(false);
 
   const [projectSearched, setProjectSearched] = useState([]);
 
-  const [columnFormData, setColumnFormData] = useState({
+  const [columnFormData, setColumnFormData] = useState<IColumnFormData>({
     name: "",
     project_board: null,
     position: 1,
   });
-  const columnData = { project_board: projectid };
 
-  const [cardFormData, setCardFormData] = useState({
+  const columnData: { project_board: number } = { project_board: projectid };
+
+  const [cardFormData, setCardFormData] = useState<ICardFormData>({
     name: "",
     column: null,
     description: "",
@@ -51,15 +118,15 @@ export function Project() {
   const [cards, setCards] = useState([]);
   const [cardsData, setCardsData] = useState();
 
-  const [showCardInfo, setShowCardInfo] = useState(false);
+  const [showCardInfo, setShowCardInfo] = useState<boolean>(false);
 
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState<ICardDetails | null>(null);
 
   if (!location.state) {
     window.location.href = "/projects";
   }
 
-  async function handleCardUpdate(e) {
+  async function handleCardUpdate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
       const updatedCard = await updateCard(selectedCard.card.id, {
@@ -72,7 +139,7 @@ export function Project() {
       });
 
       if (updatedCard?.due_date !== selectedCard.card.due_date) {
-        console.warn("Due date not updated:", updatedCard);
+        console.log("Due date not updated:", updatedCard);
       }
 
       if (updatedCard) {
@@ -180,6 +247,9 @@ export function Project() {
   async function handleSetShowCardInfo(cardId) {
     try {
       const cardDetails = await fetchCardDetails(cardId);
+
+      console.log(cardDetails);
+      
       setSelectedCard(cardDetails);
       setShowCardInfo(true);
     } catch (error) {
@@ -203,6 +273,7 @@ export function Project() {
     async function loadProjectMembers() {
       try {
         const members = await fetchProjectMembers(projectid);
+
         setAllAccounts(members);
       } catch (error) {
         console.error("Failed to load project members:", error);
@@ -217,6 +288,7 @@ export function Project() {
         const body = await fetchColumns(columnData);
 
         setColumns(body);
+        
         const columnsIds = {
           columns_id: body.map((col) => col.id),
         };
@@ -271,6 +343,7 @@ export function Project() {
             <MdKeyboardDoubleArrowLeft size={25} />
           </Link>
         </div>
+
         <BoardContent
           isEditingProjectName={isEditingProjectName}
           projectName={projectName}

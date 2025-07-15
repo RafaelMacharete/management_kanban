@@ -1,10 +1,22 @@
-import { FiTrello } from "react-icons/fi";
 import { RxDoubleArrowLeft } from "react-icons/rx";
 import { PiSquaresFourLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
-import { FaStar, FaRegStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import aa from '../assets/logo.png'
-export function Aside({ projects, showSidebar, setShowSidebar }) {
+interface IProjects {
+    favorite: boolean;
+    id: number;
+    members: number[];
+    name: string;
+}
+
+interface IAsideProps {
+    projects: IProjects[];
+    showSidebar: boolean;
+    setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export function Aside({ projects, showSidebar, setShowSidebar }: IAsideProps) {
 
     return (
         // Left Bar
@@ -20,7 +32,7 @@ export function Aside({ projects, showSidebar, setShowSidebar }) {
                         to='/projects'
                     >
 
-                        <img src={aa} alt="tilo logo" width={120}/>
+                        <img src={aa} alt="tilo logo" width={120} />
                     </Link>
                     <button
                         onClick={() => setShowSidebar(!showSidebar)}
