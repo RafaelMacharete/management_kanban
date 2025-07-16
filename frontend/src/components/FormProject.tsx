@@ -32,7 +32,7 @@ interface IFormProjectsProps {
   formData: IFormData;
   formDataSetter: React.Dispatch<React.SetStateAction<IFormData>>;
   addedAccounts: IAccounts[];
-  setAddedAccounts: React.Dispatch<React.SetStateAction<IAccounts[]>>;
+  setAddedAccounts: (param: any) => void;
   formError?: string;
   isHome: boolean;
   userId: string | null;

@@ -4,10 +4,16 @@ import { RxExit } from "react-icons/rx";
 import { CiBellOn } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 
+interface IProjects {
+  id: number;
+  name: string;
+  favorite: boolean;
+  members: number[];
+}
 
 interface IHeaderProps {
     showSidebar: boolean;
-    setProjectSearched: React.Dispatch<React.SetStateAction<never[]>>
+    setProjectSearched: React.Dispatch<React.SetStateAction<IProjects[]>>
 }
 
 export function Header({ showSidebar, setProjectSearched }: IHeaderProps) {
