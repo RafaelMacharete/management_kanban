@@ -1,9 +1,9 @@
 import { API_URL, getHeaders } from "./baseService";
 
-export async function uploadFile(cardId: number, file) {
+export async function uploadFile(cardId: number, file: File) {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("card", cardId);
+  formData.append("card", cardId.toString());
 
   try {
     const res = await fetch(`${API_URL}/attachments/`, {

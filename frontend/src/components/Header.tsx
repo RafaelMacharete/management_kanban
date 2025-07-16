@@ -1,10 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { CiSearch } from "react-icons/ci";
 import { RxExit } from "react-icons/rx";
 import { CiBellOn } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 
-export function Header({ showSidebar, projectSearched, setProjectSearched }) {
+
+interface IHeaderProps {
+    showSidebar: boolean;
+    setProjectSearched: React.Dispatch<React.SetStateAction<never[]>>
+}
+
+export function Header({ showSidebar, setProjectSearched }: IHeaderProps) {
+
     const username = localStorage.getItem("username") || localStorage.getItem("user");
     const token = localStorage.getItem("token");
     const profileImage = localStorage.getItem("profileImage");
@@ -17,8 +24,7 @@ export function Header({ showSidebar, projectSearched, setProjectSearched }) {
         localStorage.clear();
     }
 
-    function handleInputChange(e) {
-        e.preventDefault();
+    function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
         setInputValue({ ...inputValue, search: e.target.value });
     }
 

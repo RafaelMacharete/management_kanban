@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Aside } from "../components/Aside";
 import { Header } from "../components/Header";
@@ -9,9 +9,9 @@ import BoardContent from "../components/project_board/BoardContent";
 import CardDetailModal from "../components/project_board/CardDetailModal";
 import { updateProjectName, fetchProjectMembers } from '../services/projectService';
 import { createCard, createColumn, deleteCard, fetchCardDetails, fetchCards, updateCard } from "../services/cardService";
-import { addComment } from "../services/commentService";
 import { uploadFile } from "../services/fileService";
 import { fetchColumns } from "../services/columnService";
+import type { ICardDetails } from "../pages/types/cardTypes";
 
 type Comment = {
   card: number;
@@ -21,45 +21,33 @@ type Comment = {
   updated_at: string;
 }
 
-type Card = {
+export type Card = {
+  due_date: string;
   id: number;
   name: string;
   position: number;
-  priority: number;
+  priority: string;
   assigned_to: number | null;
-  attachments: any[];
+  attachments: File[];
   column: number;
   comments: Comment[];
   creation_date: string;
   description: string;
 }
 
-interface IProjects {
-  id: number;
-  name: string;
-  favorite: boolean;
-  members: number[];
-}
-interface IAccounts {
-  id: number;
-  username: string;
-  email: string;
-  image_url: string;
-  nickname: string | null;
-  profile_image: string;
-}
-
 interface IColumnFormData {
   id?: number;
-  name: string;
+  name?: string;
   project_board: number | null;
-  position: number;
+  position?: number;
+  column?: number
 }
 
-interface ICardDetails {
-  attachments: any[];
-  card: Card;
-  comments: Comment[]
+export interface IColumn {
+  id: number;
+  name: string;
+  position: number;
+  project_board: number;
 }
 
 interface ICardFormData {
@@ -69,27 +57,34 @@ interface ICardFormData {
   due_date: string;
 }
 
-export interface ICard {
-  id: number;
-  name: string;
-  column: number;
-  description: string;
-  creation_date: string; 
+interface ICardsData {
+  columns_id: number[]
 }
 
-type FilterOptions = 'Today' | 'This Week' | 'This Month' | 'All'
+interface IAccounts {
+  id: number;
+  username: string;
+  email: string;
+  image_url: string;
+  nickname: string | null;
+  profile_image: string;
+}
+
+
+
+const filterOptions = ['Today', 'This Week', 'This Month', 'All'] as const;
+type FilterOptions = typeof filterOptions[number];
 
 export function Project() {
   const location = useLocation();
   const { projectid, projectname, projects } = location.state || {};
   const token = localStorage.getItem("token");
 
-  const [allAccounts, setAllAccounts] = useState([]);
+  const [allAccounts, setAllAccounts] = useState<IAccounts[]>([]);
   const [projectName, setProjectName] = useState<string>(projectname);
   const [isEditingProjectName, setIsEditingProjectName] = useState<boolean>(false);
 
   const [activeFilter, setActiveFilter] = useState<FilterOptions>("Today");
-  const filterOptions = ["Today", "This Week", "This Month", "All"];
 
   const [reloadProjects, setReloadProject] = useState<number>(0);
 
@@ -114,9 +109,9 @@ export function Project() {
     due_date: new Date().toISOString().split('T')[0]
   });
 
-  const [columns, setColumns] = useState([]);
-  const [cards, setCards] = useState([]);
-  const [cardsData, setCardsData] = useState();
+  const [columns, setColumns] = useState<IColumn[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [cardsData, setCardsData] = useState<ICardsData>();
 
   const [showCardInfo, setShowCardInfo] = useState<boolean>(false);
 
@@ -129,12 +124,15 @@ export function Project() {
   async function handleCardUpdate(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
+      if (!selectedCard) return;
+      console.log(selectedCard);
+
       const updatedCard = await updateCard(selectedCard.card.id, {
         name: selectedCard.card.name,
         description: selectedCard.card.description,
         due_date: selectedCard.card.due_date,
-        priority: selectedCard.card.priority,
-        assigned_to_id: selectedCard.card.assigned_to?.id || null,
+        priority: Number(selectedCard.card.priority),
+        assigned_to_id: selectedCard.card.assigned_to || null,
         column: selectedCard.card.column
       });
 
@@ -145,32 +143,38 @@ export function Project() {
       if (updatedCard) {
         setCards(cards.map(card => card.id === updatedCard.id ? updatedCard : card));
         setShowCardInfo(false);
-
       }
     } catch (error) {
       console.error("Error updating card:", error);
     }
   };
 
-  const handleCardFieldChange = (field, value) => {
-    setSelectedCard(prev => ({ ...prev, card: { ...prev.card, [field]: value } }));
+  const handleCardFieldChange = <K extends keyof Card>(field: K, value: Card[K]) => {
+    setSelectedCard(prev => {
+      
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        card: {
+          ...prev.card,
+          [field]: value,
+        },
+        attachments: prev.attachments,
+        comments: prev.comments,
+      };
+    });
   };
 
-  const [newComment, setNewComment] = useState("");
 
-  async function handleAddComment(e) {
-    e.preventDefault();
-    if (!newComment.trim()) return;
 
-    await addComment(selectedCard.card.id, newComment);
-  };
 
-  async function handleFileUpload(e) {
-    const file = e.target.files[0];
+  async function handleFileUpload(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    await uploadFile(selectedCard.card.id, file);
-  };
+    await uploadFile(selectedCard!.card.id, file);
+  }
 
   async function handleUpdateProjectName() {
     if (projectName.trim() === "") {
@@ -180,46 +184,46 @@ export function Project() {
     await updateProjectName(projectid, projectName);
   };
 
-  const handleProjectNameChange = (e) => {
+  const handleProjectNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setProjectName(e.target.value);
   };
 
-  function handleProjectNameKeyDown(e) {
+  function handleProjectNameKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       handleUpdateProjectName();
     }
   };
 
-  function handleAddCard(id) {
+  function handleAddCard(id: number) {
     setShowCardForm(true);
     setCardFormData({ ...cardFormData, column: id });
   }
 
-  function handleAddColumn(id) {
+  function handleAddColumn(id: number) {
     setShowColumnForm(true);
     setColumnFormData({ ...columnData, column: id });
   }
 
-  function handleChangeName(e) {
+  function handleChangeName(e: ChangeEvent<HTMLInputElement>) {
     setCardFormData({ ...cardFormData, name: e.target.value });
   }
 
-  function handleDueDate(e) {
+  function handleDueDate(e: ChangeEvent<HTMLInputElement>) {
     setCardFormData({ ...cardFormData, due_date: e.target.value })
   }
 
-  function handleChangeDescription(e) {
+  function handleChangeDescription(e: ChangeEvent<HTMLInputElement>) {
     setCardFormData({ ...cardFormData, description: e.target.value });
   }
 
-  function handleChangeColumnName(e) {
+  function handleChangeColumnName(e: ChangeEvent<HTMLInputElement>) {
     setColumnFormData({ ...columnFormData, name: e.target.value });
   }
 
-  async function handleSubmitColumn(e) {
+  async function handleSubmitColumn(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const response = await createColumn(columnFormData, token);
+      const response = await createColumn(columnFormData);
       if (response.ok) {
         setShowColumnForm(false);
         setColumnFormData({ name: "", project_board: null });
@@ -230,10 +234,10 @@ export function Project() {
     }
   }
 
-  async function handleSubmitCard(e) {
+  async function handleSubmitCard(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const response = await createCard(cardFormData, token);
+      const response = await createCard(cardFormData);
       if (response.ok) {
         setShowCardForm(false);
         setCardFormData({ name: "", column: null, description: "", due_date: new Date().toISOString().split('T')[0] });
@@ -244,12 +248,12 @@ export function Project() {
     }
   }
 
-  async function handleSetShowCardInfo(cardId) {
+  async function handleSetShowCardInfo(cardId: number) {
     try {
       const cardDetails = await fetchCardDetails(cardId);
 
       console.log(cardDetails);
-      
+
       setSelectedCard(cardDetails);
       setShowCardInfo(true);
     } catch (error) {
@@ -259,6 +263,7 @@ export function Project() {
 
   async function handleDeleteCard() {
     if (!window.confirm("Are you sure you want to delete this task?")) return;
+    if (!selectedCard) return;
 
     const success = await deleteCard(selectedCard.card.id);
     if (success) {
@@ -285,18 +290,20 @@ export function Project() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const body = await fetchColumns(columnData);
+        const body: IColumn[] = await fetchColumns(columnData);
 
         setColumns(body);
-        
+
         const columnsIds = {
           columns_id: body.map((col) => col.id),
         };
+
         setCardsData(columnsIds);
 
         try {
           if (columnsIds.columns_id.length <= 0) return;
           const fetchedCards = await fetchCards(columnsIds);
+
           setCards(fetchedCards)
         } catch (error) {
           console.log("error: ", error);
@@ -333,7 +340,6 @@ export function Project() {
 
       <Header
         showSidebar={showSidebar}
-        projectSearched={projectSearched}
         setProjectSearched={setProjectSearched}
       />
 
@@ -397,7 +403,6 @@ export function Project() {
             handleSubmit={handleSubmitColumn}
             setShowForm={setShowColumnForm}
             toCreate="Column"
-            allAccounts={allAccounts}
           />
         )}
 
@@ -409,9 +414,6 @@ export function Project() {
             setShowCardInfo={setShowCardInfo}
             handleCardUpdate={handleCardUpdate}
             handleCardFieldChange={handleCardFieldChange}
-            handleAddComment={handleAddComment}
-            newComment={newComment}
-            setNewComment={setNewComment}
             handleFileUpload={handleFileUpload}
             handleDeleteCard={handleDeleteCard}
           />

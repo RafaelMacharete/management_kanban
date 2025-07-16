@@ -1,21 +1,55 @@
-interface ICardDetailModal {
-} 
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import { addComment } from "../../services/commentService";
+import type { ICardDetails, Card } from "../../pages/types/cardTypes";
+
+
+interface IColumn {
+    id: number;
+    name: string;
+    position: number;
+    project_board: number;
+}
+
+interface IAccounts {
+    id: number;
+    username: string;
+    email: string;
+    image_url: string;
+    nickname: string | null;
+    profile_image: string;
+}
+
+interface ICardDetailModalProps {
+    selectedCard: ICardDetails | null;
+    setShowCardInfo: React.Dispatch<React.SetStateAction<boolean>>;
+    columns: IColumn[];
+    allAccounts: IAccounts[];
+    handleFileUpload: (e: ChangeEvent<HTMLInputElement>) => Promise<void>;
+    handleCardUpdate: (e: FormEvent<HTMLFormElement>) => Promise<void>;
+    handleDeleteCard: () => void;
+    handleCardFieldChange: <K extends keyof Card>(field: K, value: Card[K]) => void;
+}
+
 const CardDetailModal = ({
     selectedCard,
     setShowCardInfo,
     columns,
     allAccounts,
-    newComment,
-    setNewComment,
     handleCardFieldChange,
-    handleAddComment,
     handleFileUpload,
     handleCardUpdate,
     handleDeleteCard,
-}) => {
-    console.log();
+}: ICardDetailModalProps) => {
 
+    const [newComment, setNewComment] = useState("");
     const profileImage = localStorage.getItem("profileImage");
+
+    async function handleAddComment(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        if (!newComment.trim()) return;
+
+        await addComment(selectedCard!.card.id, newComment);
+    };
 
     return (
         <div className="fixed top-0 left-0 w-full h-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
@@ -39,7 +73,7 @@ const CardDetailModal = ({
                         <input
                             type="text"
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 text-lg font-medium"
-                            value={selectedCard.card.name || ''}
+                            value={selectedCard?.card.name || ''}
                             onChange={(e) => handleCardFieldChange('name', e.target.value)}
                         />
                     </div>
@@ -48,9 +82,9 @@ const CardDetailModal = ({
                     <div className="mb-6">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea
-                            rows="4"
+                            rows={4}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                            value={selectedCard.card.description || ''}
+                            value={selectedCard?.card.description || ''}
                             onChange={(e) => handleCardFieldChange('description', e.target.value)}
                         ></textarea>
                     </div>
@@ -62,7 +96,7 @@ const CardDetailModal = ({
                             <input
                                 type="date"
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                                value={selectedCard.card.due_date || ''}
+                                value={selectedCard?.card.due_date?.split('T')[0] || ''}
                                 onChange={(e) => handleCardFieldChange('due_date', e.target.value)}
                             />
                         </div>
@@ -71,7 +105,7 @@ const CardDetailModal = ({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
                             <select
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                                value={selectedCard.card.priority || 'medium'}
+                                value={selectedCard?.card.priority || 'medium'}
                                 onChange={(e) => handleCardFieldChange('priority', e.target.value)}
                             >
                                 <option value="low">Low</option>
@@ -85,7 +119,7 @@ const CardDetailModal = ({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Column</label>
                             <select
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                                value={selectedCard.card.column}
+                                value={selectedCard?.card.column}
                                 onChange={(e) => handleCardFieldChange('column', parseInt(e.target.value))}
                             >
                                 {columns.map(column => (
@@ -98,7 +132,7 @@ const CardDetailModal = ({
                             <label className="block text-sm font-medium text-gray-700 mb-1">Assignee</label>
                             <select
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
-                                value={selectedCard.card.assigned_to?.id || ''}
+                                value={selectedCard?.card.assigned_to || ''}
                                 onChange={(e) =>
                                     handleCardFieldChange('assigned_to', e.target.value ? parseInt(e.target.value) : null)
                                 }
@@ -114,9 +148,9 @@ const CardDetailModal = ({
                     {/* Attachments */}
                     <div className="mb-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Attachments</label>
-                        {selectedCard.attachments.length > 0 && (
+                        {selectedCard!.attachments.length > 0 && (
                             <div className="mb-4 space-y-2">
-                                {selectedCard.attachments.map(attachment => (
+                                {selectedCard?.attachments.map(attachment => (
                                     <div key={attachment.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                                         <a
                                             href={attachment.file_url}
@@ -168,7 +202,7 @@ const CardDetailModal = ({
                                 </div>
                                 <div className="flex-grow">
                                     <textarea
-                                        rows="2"
+                                        rows={2}
                                         placeholder="Add a comment..."
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500"
                                         value={newComment}
@@ -186,12 +220,12 @@ const CardDetailModal = ({
                             </form>
 
                             <div className="border-t border-gray-200 pt-4 space-y-4">
-                                {selectedCard.comments.map(comment => (
+                                {selectedCard?.comments.map(comment => (
                                     <div key={comment.id} className="flex gap-3">
                                         <div className="flex-shrink-0">
                                             <div className="h-15 w-15 rounded-full bg-gray-300 flex items-center justify-center">
                                                 <img
-                                                    src={profileImage}
+                                                    src={profileImage!}
                                                     alt="Profile"
                                                     className="w-15 h-15 rounded-full object-cover border border-gray-300"
                                                 />
@@ -216,7 +250,10 @@ const CardDetailModal = ({
                 </div>
 
                 {/* Modal Footer */}
-                <div className="border-t border-gray-200 p-4 flex justify-end gap-3">
+                <form
+                    className="border-t border-gray-200 p-4 flex justify-end gap-3"
+                    onSubmit={handleCardUpdate}
+                >
                     <button
                         onClick={() => setShowCardInfo(false)}
                         className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
@@ -230,12 +267,12 @@ const CardDetailModal = ({
                         Delete
                     </button>
                     <button
-                        onClick={handleCardUpdate}
+                        type="submit"
                         className="px-4 py-2 bg-violet-600 text-white rounded-md hover:bg-violet-700 transition"
                     >
                         Save Changes
                     </button>
-                </div>
+                </form>
             </div>
         </div>
     );

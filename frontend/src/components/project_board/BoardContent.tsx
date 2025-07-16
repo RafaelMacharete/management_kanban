@@ -3,24 +3,50 @@ import { CiGrid2H, CiGrid41 } from "react-icons/ci";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { PiTimerLight } from "react-icons/pi";
 import { IoMdAdd } from "react-icons/io";
+import type { ChangeEvent, KeyboardEvent } from "react";
+import type { Card } from "../../pages/Project";
+import type { IColumn } from "../../pages/Project";
 
-export default function BoardContent({
-    isEditingProjectName,
-    projectName,
-    handleProjectNameChange,
-    handleProjectNameKeyDown,
-    handleUpdateProjectName,
-    setIsEditingProjectName,
-    filterOptions,
-    activeFilter,
-    setActiveFilter,
-    columns,
-    cards,
-    handleSetShowCardInfo,
-    handleAddCard,
-    handleAddColumn,
-    projectid,
-}) {
+const filterOptions = ['Today', 'This Week', 'This Month', 'All'] as const;
+type FilterOptions = typeof filterOptions[number];
+
+interface IBoardContentProps {
+    isEditingProjectName: boolean;
+    projectName: string;
+    handleProjectNameChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    handleProjectNameKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
+    handleUpdateProjectName: () => void;
+    setIsEditingProjectName: (value: boolean) => void;
+    filterOptions: readonly FilterOptions[];
+    activeFilter: FilterOptions;
+    setActiveFilter: (filter: FilterOptions) => void;
+    columns: IColumn[];
+    cards: Card[];
+    handleSetShowCardInfo: (cardId: number) => void;
+    handleAddCard: (columnId: number) => void;
+    handleAddColumn: (columnId: number) => void;
+    projectid: number;
+}
+
+export default function BoardContent(props: IBoardContentProps) {
+    const {
+        isEditingProjectName,
+        projectName,
+        handleProjectNameChange,
+        handleProjectNameKeyDown,
+        handleUpdateProjectName,
+        setIsEditingProjectName,
+        filterOptions,
+        activeFilter,
+        setActiveFilter,
+        columns,
+        cards,
+        handleSetShowCardInfo,
+        handleAddCard,
+        handleAddColumn,
+        projectid,
+    } = props;
+
     return (
         <section className="max-w-[1400px] mx-auto space-y-6">
             {/* Project Header */}

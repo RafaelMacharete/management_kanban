@@ -1,13 +1,28 @@
 import React from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
+interface IField {
+  label: string;
+  htmlFor: string;
+  placeholder: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export interface IFormProps {
+  fields: IField[];
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  setShowForm: React.Dispatch<React.SetStateAction<boolean>>;
+  toCreate: string;
+  formError?: string;
+}
+
 export function Form({
   fields,
   handleSubmit,
   setShowForm,
   toCreate,
   formError,
-}) {
+}: IFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">

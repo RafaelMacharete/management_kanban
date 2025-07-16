@@ -28,8 +28,6 @@ interface IAccounts {
   profile_image: string;
 }
 
-
-
 export function Home() {
   const [projects, setProjects] = useState<IProjects[]>([]);
   const [members, setMembers] = useState<IAccounts[]>([]);
@@ -46,7 +44,7 @@ export function Home() {
   const [projectSearched, setProjectSearched] = useState<IProjects[]>([]);
   const currentUser = localStorage.getItem('currentUser')
   const isLogged = localStorage.getItem("isLogged");
-
+  
   const [formData, setFormData] = useState<IFormData>({
     name: "",
     members: [],
@@ -298,7 +296,6 @@ export function Home() {
       {/* Main header*/}
       <Header
         showSidebar={showSidebar}
-        projectSearched={projectSearched}
         setProjectSearched={setProjectSearched}
       />
 

@@ -2,12 +2,27 @@ import { getHeaders, API_URL } from "./baseService";
 
 interface ISelectedCard {
   name: string;
-  due_date: Date;
-  priority: string;
+  due_date: string;
+  priority: number;
   assigned_to_id: number | null;
   column: number;
+  description: string;
 }
 
+interface ICardFormData {
+  name: string;
+  column: number | null;
+  description: string;
+  due_date: string;
+}
+
+interface IColumnFormData {
+  id?: number;
+  name?: string;
+  project_board: number | null;
+  position?: number;
+  column?: number
+}
 
 export async function fetchCardDetails(cardId: number) {
   try {
@@ -19,7 +34,7 @@ export async function fetchCardDetails(cardId: number) {
   }
 }
 
-export async function updateCard(cardId: string, data: ISelectedCard) {
+export async function updateCard(cardId: number, data: ISelectedCard) {
   try {
     const res = await fetch(`${API_URL}/cards/${cardId}/update/`, {
       method: "PATCH",
@@ -38,7 +53,7 @@ export async function updateCard(cardId: string, data: ISelectedCard) {
 }
 
 
-export async function fetchCards(columns_id: number[]) {
+export async function fetchCards(columns_id: {columns_id: number[]}) {
   try {
     const res = await fetch(`${API_URL}/card/`, {
       method: "POST",
@@ -52,7 +67,7 @@ export async function fetchCards(columns_id: number[]) {
   }
 }
 
-export async function createCard(cardData) {
+export async function createCard(cardData: ICardFormData) {
   try {
     console.log(cardData);
     
@@ -68,7 +83,7 @@ export async function createCard(cardData) {
   }
 }
 
-export async function createColumn(columnData) {
+export async function createColumn(columnData: IColumnFormData) {
   try {
     const res = await fetch(`${API_URL}/columns/`, {
       method: "POST",

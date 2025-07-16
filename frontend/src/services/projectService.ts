@@ -1,6 +1,6 @@
 import { API_URL, getHeaders } from "./baseService";
 
-export async function updateProjectName(projectId: number, name) {
+export async function updateProjectName(projectId: number, name: string) {
   try {
     const res = await fetch(`${API_URL}/projects/${projectId}`, {
       method: "PATCH",
@@ -25,7 +25,7 @@ export async function fetchProjectMembers(projectId: number) {
 }
 
 
-export async function deleteProject(projectId) {
+export async function deleteProject(projectId: number) {
   try {
     const res = await fetch(`${API_URL}/projects/${projectId}/`, {
       method: "DELETE",

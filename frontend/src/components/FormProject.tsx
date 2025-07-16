@@ -1,5 +1,42 @@
-import React from "react";
+import React, { type ChangeEvent, type FormEvent } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+
+interface IField {
+  label: string;
+  htmlFor: string;
+  placeholder: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface IAccounts {
+  id: number;
+  username: string;
+  email: string;
+  image_url: string;
+  nickname: string | null;
+  profile_image: string;
+}
+
+interface IFormData {
+  name: string;
+  members: number[]
+}
+
+interface IFormProjectsProps {
+  fields: IField[];
+  handleSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
+  setShowForm: React.Dispatch<React.SetStateAction<boolean>>;
+  toCreate: string;
+  allAccounts: IAccounts[];
+  addMember: (id: number) => void;
+  formData: IFormData;
+  formDataSetter: React.Dispatch<React.SetStateAction<IFormData>>;
+  addedAccounts: IAccounts[];
+  setAddedAccounts: React.Dispatch<React.SetStateAction<IAccounts[]>>;
+  formError?: string;
+  isHome: boolean;
+  userId: string | null;
+}
 
 export function FormProject({
   fields,
@@ -15,22 +52,12 @@ export function FormProject({
   formError,
   isHome,
   userId
-}) {
-  function removeMember(id) {
+}: IFormProjectsProps) {
+
+  function removeMember(id: number) {
     const updated = formData.members.filter((memberId) => memberId !== id);
     formDataSetter((prev) => ({ ...prev, members: updated }));
     setAddedAccounts((prev) => prev.filter((acc) => acc.id !== id));
-  }
-  console.log(allAccounts);
-  
-
-  function handleMembersInputChange(e) {
-    const value = e.target.value;
-    if (value === "") {
-      formDataSetter((prev) => ({ ...prev, members: [] }));
-      setAddedAccounts([]);
-    }
-    fields.find((f) => f.htmlFor === "members").onChange(e);
   }
 
   return (
@@ -110,7 +137,7 @@ export function FormProject({
               </p>
               <div className="grid grid-cols-4 gap-3">
                 {allAccounts
-                  .filter(account => account.id !== parseInt(userId))
+                  .filter(account => account.id !== parseInt(userId!))
                   .map((account, idx) => (
                     <div
                       key={idx}
@@ -141,7 +168,7 @@ export function FormProject({
               {allAccounts.length >= 1 && isHome && (
                 <p className="text-xs text-gray-500 mt-3 text-center">
                   {
-                    allAccounts.filter(account => account.id !== parseInt(userId)).length
+                    allAccounts.filter(account => account.id !== parseInt(userId!)).length
                   } accounts found
                 </p>
               )}
